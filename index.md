@@ -1,6 +1,6 @@
 ## 目录
 
-* [《随便写，随便看 01》](https://tanzhijian.org/posts/dev01)
+* [随便写，随便看 01](https://tanzhijian.org/posts/dev01)
 
 * [《1973 年的弹子球》读书笔记](https://tanzhijian.org/posts/1973)
 
