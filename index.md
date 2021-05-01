@@ -1,5 +1,7 @@
 ## 目录
 
+* [《Soccermatics》读书笔记 00](https://tanzhijian.org/posts/soccermatics00)
+
 * [随便写，随便看 01](https://tanzhijian.org/posts/dev01)
 
 * [《1973 年的弹子球》读书笔记](https://tanzhijian.org/posts/1973)
