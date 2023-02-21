@@ -1,5 +1,7 @@
 ## 目录
 
+* [《Football Hackers》读书笔记 02](https://tanzhijian.org/posts/football_hackers_02)
+
 * [《Football Hackers》读书笔记 01](https://tanzhijian.org/posts/football_hackers_01)
 
 * [《Soccermatics》读书笔记 00](https://tanzhijian.org/posts/soccermatics00)
