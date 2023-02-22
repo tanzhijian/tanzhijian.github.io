@@ -7,7 +7,7 @@
   <generator>?</generator>
   {% for entry in entries %}<entry>
     <title>{{ entry['title'] }}</title>
-    <link href="{{ entry['url'] }}">
+    <link href="{{ entry['url'] }}"></link>
     <id>{{entry['id']}}</id>
     <updated>{{ entry['time'] }}</updated>
     <published>{{ entry['time'] }}</published>
