@@ -1,34 +1,42 @@
 from pathlib import Path
 
 import markdown
+from jinja2 import Template
 
 
-path_list = Path(Path.cwd(), 'posts').glob('**/*')
+path_list = Path(Path.cwd(), "posts").glob("**/*")
+template = Path(Path.cwd(), "template.xml")
+feed = Path(Path.cwd(), "atom.xml")
 
 
 def read(path):
     with open(path) as f:
-        md = f.read()
-    return md
+        text = f.read()
+    return text
+
 
 def convert(md):
     html = markdown.markdown(md)
     return {
-        'html': html,
+        "html": html,
     }
 
 
-def export(data):
-    pass
+def export(data, template, feed):
+    with open(template) as f:
+        template = f.read()
+    atom = Template(template).render(entries=data)
+    with open(feed, "w") as f:
+        f.write(atom)
 
 
 def main():
+    data = []
     for path in path_list:
         md = read(path)
-        # print(text[:100])
-        data = convert(md)
-    return data['html'][:100]
+        data.append(convert(md))
+    export(data, template, feed)
 
 
-if __name__ == '__main__':
-    print(main())
+if __name__ == "__main__":
+    main()
