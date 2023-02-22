@@ -1,7 +1,7 @@
 <feed>
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-02-22 21:40:50</updated>
+  <updated>2023-02-22T21:40:50Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
@@ -9,9 +9,9 @@
     <title>《Football Hackers》读书笔记 02</title>
     <link href="https://tanzhijian.org/posts/football_hackers_02"></link>
     <id>1677073250.564302</id>
-    <updated>2023-02-22 21:40:50</updated>
-    <published>2023-02-22 21:40:50</published>
-    <author>tanzhijian</author>
+    <updated>2023-02-22T21:40:50Z</updated>
+    <published>2023-02-22T21:40:50Z</published>
+    <author><name>tanzhijian</name></author>
     <summary>这一章的主题围绕着 xG 和运气，探讨这二者的关系。14/15 赛季多特蒙德半赛季崩盘排名 17，克洛普随之在赛季结束离开，一个时代结束。一个叫 Colin Trainor 的分析师指出积分榜并没有反映出真实的情况，半个赛季的时候，多特蒙德的进球数应该是预期进球 25 个而不是真实进球数18，防守也没有 26 个失球表现的那么夸张，而只应该是预期失球 17 个，所以他们应该获得的预期积分是 30 分，不是实际得到的 15 分。如果是这样多特蒙德在积分榜上面的位置应该是第四名。
 </summary>
     <content type="html">
@@ -43,9 +43,9 @@
     <title>《Football Hackers》读书笔记 01</title>
     <link href="https://tanzhijian.org/posts/football_hackers_01"></link>
     <id>1677073125.7405462</id>
-    <updated>2023-02-22 21:38:45</updated>
-    <published>2023-02-22 21:38:45</published>
-    <author>tanzhijian</author>
+    <updated>2023-02-22T21:38:45Z</updated>
+    <published>2023-02-22T21:38:45Z</published>
+    <author><name>tanzhijian</name></author>
     <summary>去年读《莱斯特手稿》时我就在想，我也要像这样来写东西，现在总算能行动了。tanzhijian.org 以前也写了大概一百来篇博客，总是想着为别人读而写，想让别人读得舒服，尽可能的构思一些通俗易读不失优美的句子，但其实并没有多少人会读(笑)，对于我这样的非专业写作者，构思这些是一件很累的事情，很难坚持长久。所以这一次为自己写，整理思绪写得舒服，自己能看懂即可，看能坚持多久吧。
 </summary>
     <content type="html">
@@ -83,9 +83,9 @@
     <title>《Soccermatics》读书笔记 00</title>
     <link href="https://tanzhijian.org/posts/soccermatics00"></link>
     <id>1677073007.9952753</id>
-    <updated>2023-02-22 21:36:47</updated>
-    <published>2023-02-22 21:36:47</published>
-    <author>tanzhijian</author>
+    <updated>2023-02-22T21:36:47Z</updated>
+    <published>2023-02-22T21:36:47Z</published>
+    <author><name>tanzhijian</name></author>
     <summary>几年前在颜强老师那里听说了这本书，在之前只是零星琐碎的通过各种博客论坛文章中读到一些关于 xG，比赛热图的内容，由于常年关注此类数据，也算是个半吊子硬核球迷，大概知道这类数据的研究被用到各类比赛的进程推演以及复盘战术上。但总归是浅尝则止，所以当知道这本书的消息后便四方搜寻，最终在 Google Book 找到了刚发售的电子版（记得不是太清楚，印象中当时 Kindle 并没有找到）。
 </summary>
     <content type="html">
@@ -122,9 +122,9 @@
     <title>随便写，随便看 01</title>
     <link href="https://tanzhijian.org/posts/dev01"></link>
     <id>1677072862.7375624</id>
-    <updated>2023-02-22 21:34:22</updated>
-    <published>2023-02-22 21:34:22</published>
-    <author>tanzhijian</author>
+    <updated>2023-02-22T21:34:22Z</updated>
+    <published>2023-02-22T21:34:22Z</published>
+    <author><name>tanzhijian</name></author>
     <summary>又一次在模型调试不顺利发生争吵后忘记关闭微信语音，独自整理着愈发庞大的代码库。片刻之后合伙人问我：“失望吗？”
 </summary>
     <content type="html">
@@ -147,9 +147,9 @@
     <title>《1973 年的弹子球》读书笔记</title>
     <link href="https://tanzhijian.org/posts/1973"></link>
     <id>1677072749.3773606</id>
-    <updated>2023-02-22 21:32:29</updated>
-    <published>2023-02-22 21:32:29</published>
-    <author>tanzhijian</author>
+    <updated>2023-02-22T21:32:29Z</updated>
+    <published>2023-02-22T21:32:29Z</published>
+    <author><name>tanzhijian</name></author>
     <summary>村上春树在他第二本小说《1973 年的弹子球》仍然写不了长句子，不过并不妨碍成为一本读感很好的小说，不同于《且听风吟》笔法生疏造成的语句割裂感，依旧使用了很少的形容词与副词，却巧妙了很多，也形成了小说家最重要的一些东西：言辞达意，结构清晰。仅用了一本小说的时间。
 </summary>
     <content type="html">
@@ -184,9 +184,9 @@
     <title>我与魔兽世界的一些故事（1）</title>
     <link href="https://tanzhijian.org/posts/some_of_my_wow_1"></link>
     <id>1677072633.8233135</id>
-    <updated>2023-02-22 21:30:33</updated>
-    <published>2023-02-22 21:30:33</published>
-    <author>tanzhijian</author>
+    <updated>2023-02-22T21:30:33Z</updated>
+    <published>2023-02-22T21:30:33Z</published>
+    <author><name>tanzhijian</name></author>
     <summary>很久很久以前，那时候还风靡一款叫做魔兽世界的游戏。我和我的几个朋友，某宁，某强，某斌，等等一起沉溺其中。某宁搓着一个叫“淡紫色的瞳孔”的法爷，为了叫唤方便，他公会的人都会称之为“淡紫”。有一天，某宁突然做了个悲伤的表情对我说，我被骗了。
 </summary>
     <content type="html">

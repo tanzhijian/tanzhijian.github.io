@@ -35,7 +35,7 @@ def convert(md_list, timestamp, name):
         "url": f"https://tanzhijian.org/posts/{name}".rstrip(".md"),
         "summary": get_summary(md_list),
         "html": html,
-        "time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(timestamp)),
+        "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.localtime(timestamp)),
     }
 
 

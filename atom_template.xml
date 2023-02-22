@@ -11,7 +11,7 @@
     <id>{{entry['id']}}</id>
     <updated>{{ entry['time'] }}</updated>
     <published>{{ entry['time'] }}</published>
-    <author>tanzhijian</author>
+    <author><name>tanzhijian</name></author>
     <summary>{{ entry.summary }}</summary>
     <content type="html">
       {{ entry['html'] }}
