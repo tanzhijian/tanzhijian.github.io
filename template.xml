@@ -1,19 +1,18 @@
 <feed>
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-02-22T16:11:01.074276Z</updated>
+  <updated>{{ entries[0]['time'] }}</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
-  {% for entry in entries %}
-  <entry>
-    <title></title>
-    <link href=""/>
+  {% for entry in entries %}<entry>
+    <title>{{ entry['title'] }}</title>
+    <link href="{{ entry['url'] }}">
     <id>{{entry['id']}}</id>
     <updated>{{ entry['time'] }}</updated>
     <published>{{ entry['time'] }}</published>
     <author>tanzhijian</author>
-    <summary></summary>
+    <summary>{{ entry.summary }}</summary>
     <content type="html">
       {{ entry['html'] }}
     </content>
