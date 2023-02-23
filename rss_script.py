@@ -8,7 +8,7 @@ from jinja2 import Template
 
 path_list = Path(Path.cwd(), "posts").glob("**/*")
 atom_template = Path(Path.cwd(), "atom_template.xml")
-index_template = Path(Path.cwd(), 'index_templete.txt')
+index_template = Path(Path.cwd(), "index_templete.txt")
 atom = Path(Path.cwd(), "atom.xml")
 index = Path(Path.cwd(), "index.md")
 
@@ -27,13 +27,13 @@ def read(path):
     return text_list, timestamp, path.name
 
 
-def convert(md_list, timestamp, name):
-    html = markdown.markdown("".join(md_list))
+def convert(text_list, timestamp, name):
+    html = markdown.markdown("".join(text_list))
     return {
         "id": timestamp,
-        "title": md_list[0].lstrip("# ").rstrip("\n"),
-        "url": f"https://tanzhijian.org/posts/{name}".rstrip(".md"),
-        "summary": get_summary(md_list),
+        "title": text_list[0].lstrip("# ").rstrip("\n"),
+        "url": f"https://tanzhijian.org/posts/{name.rstrip('.md')}",
+        "summary": get_summary(text_list),
         "html": html,
         "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.localtime(timestamp)),
     }
@@ -50,13 +50,14 @@ def export(data, template, file):
 def main():
     data = []
     for path in path_list:
-        md_list, timestamp, name = read(path)
-        data.append(convert(md_list, timestamp, name))
+        text_list, timestamp, name = read(path)
+        data.append(convert(text_list, timestamp, name))
     # 排序
-    data = sorted(data, key=lambda x: x["id"], reverse=True)
+    data.sort(key=lambda x: x["id"], reverse=True)
 
     export(data, index_template, index)
-    export(data, atom_template, atom)
+    # 只生成 10 个订阅
+    export(data[:10], atom_template, atom)
 
 
 if __name__ == "__main__":
