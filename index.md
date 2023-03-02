@@ -1,5 +1,7 @@
 ## 目录
 
+* [《Football Hackers》读书笔记 03, 令人感动的创业故事](https://tanzhijian.org/posts/football_hackers_03)
+
 * [《Football Hackers》读书笔记 02](https://tanzhijian.org/posts/football_hackers_02)
 
 * [《Football Hackers》读书笔记 01](https://tanzhijian.org/posts/football_hackers_01)
