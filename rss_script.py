@@ -52,7 +52,7 @@ def main():
     for path in path_list:
         text_list, timestamp, name = read(path)
         data.append(convert(text_list, timestamp, name))
-    # 排序
+
     data.sort(key=lambda x: x["id"], reverse=True)
 
     export(data, index_template, index)
