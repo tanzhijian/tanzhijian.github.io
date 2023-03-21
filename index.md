@@ -1,5 +1,7 @@
 ## 目录
 
+* [《萤》读书笔记](https://tanzhijian.org/posts/firefly)
+
 * [《Football Hackers》读书笔记 04, 瓜迪奥拉](https://tanzhijian.org/posts/football_hackers_04)
 
 * [《刺杀骑士团长》读书笔记](https://tanzhijian.org/posts/commendatore)
