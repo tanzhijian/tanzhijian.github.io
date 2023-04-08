@@ -1,5 +1,7 @@
 ## 目录
 
+* [关于这个博客](https://tanzhijian.org/posts/about_blog)
+
 * [《萤》读书笔记](https://tanzhijian.org/posts/firefly)
 
 * [《Football Hackers》读书笔记 04, 瓜迪奥拉](https://tanzhijian.org/posts/football_hackers_04)
