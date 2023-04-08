@@ -1,2 +1,2 @@
 build:
-	$(HOME)/myvenv/tanzhijian-org/bin/python rss_script.py
+	$(HOME)/myvenv/tanzhijian-org/bin/python build.py

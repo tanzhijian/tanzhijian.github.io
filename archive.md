@@ -1,4 +1,4 @@
-## 最近更新
+## 目录
 
 * [《萤》读书笔记](https://tanzhijian.org/posts/firefly)
 
@@ -20,8 +20,3 @@
 
 * [我与魔兽世界的一些故事（1）](https://tanzhijian.org/posts/some_of_my_wow_1)
 
-[更多](https://tanzhijian.org/archive)
-
----
-
-[rss](https://tanzhijian.org/atom.xml)

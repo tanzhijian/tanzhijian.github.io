@@ -2,6 +2,4 @@
 
 {% for entry in entries %}* [{{ entry.title }}]({{ entry.url }})
 
-{% endfor %}---
-
-[rss](https://tanzhijian.org/atom.xml)
+{% endfor %}
