@@ -593,7 +593,7 @@ for i, row in lines.iterrows():
     player2_x = scatter.loc[scatter['player_id'] == player2]['x'].iloc[0]
     player2_y = scatter.loc[scatter['player_id'] == player2]['y'].iloc[0]
     passes_count = row['pass_count']
-    # 调整线宽，使通过的次数越多，线越宽
+    # 调整线宽，传球的次数越多，线越宽
     line_width = passes_count / lines['pass_count'].max() * 10
 
     pitch.lines(

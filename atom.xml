@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-11T23:54:57Z</updated>
+  <updated>2023-04-12T01:10:47Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 01</title>
     <link href="https://tanzhijian.org/posts/invincible01"></link>
-    <id>1681228497.3271396</id>
-    <updated>2023-04-11T23:54:57Z</updated>
-    <published>2023-04-11T23:54:57Z</published>
+    <id>1681233047.4311705</id>
+    <updated>2023-04-12T01:10:47Z</updated>
+    <published>2023-04-12T01:10:47Z</published>
     <author><name>tanzhijian</name></author>
     <summary>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。
 </summary>
@@ -520,7 +520,7 @@ player1_y = scatter.loc[scatter['player_id'] == player1]['y'].iloc[0]
 player2_x = scatter.loc[scatter['player_id'] == player2]['x'].iloc[0]
 player2_y = scatter.loc[scatter['player_id'] == player2]['y'].iloc[0]
 passes_count = row['pass_count']
-# 调整线宽，使通过的次数越多，线越宽
+# 调整线宽，传球的次数越多，线越宽
 line_width = passes_count / lines['pass_count'].max() * 10
 
 pitch.lines(
