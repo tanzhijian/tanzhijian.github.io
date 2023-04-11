@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 import time
 
-import markdown
+import marko
 from jinja2 import Template
 
 
@@ -30,7 +30,7 @@ def read(post: Path) -> tuple:
 
 
 def convert(text: list[str], timestamp: float, name: str) -> dict:
-    html = markdown.markdown("".join(text))
+    html = marko.convert("".join(text))
     return {
         "id": timestamp,
         "title": text[0].lstrip("# ").rstrip("\n"),

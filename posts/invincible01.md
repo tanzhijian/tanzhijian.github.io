@@ -210,9 +210,9 @@ passes.head()
 
 
 <div>
-<table border="1">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>x</th>
       <th>y</th>
@@ -321,9 +321,9 @@ scatter
 
 
 <div>
-<table border="1">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>player_id</th>
       <th>x</th>
@@ -479,9 +479,9 @@ lines.head()
 
 
 <div>
-<table border="1">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>pair_key</th>
       <th>pass_count</th>

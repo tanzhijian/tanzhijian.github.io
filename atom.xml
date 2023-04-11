@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-12T01:17:42Z</updated>
+  <updated>2023-04-12T01:30:14Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 01</title>
     <link href="https://tanzhijian.org/posts/invincible01"></link>
-    <id>1681233462.3863146</id>
-    <updated>2023-04-12T01:17:42Z</updated>
-    <published>2023-04-12T01:17:42Z</published>
+    <id>1681234214.2430804</id>
+    <updated>2023-04-12T01:30:14Z</updated>
+    <published>2023-04-12T01:30:14Z</published>
     <author><name>tanzhijian</name></author>
     <summary>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。
 </summary>
@@ -20,21 +20,20 @@
 <p>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。</p>
 <p>通过 competitions 找到英超联赛 0304赛季的 id，其中只有阿森纳的比赛，这次随便获取一场比赛来试手，2004 年 4 月 25 日北伦敦德比，阿森纳在白鹿巷球场 2:2 战平热刺，高举起英格兰超级联赛冠军奖杯，就它了。</p>
 <h2>import</h2>
-<p>```python
-import numpy as np
+<pre><code class="language-python">import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from mplsoccer import Pitch, Sbopen</p>
-<p>match_id = 3749068
-```</p>
-<p><code>python
-parser = Sbopen()
-events, related, freeze, tactics = parser.event(match_id)</code></p>
-<p>```python</p>
-<h1>检查一下数据集</h1>
-<p>events.info()
-```</p>
-<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+from mplsoccer import Pitch, Sbopen
+
+match_id = 3749068
+</code></pre>
+<pre><code class="language-python">parser = Sbopen()
+events, related, freeze, tactics = parser.event(match_id)
+</code></pre>
+<pre><code class="language-python"># 检查一下数据集
+events.info()
+</code></pre>
+<pre><code>&lt;class &#x27;pandas.core.frame.DataFrame&#x27;&gt;
 RangeIndex: 3156 entries, 0 to 3155
 Data columns (total 77 columns):
  #   Column                          Non-Null Count  Dtype  
@@ -119,16 +118,15 @@ Data columns (total 77 columns):
 dtypes: float64(26), int64(10), object(41)
 memory usage: 1.9+ MB
 </code></pre>
-<p>```python</p>
-<h1>查看有哪些事件</h1>
-<p>events['type_name'].unique()
-```</p>
-<pre><code>array(['Starting XI', 'Half Start', 'Pass', 'Ball Receipt', 'Carry',
-       'Block', 'Ball Recovery', 'Pressure', 'Duel', 'Clearance',
-       'Foul Committed', 'Foul Won', 'Dribbled Past', 'Dribble', 'Shot',
-       'Goal Keeper', 'Dispossessed', 'Interception', 'Miscontrol',
-       '50/50', 'Offside', 'Half End', 'Substitution', 'Error',
-       'Tactical Shift', 'Bad Behaviour'], dtype=object)
+<pre><code class="language-python"># 查看有哪些事件
+events[&#x27;type_name&#x27;].unique()
+</code></pre>
+<pre><code>array([&#x27;Starting XI&#x27;, &#x27;Half Start&#x27;, &#x27;Pass&#x27;, &#x27;Ball Receipt&#x27;, &#x27;Carry&#x27;,
+       &#x27;Block&#x27;, &#x27;Ball Recovery&#x27;, &#x27;Pressure&#x27;, &#x27;Duel&#x27;, &#x27;Clearance&#x27;,
+       &#x27;Foul Committed&#x27;, &#x27;Foul Won&#x27;, &#x27;Dribbled Past&#x27;, &#x27;Dribble&#x27;, &#x27;Shot&#x27;,
+       &#x27;Goal Keeper&#x27;, &#x27;Dispossessed&#x27;, &#x27;Interception&#x27;, &#x27;Miscontrol&#x27;,
+       &#x27;50/50&#x27;, &#x27;Offside&#x27;, &#x27;Half End&#x27;, &#x27;Substitution&#x27;, &#x27;Error&#x27;,
+       &#x27;Tactical Shift&#x27;, &#x27;Bad Behaviour&#x27;], dtype=object)
 </code></pre>
 <p>由于换人了以后阵容战术就会变动，所以绘制首发传球图需要在第一次换人之前，找到第一次换人的事件</p>
 <p>然后过滤掉：</p>
@@ -137,11 +135,11 @@ memory usage: 1.9+ MB
 <li>换人之后的事件，也就是index 小于 sub 的事件</li>
 <li>失败的传球</li>
 </ol>
-<p><code>python
-first_sub = events.loc[
-    events['type_name'] == 'Substitution'].loc[
-    events['team_name'] == "Arsenal"].iloc[0]
-first_sub</code></p>
+<pre><code class="language-python">first_sub = events.loc[
+    events[&#x27;type_name&#x27;] == &#x27;Substitution&#x27;].loc[
+    events[&#x27;team_name&#x27;] == &quot;Arsenal&quot;].iloc[0]
+first_sub
+</code></pre>
 <pre><code>id                         7900f48c-1308-4aa5-9ec8-37af5c06a6d7
 index                                                      2335
 period                                                        2
@@ -155,14 +153,14 @@ bad_behaviour_card_id                                       NaN
 bad_behaviour_card_name                                     NaN
 Name: 2334, Length: 77, dtype: object
 </code></pre>
-<p><code>python
-_filter = (
-    events.type_name == 'Pass') &amp; (
-    events.team_name == "Arsenal") &amp; (
-    events.index &lt; first_sub['index']) &amp; (
-    events.outcome_name.isnull())</code></p>
-<p><code>python
-_filter.head()</code></p>
+<pre><code class="language-python">_filter = (
+    events.type_name == &#x27;Pass&#x27;) &amp; (
+    events.team_name == &quot;Arsenal&quot;) &amp; (
+    events.index &lt; first_sub[&#x27;index&#x27;]) &amp; (
+    events.outcome_name.isnull())
+</code></pre>
+<pre><code class="language-python">_filter.head()
+</code></pre>
 <pre><code>0    False
 1    False
 2    False
@@ -170,15 +168,14 @@ _filter.head()</code></p>
 4     True
 dtype: bool
 </code></pre>
-<p>```python</p>
-<h1>获取必要的数据</h1>
-<p>passes = events.loc[_filter, [
-    'x', 'y', 'end_x', 'end_y',
-    'player_id', 'player_name', 'pass_recipient_name', 'pass_recipient_id'
+<pre><code class="language-python"># 获取必要的数据
+passes = events.loc[_filter, [
+    &#x27;x&#x27;, &#x27;y&#x27;, &#x27;end_x&#x27;, &#x27;end_y&#x27;,
+    &#x27;player_id&#x27;, &#x27;player_name&#x27;, &#x27;pass_recipient_name&#x27;, &#x27;pass_recipient_id&#x27;
 ]]
-```</p>
-<p><code>python
-passes.head()</code></p>
+</code></pre>
+<pre><code class="language-python">passes.head()
+</code></pre>
 <div>
 <table border="1">
   <thead>
@@ -253,30 +250,29 @@ passes.head()</code></p>
   </tbody>
 </table>
 </div>
-
 <h2>计算位置和大小</h2>
 <p>对于每个球员，计算传球和接球的平均位置，然后计算每个球员到接球球员的传球次数，传球线路的粗细与之成正比</p>
-<p>```python
-scatter = pd.DataFrame()
-for i, _id in enumerate(passes['player_id'].unique()):
-    pass_x = passes.loc[passes['player_id'] == _id]['x'].to_numpy()
-    pass_y = passes.loc[passes['player_id'] == _id]['y'].to_numpy()
-    rec_x = passes.loc[passes['pass_recipient_id'] == _id]['end_x'].to_numpy()
-    rec_y = passes.loc[passes['pass_recipient_id'] == _id]['end_y'].to_numpy()
-    scatter.at[i, 'player_id'] = _id</p>
-<pre><code># 计算每个点的 x 和 y，位置为传球和接球的平均值
-scatter.at[i, 'x'] = np.mean(np.concatenate([pass_x, rec_x]))
-scatter.at[i, 'y'] = np.mean(np.concatenate([pass_y, rec_y]))
-
-# 计算传球数
-scatter.at[i, 'count'] = passes.loc[
-    passes['player_id'] == _id].count().iloc[0]
+<pre><code class="language-python">scatter = pd.DataFrame()
+for i, _id in enumerate(passes[&#x27;player_id&#x27;].unique()):
+    pass_x = passes.loc[passes[&#x27;player_id&#x27;] == _id][&#x27;x&#x27;].to_numpy()
+    pass_y = passes.loc[passes[&#x27;player_id&#x27;] == _id][&#x27;y&#x27;].to_numpy()
+    rec_x = passes.loc[passes[&#x27;pass_recipient_id&#x27;] == _id][&#x27;end_x&#x27;].to_numpy()
+    rec_y = passes.loc[passes[&#x27;pass_recipient_id&#x27;] == _id][&#x27;end_y&#x27;].to_numpy()
+    scatter.at[i, &#x27;player_id&#x27;] = _id
+    
+    # 计算每个点的 x 和 y，位置为传球和接球的平均值
+    scatter.at[i, &#x27;x&#x27;] = np.mean(np.concatenate([pass_x, rec_x]))
+    scatter.at[i, &#x27;y&#x27;] = np.mean(np.concatenate([pass_y, rec_y]))
+    
+    # 计算传球数
+    scatter.at[i, &#x27;count&#x27;] = passes.loc[
+        passes[&#x27;player_id&#x27;] == _id].count().iloc[0]
+    
+# 位置大小
+scatter[&#x27;marker_size&#x27;] = scatter[&#x27;count&#x27;] / scatter[&#x27;count&#x27;].max() * 1500
 </code></pre>
-<h1>位置大小</h1>
-<p>scatter['marker_size'] = scatter['count'] / scatter['count'].max() * 1500
-```</p>
-<p><code>python
-scatter</code></p>
+<pre><code class="language-python">scatter
+</code></pre>
 <div>
 <table border="1">
   <thead>
@@ -381,37 +377,34 @@ scatter</code></p>
   </tbody>
 </table>
 </div>
-
 <h2>球员名及号码</h2>
 <p>由于事件数据集只有简单的球员名字和 id，绘制图片时使用名字全称过长，比如 Laureano Bisan-Etame Mayer 这位大哥估计不少人反应不过来是谁，Lauren 就明白了。</p>
 <p>需要从另一个数据集中获取</p>
-<p><code>python
-lineup = parser.lineup(match_id)</code></p>
-<p><code>python
-arsenal = lineup.loc[lineup['team_name'] == 'Arsenal']
+<pre><code class="language-python">lineup = parser.lineup(match_id)
+</code></pre>
+<pre><code class="language-python">arsenal = lineup.loc[lineup[&#x27;team_name&#x27;] == &#x27;Arsenal&#x27;]
 scatter = pd.merge(
     scatter, 
-    arsenal[['player_id', 'player_nickname', 'jersey_number']], 
-    on='player_id'
-)</code></p>
+    arsenal[[&#x27;player_id&#x27;, &#x27;player_nickname&#x27;, &#x27;jersey_number&#x27;]], 
+    on=&#x27;player_id&#x27;
+)
+</code></pre>
 <h2>计算传球线路宽度</h2>
 <p>计算线路宽度，需要根据传球和接球的组合对传球数据框进行分组，并计算他们之间的传球次数。最后一步设置了忽略传球次数少于 2 次的球员的阈值。可以尝试不同的值，根据可视化背后的信息调整它</p>
-<p>```python</p>
-<h1>计算球员之间的传球次数</h1>
-<p>passes['pair_key'] = passes.apply(
-    lambda x: '-'.join(sorted([str(x['player_id']), 
-                               str(x['pass_recipient_id'])])),
+<pre><code class="language-python"># 计算球员之间的传球次数
+passes[&#x27;pair_key&#x27;] = passes.apply(
+    lambda x: &#x27;-&#x27;.join(sorted([str(x[&#x27;player_id&#x27;]), 
+                               str(x[&#x27;pass_recipient_id&#x27;])])),
     axis=1,
 )
-lines = passes.groupby(['pair_key']).x.count().reset_index()
-lines.rename({'x': 'pass_count'}, axis='columns', inplace=True)
-```</p>
-<p>```python</p>
-<h1>设定一个阈值，可以尝试研究它在更改时如何变化</h1>
-<p>lines = lines[lines['pass_count'] &gt; 2]
-```</p>
-<p><code>python
-lines.head()</code></p>
+lines = passes.groupby([&#x27;pair_key&#x27;]).x.count().reset_index()
+lines.rename({&#x27;x&#x27;: &#x27;pass_count&#x27;}, axis=&#x27;columns&#x27;, inplace=True)
+</code></pre>
+<pre><code class="language-python"># 设定一个阈值，可以尝试研究它在更改时如何变化
+lines = lines[lines[&#x27;pass_count&#x27;] &gt; 2]
+</code></pre>
+<pre><code class="language-python">lines.head()
+</code></pre>
 <div>
 <table border="1">
   <thead>
@@ -450,49 +443,51 @@ lines.head()</code></p>
   </tbody>
 </table>
 </div>
-
 <h2>绘制路线</h2>
-<p>```python</p>
-<h1>绘制球场</h1>
-<p>pitch = Pitch(line_color='grey')
+<pre><code class="language-python"># 绘制球场
+pitch = Pitch(line_color=&#x27;grey&#x27;)
 fig, ax = pitch.grid(
     grid_height=0.9, title_height=0.06, axis=False,
     endnote_height=0.04, title_space=0, endnote_space=0,
-)</p>
-<h1>球场上的位置</h1>
-<p>pitch.scatter(
-    scatter.x, scatter.y, s=scatter.marker_size, 
-    color='red', edgecolors='grey', linewidth=1, alpha=1,
-    ax=ax['pitch'], zorder=3,
-)</p>
-<h1>填充球员名字</h1>
-<p>for i, row in scatter.iterrows():
-    pitch.annotate(
-        row.player_nickname, xy=(row.x, row.y), c='black', 
-        va='center', ha='center', weight="bold", 
-        size=14, ax=ax["pitch"], zorder=4,
-    )</p>
-<p>for i, row in lines.iterrows():
-    player1 = float(row['pair_key'].split('-')[0])
-    player2 = float(row['pair_key'].split('-')[1])</p>
-<pre><code># 取球员的平均位置在他们之间画一条线
-player1_x = scatter.loc[scatter['player_id'] == player1]['x'].iloc[0]
-player1_y = scatter.loc[scatter['player_id'] == player1]['y'].iloc[0]
-player2_x = scatter.loc[scatter['player_id'] == player2]['x'].iloc[0]
-player2_y = scatter.loc[scatter['player_id'] == player2]['y'].iloc[0]
-passes_count = row['pass_count']
-# 调整线宽，传球的次数越多，线越宽
-line_width = passes_count / lines['pass_count'].max() * 10
-
-pitch.lines(
-    player1_x, player1_y, player2_x, player2_y,
-    alpha=1, lw=line_width, zorder=2, color='red', ax=ax['pitch']
 )
-</code></pre>
-<p>fig.suptitle('2004-04-25, Tottenham Hotspur vs Arsenal', fontsize=30)
+# 球场上的位置
+pitch.scatter(
+    scatter.x, scatter.y, s=scatter.marker_size, 
+    color=&#x27;red&#x27;, edgecolors=&#x27;grey&#x27;, linewidth=1, alpha=1,
+    ax=ax[&#x27;pitch&#x27;], zorder=3,
+)
+
+# 填充球员名字
+for i, row in scatter.iterrows():
+    pitch.annotate(
+        row.player_nickname, xy=(row.x, row.y), c=&#x27;black&#x27;, 
+        va=&#x27;center&#x27;, ha=&#x27;center&#x27;, weight=&quot;bold&quot;, 
+        size=14, ax=ax[&quot;pitch&quot;], zorder=4,
+    )
+    
+for i, row in lines.iterrows():
+    player1 = float(row[&#x27;pair_key&#x27;].split(&#x27;-&#x27;)[0])
+    player2 = float(row[&#x27;pair_key&#x27;].split(&#x27;-&#x27;)[1])
+    
+    # 取球员的平均位置在他们之间画一条线
+    player1_x = scatter.loc[scatter[&#x27;player_id&#x27;] == player1][&#x27;x&#x27;].iloc[0]
+    player1_y = scatter.loc[scatter[&#x27;player_id&#x27;] == player1][&#x27;y&#x27;].iloc[0]
+    player2_x = scatter.loc[scatter[&#x27;player_id&#x27;] == player2][&#x27;x&#x27;].iloc[0]
+    player2_y = scatter.loc[scatter[&#x27;player_id&#x27;] == player2][&#x27;y&#x27;].iloc[0]
+    passes_count = row[&#x27;pass_count&#x27;]
+    # 调整线宽，传球的次数越多，线越宽
+    line_width = passes_count / lines[&#x27;pass_count&#x27;].max() * 10
+
+    pitch.lines(
+        player1_x, player1_y, player2_x, player2_y,
+        alpha=1, lw=line_width, zorder=2, color=&#x27;red&#x27;, ax=ax[&#x27;pitch&#x27;]
+    )
+    
+fig.suptitle(&#x27;2004-04-25, Tottenham Hotspur vs Arsenal&#x27;, fontsize=30)
 plt.show()
-```</p>
-<p><img alt="ARS_VS_HOT_0304_passing_networks.png" src="https://s2.loli.net/2023/04/11/1GzYOeHoiubdvLF.png" /></p>
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/11/1GzYOeHoiubdvLF.png" alt="ARS_VS_HOT_0304_passing_networks.png" /></p>
+
     </content>
   </entry>
   <entry>
@@ -509,12 +504,13 @@ plt.show()
 <p>内容没什么好说的，无非就是 GitHub Pages，加上比较懒，样式主题都没改，不过无所谓，以前把博客弄得好看回头文章几年没写一次也不是没有过。</p>
 <p>但好歹要有一些必须的页面，所以写了一个<a href="https://github.com/tanzhijian/tanzhijian.github.io/blob/master/build.py">脚本</a>生成了 index，archive，以及最重要的 rss，以下是用 ChatGPT 生成的介绍：</p>
 <blockquote>
-<p>这段代码是一个用 Python 语言写的脚本，可以帮助我们生成一个博客网站。这个博客网站可以展示使用 Markdown 格式编写的博客文章。脚本会读取 "posts" 文件夹中的 Markdown 文件，将它们转换为 HTML 格式，并且使用 Jinja2 模板语言生成 Atom 订阅源、主页和归档页。</p>
+<p>这段代码是一个用 Python 语言写的脚本，可以帮助我们生成一个博客网站。这个博客网站可以展示使用 Markdown 格式编写的博客文章。脚本会读取 &quot;posts&quot; 文件夹中的 Markdown 文件，将它们转换为 HTML 格式，并且使用 Jinja2 模板语言生成 Atom 订阅源、主页和归档页。</p>
 <p>代码中定义了一些函数，它们会将 Markdown 文件转换为字典，然后使用 Jinja2 模板渲染字典数据，最终生成网站文件。其中 main 函数是整个程序的主要逻辑，它会读取 Markdown 文件夹中的所有文件，将它们转换为字典并排序，然后将字典数据填充到 Jinja2 模板中，最终生成网站文件。</p>
 <p>这个脚本是一个简单的示例，可以作为生成静态网站的基础。</p>
 </blockquote>
 <p>不足的地方还很多，比如日期是读取文件修改日期，简介只是粗暴的截取第一段填充字数，这些随着使用过程再改了。</p>
 <p>关于之后能写的目标，尽量做到避免文章标题复制给 ai 能写出相似更好的内容，这样太糟糕了。</p>
+
     </content>
   </entry>
   <entry>
@@ -548,6 +544,7 @@ plt.show()
 <p>我看了很多解读，包括电影《燃烧》，到这里都在讨论，烧仓房只是象征，被真正“烧”掉的是年轻女孩，以及随之而来的阶层固化，上层阶级对于道德甚至法律的话语权，等等。</p>
 <p>在我看来本书的结尾处理才是这篇小说仅仅想要表达的主题，一个更绝望的主题：只需要安排一个结局罢了。</p>
 <p>至于哪座仓房被真正烧掉了，年轻女孩又是否真的消失了，谁在意呢？</p>
+
     </content>
   </entry>
   <entry>
@@ -574,6 +571,7 @@ plt.show()
 <p>拜仁的分析师迈克尔尼迈耶告诉我，瓜迪奥拉对数据不感兴趣；他从比赛视频中获取了他需要的所有信息。从字面意义上讲，加泰罗尼亚人不是数据爱好者，而是一个有远见的人：他狂热地寻找通往对手球门的途径，空间和数据优势更容易在影像的帮助下得到改进。</p>
 <p>瓜迪奥拉和他那一代人通过观看无数小时的比赛视频来磨练他们的专业知识。</p>
 </blockquote>
+
     </content>
   </entry>
   <entry>
@@ -606,6 +604,7 @@ plt.show()
 <p>看上去他得以重返昏睡那个平稳的世界，那个一无意识二无痛楚的世界。我为他感到欣慰。</p>
 </blockquote>
 <p>当然了，作为一部四十余万字的小说，丰富程度不仅于此，比如一直不变的“高度发达的资本主义社会与身处边缘却自成一统的价值观和付诸行动的良知勇气”，比如永远“继承”的人物群像模板，这些在读过很多本村上春树小说后变得不那么重要，更何况随着年纪的增大，自己也活成了他笔下那些孤独的配角。值得高兴的是，作为一个已经七十多岁的作者，能感受到他一直精进的笔法和节奏，似乎永远不用担心他成为年纪轻轻的传说——“那甚至是一场噩梦，一旦那样，漫长的人生就只能摩挲着自己的传说来度过，在也没有比那更无聊的人生了。”</p>
+
     </content>
   </entry>
   <entry>
@@ -640,6 +639,7 @@ plt.show()
 <p>他在考文垂俱乐部获得了机会，与技术总监马克维纳斯一起工作。到这里大家可能认为一切都走向正轨，他会向前面两位那样改造球队成功。但生活中失败与妥协才是常态，他在管理中参与了太多不相关的琐事，这些才是俱乐部的真实面貌——数据战术只是很小的一部分。2015 年接任，俱乐部以第八名结束赛季，第二年出现了一些问题，他无法解决，于是认输离开俱乐部。</p>
 <p>他想尝试来自外部的创新，局外人是否也能赢，他觉得这个概念非常浪漫。在考文垂之前他成立了一家咨询公司 Anderson and Sally，就经济和金融问题向足球俱乐部的投资者提供建议，尤其是希望其中一位投资者有足够的勇气，把钱花在外人身上。</p>
 <p>我想起身边的许多局外人，安德森的经历不算出色，但比起他们足够幸运，但愿他们能在不具有包容性的时代，找到属于自己的角色。</p>
+
     </content>
   </entry>
   <entry>
@@ -674,6 +674,7 @@ plt.show()
 <p>回到开头，14/15 赛季的多特蒙德，在人员方面没有发生任何重大变化的情况下，打进了 29 个进球，丢了 16 球，赢得了 31 分——几乎与 Trainor 计算中上半赛季的得分完全相同。</p>
 <p>他们不遗余力地试图根除糟糕结果的原因。但是，如果他们意识到当时有可能衡量巧合的影响，他和克洛普今天就不会在利物浦了。</p>
 <p>Graham 在 2019 年 3 月的 OptaPro 会议上说：“我们真的认为多特蒙德运气不好。这与球员和教练的系统性问题无关。这真的很重要，因为俱乐部必须做出的最大战略决定之一是聘请一名新教练。如果我们想聘请克洛普，我们必须了解多特蒙德是否有问题。统计分析说得非常清楚和强烈：不。”</p>
+
     </content>
   </entry>
   <entry>
@@ -714,6 +715,7 @@ plt.show()
 <p>数据本身并不一定能带来更好的分析。相反，数据很容易引起更多的认知偏见。足球不像篮球，单一事件的重要性较低，足球的单一事件影响整个比赛进程的比重过高，使得认知偏见会严重影响判断。</p>
 <p>大多数人倾向于将结果作为起点的判断解释，而不是教练的意图和策略。简而言之：如果结果是积极的，我们假设他的计划或赛前决定是正确的。然而如果结果是负面的，我们很快就会相信他的战术一定很糟糕。</p>
 <p>很多人可能会说这是正确和合乎逻辑的。但这会忽视我们在足球中面临的下一个非常大的问题：表现和结果之间往往存在相当大的差距。</p>
+
     </content>
   </entry>
   <entry>
@@ -753,6 +755,7 @@ plt.show()
 </li>
 </ul>
 <p>把准备工作先做了。</p>
+
     </content>
   </entry>
   <entry>
@@ -778,6 +781,7 @@ plt.show()
 </blockquote>
 <p>一切都是概率和规律。</p>
 <p>年龄增长带来的好事，便是不大在乎得失带来的情绪，而更在乎得失带来的收益。以前看不到的东西现在可以看到了，不明白的东西现在弄明白了，这无论如何都谈不上失望，倒像是人生中白捡了一个便宜。只是接下来又有更多的工作要做了。</p>
+
     </content>
   </entry>
   
