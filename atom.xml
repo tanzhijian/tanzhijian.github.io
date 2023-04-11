@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-12T01:10:47Z</updated>
+  <updated>2023-04-12T01:17:42Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 01</title>
     <link href="https://tanzhijian.org/posts/invincible01"></link>
-    <id>1681233047.4311705</id>
-    <updated>2023-04-12T01:10:47Z</updated>
-    <published>2023-04-12T01:10:47Z</published>
+    <id>1681233462.3863146</id>
+    <updated>2023-04-12T01:17:42Z</updated>
+    <published>2023-04-12T01:17:42Z</published>
     <author><name>tanzhijian</name></author>
     <summary>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。
 </summary>
@@ -180,20 +180,7 @@ dtype: bool
 <p><code>python
 passes.head()</code></p>
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -291,20 +278,7 @@ scatter.at[i, 'count'] = passes.loc[
 <p><code>python
 scatter</code></p>
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -439,20 +413,7 @@ lines.rename({'x': 'pass_count'}, axis='columns', inplace=True)
 <p><code>python
 lines.head()</code></p>
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table border="1">
   <thead>
     <tr style="text-align: right;">
       <th></th>
