@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-12T01:30:14Z</updated>
+  <updated>2023-04-12T01:34:00Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 01</title>
     <link href="https://tanzhijian.org/posts/invincible01"></link>
-    <id>1681234214.2430804</id>
-    <updated>2023-04-12T01:30:14Z</updated>
-    <published>2023-04-12T01:30:14Z</published>
+    <id>1681234440.864004</id>
+    <updated>2023-04-12T01:34:00Z</updated>
+    <published>2023-04-12T01:34:00Z</published>
     <author><name>tanzhijian</name></author>
     <summary>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。
 </summary>
@@ -177,9 +177,9 @@ passes = events.loc[_filter, [
 <pre><code class="language-python">passes.head()
 </code></pre>
 <div>
-<table border="1">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>x</th>
       <th>y</th>
@@ -274,9 +274,9 @@ scatter[&#x27;marker_size&#x27;] = scatter[&#x27;count&#x27;] / scatter[&#x27;co
 <pre><code class="language-python">scatter
 </code></pre>
 <div>
-<table border="1">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>player_id</th>
       <th>x</th>
@@ -406,9 +406,9 @@ lines = lines[lines[&#x27;pass_count&#x27;] &gt; 2]
 <pre><code class="language-python">lines.head()
 </code></pre>
 <div>
-<table border="1">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>pair_key</th>
       <th>pass_count</th>
