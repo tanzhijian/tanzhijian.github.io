@@ -2,10 +2,538 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-08T14:52:21Z</updated>
+  <updated>2023-04-11T23:39:03Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>阿森纳不败赛季传球路线图探索 01</title>
+    <link href="https://tanzhijian.org/posts/invincible01"></link>
+    <id>1681227543.9191074</id>
+    <updated>2023-04-11T23:39:03Z</updated>
+    <published>2023-04-11T23:39:03Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。
+</summary>
+    <content type="html">
+      <h1>阿森纳不败赛季传球路线图探索 01</h1>
+<p>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。</p>
+<p>通过 competitions 找到英超联赛 0304赛季的 id，其中只有阿森纳的比赛，这次随便获取一场比赛来试手，2004 年 4 月 25 日北伦敦德比，阿森纳在白鹿巷球场 2:2 战平热刺，高举起英格兰超级联赛冠军奖杯，就它了。</p>
+<h2>import</h2>
+<p>```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from mplsoccer import Pitch, Sbopen</p>
+<p>match_id = 3749068
+```</p>
+<p><code>python
+parser = Sbopen()
+events, related, freeze, tactics = parser.event(match_id)</code></p>
+<p>```python</p>
+<h1>检查一下数据集</h1>
+<p>events.info()
+```</p>
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 3156 entries, 0 to 3155
+Data columns (total 77 columns):
+ #   Column                          Non-Null Count  Dtype  
+---  ------                          --------------  -----  
+ 0   id                              3156 non-null   object 
+ 1   index                           3156 non-null   int64  
+ 2   period                          3156 non-null   int64  
+ 3   timestamp                       3156 non-null   object 
+ 4   minute                          3156 non-null   int64  
+ 5   second                          3156 non-null   int64  
+ 6   possession                      3156 non-null   int64  
+ 7   duration                        2355 non-null   float64
+ 8   match_id                        3156 non-null   int64  
+ 9   type_id                         3156 non-null   int64  
+ 10  type_name                       3156 non-null   object 
+ 11  possession_team_id              3156 non-null   int64  
+ 12  possession_team_name            3156 non-null   object 
+ 13  play_pattern_id                 3156 non-null   int64  
+ 14  play_pattern_name               3156 non-null   object 
+ 15  team_id                         3156 non-null   int64  
+ 16  team_name                       3156 non-null   object 
+ 17  tactics_formation               3 non-null      float64
+ 18  player_id                       3145 non-null   float64
+ 19  player_name                     3145 non-null   object 
+ 20  position_id                     3145 non-null   float64
+ 21  position_name                   3145 non-null   object 
+ 22  pass_recipient_id               801 non-null    float64
+ 23  pass_recipient_name             801 non-null    object 
+ 24  pass_length                     879 non-null    float64
+ 25  pass_angle                      879 non-null    float64
+ 26  pass_height_id                  879 non-null    float64
+ 27  pass_height_name                879 non-null    object 
+ 28  end_x                           1571 non-null   float64
+ 29  end_y                           1571 non-null   float64
+ 30  body_part_id                    899 non-null    float64
+ 31  body_part_name                  899 non-null    object 
+ 32  sub_type_id                     322 non-null    float64
+ 33  sub_type_name                   322 non-null    object 
+ 34  x                               3139 non-null   float64
+ 35  y                               3139 non-null   float64
+ 36  outcome_id                      434 non-null    float64
+ 37  outcome_name                    434 non-null    object 
+ 38  under_pressure                  670 non-null    float64
+ 39  counterpress                    82 non-null     float64
+ 40  off_camera                      65 non-null     float64
+ 41  aerial_won                      38 non-null     object 
+ 42  out                             34 non-null     float64
+ 43  ball_recovery_recovery_failure  11 non-null     object 
+ 44  pass_switch                     38 non-null     object 
+ 45  foul_committed_advantage        5 non-null      object 
+ 46  foul_won_advantage              5 non-null      object 
+ 47  technique_id                    50 non-null     float64
+ 48  technique_name                  50 non-null     object 
+ 49  pass_assisted_shot_id           16 non-null     object 
+ 50  pass_goal_assist                3 non-null      object 
+ 51  shot_open_goal                  1 non-null      object 
+ 52  shot_statsbomb_xg               23 non-null     float64
+ 53  end_z                           19 non-null     float64
+ 54  shot_key_pass_id                16 non-null     object 
+ 55  shot_first_time                 8 non-null      object 
+ 56  goalkeeper_position_id          23 non-null     float64
+ 57  goalkeeper_position_name        23 non-null     object 
+ 58  pass_cross                      15 non-null     object 
+ 59  dribble_overrun                 3 non-null      object 
+ 60  ball_recovery_offensive         2 non-null      object 
+ 61  pass_shot_assist                13 non-null     object 
+ 62  foul_won_defensive              9 non-null      object 
+ 63  pass_deflected                  2 non-null      object 
+ 64  half_start_late_video_start     2 non-null      object 
+ 65  substitution_replacement_id     5 non-null      float64
+ 66  substitution_replacement_name   5 non-null      object 
+ 67  foul_committed_card_id          2 non-null      float64
+ 68  foul_committed_card_name        2 non-null      object 
+ 69  dribble_nutmeg                  1 non-null      object 
+ 70  shot_one_on_one                 1 non-null      object 
+ 71  pass_cut_back                   1 non-null      object 
+ 72  block_offensive                 1 non-null      object 
+ 73  foul_committed_penalty          1 non-null      object 
+ 74  foul_won_penalty                1 non-null      object 
+ 75  bad_behaviour_card_id           1 non-null      float64
+ 76  bad_behaviour_card_name         1 non-null      object 
+dtypes: float64(26), int64(10), object(41)
+memory usage: 1.9+ MB
+</code></pre>
+<p>```python</p>
+<h1>查看有哪些事件</h1>
+<p>events['type_name'].unique()
+```</p>
+<pre><code>array(['Starting XI', 'Half Start', 'Pass', 'Ball Receipt', 'Carry',
+       'Block', 'Ball Recovery', 'Pressure', 'Duel', 'Clearance',
+       'Foul Committed', 'Foul Won', 'Dribbled Past', 'Dribble', 'Shot',
+       'Goal Keeper', 'Dispossessed', 'Interception', 'Miscontrol',
+       '50/50', 'Offside', 'Half End', 'Substitution', 'Error',
+       'Tactical Shift', 'Bad Behaviour'], dtype=object)
+</code></pre>
+<p>由于换人了以后阵容战术就会变动，所以绘制首发传球图需要在第一次换人之前，找到第一次换人的事件</p>
+<p>然后过滤掉：</p>
+<ol>
+<li>对手的事件</li>
+<li>换人之后的事件，也就是index 小于 sub 的事件</li>
+<li>失败的传球</li>
+</ol>
+<p><code>python
+first_sub = events.loc[
+    events['type_name'] == 'Substitution'].loc[
+    events['team_name'] == "Arsenal"].iloc[0]
+first_sub</code></p>
+<pre><code>id                         7900f48c-1308-4aa5-9ec8-37af5c06a6d7
+index                                                      2335
+period                                                        2
+timestamp                                       00:21:42.293000
+minute                                                       66
+                                           ...                 
+block_offensive                                             NaN
+foul_committed_penalty                                      NaN
+foul_won_penalty                                            NaN
+bad_behaviour_card_id                                       NaN
+bad_behaviour_card_name                                     NaN
+Name: 2334, Length: 77, dtype: object
+</code></pre>
+<p><code>python
+_filter = (
+    events.type_name == 'Pass') &amp; (
+    events.team_name == "Arsenal") &amp; (
+    events.index &lt; first_sub['index']) &amp; (
+    events.outcome_name.isnull())</code></p>
+<p><code>python
+_filter.head()</code></p>
+<pre><code>0    False
+1    False
+2    False
+3    False
+4     True
+dtype: bool
+</code></pre>
+<p>```python</p>
+<h1>获取必要的数据</h1>
+<p>passes = events.loc[_filter, [
+    'x', 'y', 'end_x', 'end_y',
+    'player_id', 'player_name', 'pass_recipient_name', 'pass_recipient_id'
+]]
+```</p>
+<p><code>python
+passes.head()</code></p>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>end_x</th>
+      <th>end_y</th>
+      <th>player_id</th>
+      <th>player_name</th>
+      <th>pass_recipient_name</th>
+      <th>pass_recipient_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4</th>
+      <td>60.0</td>
+      <td>40.0</td>
+      <td>62.3</td>
+      <td>43.5</td>
+      <td>15516.0</td>
+      <td>Thierry Henry</td>
+      <td>Dennis Bergkamp</td>
+      <td>15042.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>62.0</td>
+      <td>43.5</td>
+      <td>47.2</td>
+      <td>30.7</td>
+      <td>15042.0</td>
+      <td>Dennis Bergkamp</td>
+      <td>Patrick Vieira</td>
+      <td>15515.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>47.2</td>
+      <td>29.5</td>
+      <td>38.2</td>
+      <td>12.1</td>
+      <td>15515.0</td>
+      <td>Patrick Vieira</td>
+      <td>Ashley Cole</td>
+      <td>12529.0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>38.2</td>
+      <td>12.1</td>
+      <td>31.7</td>
+      <td>26.3</td>
+      <td>12529.0</td>
+      <td>Ashley Cole</td>
+      <td>Sulzeer Jeremiah ''Sol' Campbell</td>
+      <td>15637.0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>28.8</td>
+      <td>29.5</td>
+      <td>48.4</td>
+      <td>38.8</td>
+      <td>15637.0</td>
+      <td>Sulzeer Jeremiah ''Sol' Campbell</td>
+      <td>Gilberto Aparecido da Silva</td>
+      <td>40221.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>计算位置和大小</h2>
+<p>对于每个球员，计算传球和接球的平均位置，然后计算每个球员到接球球员的传球次数，传球线路的粗细与之成正比</p>
+<p>```python
+scatter = pd.DataFrame()
+for i, _id in enumerate(passes['player_id'].unique()):
+    pass_x = passes.loc[passes['player_id'] == _id]['x'].to_numpy()
+    pass_y = passes.loc[passes['player_id'] == _id]['y'].to_numpy()
+    rec_x = passes.loc[passes['pass_recipient_id'] == _id]['end_x'].to_numpy()
+    rec_y = passes.loc[passes['pass_recipient_id'] == _id]['end_y'].to_numpy()
+    scatter.at[i, 'player_id'] = _id</p>
+<pre><code># 计算每个点的 x 和 y，位置为传球和接球的平均值
+scatter.at[i, 'x'] = np.mean(np.concatenate([pass_x, rec_x]))
+scatter.at[i, 'y'] = np.mean(np.concatenate([pass_y, rec_y]))
+
+# 计算传球数
+scatter.at[i, 'count'] = passes.loc[
+    passes['player_id'] == _id].count().iloc[0]
+</code></pre>
+<h1>位置大小</h1>
+<p>scatter['marker_size'] = scatter['count'] / scatter['count'].max() * 1500
+```</p>
+<p><code>python
+scatter</code></p>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>player_id</th>
+      <th>x</th>
+      <th>y</th>
+      <th>count</th>
+      <th>marker_size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>15516.0</td>
+      <td>73.757692</td>
+      <td>33.834615</td>
+      <td>10.0</td>
+      <td>306.122449</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>15042.0</td>
+      <td>66.135897</td>
+      <td>37.082051</td>
+      <td>15.0</td>
+      <td>459.183673</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>15515.0</td>
+      <td>54.474194</td>
+      <td>33.134409</td>
+      <td>49.0</td>
+      <td>1500.000000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12529.0</td>
+      <td>52.920313</td>
+      <td>7.568750</td>
+      <td>35.0</td>
+      <td>1071.428571</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15637.0</td>
+      <td>36.142857</td>
+      <td>19.846429</td>
+      <td>13.0</td>
+      <td>397.959184</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>40221.0</td>
+      <td>52.817460</td>
+      <td>43.530159</td>
+      <td>32.0</td>
+      <td>979.591837</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>38412.0</td>
+      <td>35.815909</td>
+      <td>48.084091</td>
+      <td>23.0</td>
+      <td>704.081633</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>40222.0</td>
+      <td>49.040351</td>
+      <td>70.389474</td>
+      <td>31.0</td>
+      <td>948.979592</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>19312.0</td>
+      <td>61.132308</td>
+      <td>18.466154</td>
+      <td>32.0</td>
+      <td>979.591837</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>20015.0</td>
+      <td>8.210000</td>
+      <td>41.750000</td>
+      <td>8.0</td>
+      <td>244.897959</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>24972.0</td>
+      <td>68.381081</td>
+      <td>67.370270</td>
+      <td>15.0</td>
+      <td>459.183673</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>球员名及号码</h2>
+<p>由于事件数据集只有简单的球员名字和 id，绘制图片时使用名字全称过长，比如 Laureano Bisan-Etame Mayer 这位大哥估计不少人反应不过来是谁，Lauren 就明白了。</p>
+<p>需要从另一个数据集中获取</p>
+<p><code>python
+lineup = parser.lineup(match_id)</code></p>
+<p><code>python
+arsenal = lineup.loc[lineup['team_name'] == 'Arsenal']
+scatter = pd.merge(
+    scatter, 
+    arsenal_lineup[['player_id', 'player_nickname', 'jersey_number']], 
+    on='player_id'
+)</code></p>
+<h2>计算传球线路宽度</h2>
+<p>计算线路宽度，需要根据传球和接球的组合对传球数据框进行分组，并计算他们之间的传球次数。最后一步设置了忽略传球次数少于 2 次的球员的阈值。可以尝试不同的值，根据可视化背后的信息调整它</p>
+<p>```python</p>
+<h1>计算球员之间的传球次数</h1>
+<p>passes['pair_key'] = passes.apply(
+    lambda x: '-'.join(sorted([str(x['player_id']), 
+                               str(x['pass_recipient_id'])])),
+    axis=1,
+)
+lines = passes.groupby(['pair_key']).x.count().reset_index()
+lines.rename({'x': 'pass_count'}, axis='columns', inplace=True)
+```</p>
+<p>```python</p>
+<h1>设定一个阈值，可以尝试研究它在更改时如何变化</h1>
+<p>lines = lines[lines['pass_count'] &gt; 2]
+```</p>
+<p><code>python
+lines.head()</code></p>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pair_key</th>
+      <th>pass_count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>12529.0-15515.0</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12529.0-15516.0</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12529.0-15637.0</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>12529.0-19312.0</td>
+      <td>21</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>12529.0-40221.0</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>绘制路线</h2>
+<p>```python</p>
+<h1>绘制球场</h1>
+<p>pitch = Pitch(line_color='grey')
+fig, ax = pitch.grid(
+    grid_height=0.9, title_height=0.06, axis=False,
+    endnote_height=0.04, title_space=0, endnote_space=0,
+)</p>
+<h1>球场上的位置</h1>
+<p>pitch.scatter(
+    scatter.x, scatter.y, s=scatter.marker_size, 
+    color='red', edgecolors='grey', linewidth=1, alpha=1,
+    ax=ax['pitch'], zorder=3,
+)</p>
+<h1>填充球员名字</h1>
+<p>for i, row in scatter.iterrows():
+    pitch.annotate(
+        row.player_nickname, xy=(row.x, row.y), c='black', 
+        va='center', ha='center', weight="bold", 
+        size=14, ax=ax["pitch"], zorder=4,
+    )</p>
+<p>for i, row in lines.iterrows():
+    player1 = float(row['pair_key'].split('-')[0])
+    player2 = float(row['pair_key'].split('-')[1])</p>
+<pre><code># 取球员的平均位置在他们之间画一条线
+player1_x = scatter.loc[scatter['player_id'] == player1]['x'].iloc[0]
+player1_y = scatter.loc[scatter['player_id'] == player1]['y'].iloc[0]
+player2_x = scatter.loc[scatter['player_id'] == player2]['x'].iloc[0]
+player2_y = scatter.loc[scatter['player_id'] == player2]['y'].iloc[0]
+passes_count = row['pass_count']
+# 调整线宽，使通过的次数越多，线越宽
+line_width = passes_count / lines['pass_count'].max() * 10
+
+pitch.lines(
+    player1_x, player1_y, player2_x, player2_y,
+    alpha=1, lw=line_width, zorder=2, color='red', ax=ax['pitch']
+)
+</code></pre>
+<p>fig.suptitle('2004-04-25, Tottenham Hotspur vs Arsenal', fontsize=30)
+plt.show()
+```</p>
+<p><img alt="ARS_VS_HOT_0304_passing_networks.png" src="https://s2.loli.net/2023/04/11/1GzYOeHoiubdvLF.png" /></p>
+    </content>
+  </entry>
   <entry>
     <title>关于这个博客</title>
     <link href="https://tanzhijian.org/posts/about_blog"></link>
@@ -289,43 +817,6 @@
 </blockquote>
 <p>一切都是概率和规律。</p>
 <p>年龄增长带来的好事，便是不大在乎得失带来的情绪，而更在乎得失带来的收益。以前看不到的东西现在可以看到了，不明白的东西现在弄明白了，这无论如何都谈不上失望，倒像是人生中白捡了一个便宜。只是接下来又有更多的工作要做了。</p>
-    </content>
-  </entry>
-  <entry>
-    <title>《1973 年的弹子球》读书笔记</title>
-    <link href="https://tanzhijian.org/posts/1973"></link>
-    <id>1677072749.3773606</id>
-    <updated>2023-02-22T21:32:29Z</updated>
-    <published>2023-02-22T21:32:29Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>村上春树在他第二本小说《1973 年的弹子球》仍然写不了长句子，不过并不妨碍成为一本读感很好的小说，不同于《且听风吟》笔法生疏造成的语句割裂感，依旧使用了很少的形容词与副词，却巧妙了很多，也形成了小说家最重要的一些东西：言辞达意，结构清晰。仅用了一本小说的时间。
-</summary>
-    <content type="html">
-      <h1>《1973 年的弹子球》读书笔记</h1>
-<p>村上春树在他第二本小说《1973 年的弹子球》仍然写不了长句子，不过并不妨碍成为一本读感很好的小说，不同于《且听风吟》笔法生疏造成的语句割裂感，依旧使用了很少的形容词与副词，却巧妙了很多，也形成了小说家最重要的一些东西：言辞达意，结构清晰。仅用了一本小说的时间。</p>
-<p>从这本小说开始，已经有了村上春树小说的大多数特点：双线叙事结构，超现实主义的穿插闪回，以及字里行间的孤独。相对于我最近正在读的另一个作家，张爱玲笔下的孤独苍凉而赤裸，村上春树则温暖了许多——琐碎且温暖：</p>
-<blockquote>
-<p>傍晚五时半的胡须弄得脸有点儿发暗，也不管它了。问题是这根本不像我的脸，而是碰巧坐在通勤电车对面座位上的二十四岁男人的脸。无论是我的脸我的心，都不过是对任何人都毫无意义可言的尸骸罢了。我的心痛某人的心相擦而过。啊，我说。噢，对方应到。如此而已。谁也不举手。谁也不再回头。</p>
-<p>之后他洗脸刷牙，上床躺倒，暗想明天早上肯定有电话打过来，便熄灯睡觉。结果周六早上电话也没响。他打开窗，做早餐，给盆栽植物浇水，然后等到偏午。这回恐怕真的死心了，随即笑笑——那种像是对着镜子边梳头边练习几次的笑。</p>
-<p>车前几米远的地面被齐整整地切去了，而横亘着黑暗的天宇，海和城市夜景。鼠身体前倾，双手搭在方向盘上，纹丝不动地盯视着空中的某一点。夹在指尖的没有点火的香烟，其端头在空中不断勾勒出若干复杂而毫无意义的图形。</p>
-</blockquote>
-<p>这大概也是村上春树更为受欢迎的原因吧，流行的东西都免不了“俗”。还有个一直延续的东西，便是开始频繁出现在细节描写中，如同之后的《没有色彩的多崎作和他的巡礼之年》里用来形容芬兰人脱口而出的警句，这应该是习惯：</p>
-<blockquote>
-<p>一五一十解释起来怕是要五个钟头。如向一个人解释，说不定其他人都要听，而不久就要落到向全世界解释的地步。</p>
-<p>“那是工作。”我继续相劝，“起初可能有趣，但从早到晚尽干那个，谁都要生厌的。”</p>
-<p>搞我们这个档次的翻译的好处，就是无须加进什么想法。左手拿硬币，啪一声放到右手，左手腾空，右手留下硬币，如此而已。</p>
-</blockquote>
-<p>这本书写于 1980 年，如果以 1983 年任天堂推出 fc 为界线，处于前电子游戏时代，诚然这个时代已经有了大量的文字类电子游戏以及终端字符串模拟图形游戏，但以大众对电子游戏的接触面，前电子游戏时代这个说辞大概是可以的。而弹子球机——我并没有看到过弹子球机，应该是 Windows 内置的三维弹球的现实具象，在小说中的描写：</p>
-<blockquote>
-<p>除了换成数值的自尊心，从弹子球机中你几乎一无所得，而失去的却不可胜数。至少失去了时间——失去了用足以建造所有历届总统铜像的铜板都换不来的宝贵时间。</p>
-<p>弹子球的目的不在于自我表现，而在于自我变革；不在于扩张自己，而在于缩小自己；不在于分析，而在于综合。</p>
-<p>在大学校园里我几乎不露面，打工钱大半投进了弹子球机，跳击，顺击，拦击，停击等大多数技巧也学得出神入化。</p>
-<p>得分超过十五万时，真正的冬天来临了。</p>
-<p>她出类拔萃，三蹼“宇宙飞船”......只有我理解他，唯独她理解我。我每次按下开机钮，她都以不无快感的声音在记分屏上弹出六个“0”，随即冲我微笑。我把活塞拉到精确得毫厘不爽的位置，将银色闪闪的球从秋到弹向球区。球在她的球区激素转动的时间里，我的心就好像吸了优质大麻一样彻底舒展开来。</p>
-</blockquote>
-<p>我第一次读这本书是在 2006 年，当时实在无法想象一个前电子游戏时代简单规则集合的机器能产生魔兽世界一样的吸引力。现在想来，无论原子世界或比特世界，无论指令和数据结构的复杂，真正重要的是在某一刻让精神获得自由的东西，这大概是游戏最重要的东西了。</p>
-<p>这本书的许多书评都乐于讨论故事的走向，在我看来村上春树的小说故事脉络并不是那么的重要，它原本就是简单的。鼠的走向，我的走向，双胞胎姐妹的走向，这些都是不言自明，在孤独中寻求幸福生活，无处不在的自我斗争更为重要。他的结局，大多人因为林少华先生的序把关注点放在放在生与死的探讨，这是我觉得这本中译版排版欠妥的地方。而林少华先生的序，“新颖别致，洗尽铅华，节奏明快，一气流住，而又峰回路转，机警诙谐，曲尽其妙。简约、韵律和幽默联翩而出各呈风姿，日本式抒情和美国风味水乳交融浑然一体。”大概是他一时兴起把自己代入进了村上春树，使我怀念起了一个长辈，拥有同样“八零年代文化人的酸腐”。这样说有点刻薄，但一时也想不出太好的词汇，只能脱口而出了。</p>
-<p>弹子球机作为延伸，1973 年作为分水岭，正是它的标题。格列，巴里的大沙皇，戈德利普的国王与皇后，安玛格丽特，奥黛丽赫本，玛丽莲梦露，以及他最爱的三蹼号宇宙飞船上面的群星。指针已经完全明确，告别那个一去不复返的浪漫年代，东西对立核弹威胁，人们对宇宙怀揣希望，嬉皮士，摇滚乐，史蒂夫乔布斯一心想回溯的年代。这便是结局，如此我们才能走向未来，那个政治正确仿佛也不错的未来，于是我们听着《橡胶灵魂》，煮咖啡，一整天望着窗外飘逝的这个星期日，这个一切都清澄得近乎透明的静静的星期日。</p>
     </content>
   </entry>
   
