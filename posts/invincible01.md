@@ -469,7 +469,7 @@ lineup = parser.lineup(match_id)
 arsenal = lineup.loc[lineup['team_name'] == 'Arsenal']
 scatter = pd.merge(
     scatter, 
-    arsenal_lineup[['player_id', 'player_nickname', 'jersey_number']], 
+    arsenal[['player_id', 'player_nickname', 'jersey_number']], 
     on='player_id'
 )
 ```
