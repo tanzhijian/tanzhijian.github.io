@@ -2,10 +2,263 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-12T01:34:00Z</updated>
+  <updated>2023-04-15T03:48:03Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>阿森纳不败赛季传球路线图探索 02</title>
+    <link href="https://tanzhijian.org/posts/invincible_02"></link>
+    <id>1681501683.1309137</id>
+    <updated>2023-04-15T03:48:03Z</updated>
+    <published>2023-04-15T03:48:03Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>上篇文章选取了其中一场的比赛，其主力阵容除了右边前卫帕洛尔，其余都是不败赛季夺冠的常规主力，这次的探索目标为整个赛季的所有比赛，作为常规主力的十一人传球路线图
+</summary>
+    <content type="html">
+      <h1>阿森纳不败赛季传球路线图探索 02</h1>
+<p>上篇文章选取了其中一场的比赛，其主力阵容除了右边前卫帕洛尔，其余都是不败赛季夺冠的常规主力，这次的探索目标为整个赛季的所有比赛，作为常规主力的十一人传球路线图</p>
+<p>首先是获取 38 场比赛的数据集</p>
+<h2>import</h2>
+<pre><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from mplsoccer import Pitch, Sbopen
+</code></pre>
+<pre><code class="language-python"># 获取所有比赛的 id
+parser = Sbopen()
+matches = parser.match(competition_id=2, season_id=44)
+</code></pre>
+<pre><code class="language-python"># 获取所有比赛的事件数据集
+events = []
+for match_id in matches[&#x27;match_id&#x27;]:
+    data = parser.event(match_id)
+    # data[0] 为 event
+    events.append(data[0])
+</code></pre>
+<h2>获取需要的数据</h2>
+<p>现在需要找到首发 11 人的 player_id, 这一步手动来完成了，也就是上一篇文章的首发阵容 id，然后把帕洛尔换成永贝里</p>
+<pre><code class="language-python">invincible_11 = [
+    20015,
+    40222, 38412, 15637, 12529,
+    15754, 40221, 15515, 19312,
+    15042, 15516,
+]
+</code></pre>
+<pre><code class="language-python"># 手动获取一场全部 11 人阵容的比赛
+lineup = parser.lineup(3749257)
+invincible_11 = pd.merge(
+    pd.DataFrame({&#x27;player_id&#x27;: invincible_11}),
+    lineup[[&#x27;player_id&#x27;, &#x27;player_nickname&#x27;,]],
+    on=&#x27;player_id&#x27;
+)
+</code></pre>
+<p>接下来设置过滤条件，和上一篇文章差不多：</p>
+<ol>
+<li>对手的事件</li>
+<li>失败的传球</li>
+<li>传球队员与接球队员是否 invincible_11</li>
+</ol>
+<pre><code class="language-python">def mask(events):
+    _filter = (
+    events.type_name == &#x27;Pass&#x27;) &amp; (
+    events.team_name == &quot;Arsenal&quot;) &amp; (
+    events.player_id.isin(invincible_11.player_id)) &amp; (
+    events.pass_recipient_id.isin(invincible_11.player_id)) &amp; (
+    events.outcome_name.isnull())
+    
+    passes = events.loc[_filter, [
+        &#x27;x&#x27;, &#x27;y&#x27;, &#x27;end_x&#x27;, &#x27;end_y&#x27;,
+        &#x27;player_id&#x27;, &#x27;player_name&#x27;, &#x27;pass_recipient_name&#x27;, &#x27;pass_recipient_id&#x27;
+    ]]
+    return passes
+</code></pre>
+<pre><code class="language-python">passes = pd.concat([mask(event) for event in events])
+</code></pre>
+<pre><code class="language-python">passes = passes.reset_index()
+passes.head()
+</code></pre>
+<div>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>index</th>
+      <th>x</th>
+      <th>y</th>
+      <th>end_x</th>
+      <th>end_y</th>
+      <th>player_id</th>
+      <th>player_name</th>
+      <th>pass_recipient_name</th>
+      <th>pass_recipient_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>4</td>
+      <td>61.0</td>
+      <td>40.1</td>
+      <td>61.4</td>
+      <td>43.6</td>
+      <td>15516.0</td>
+      <td>Thierry Henry</td>
+      <td>Dennis Bergkamp</td>
+      <td>15042.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12</td>
+      <td>37.6</td>
+      <td>2.9</td>
+      <td>23.4</td>
+      <td>24.7</td>
+      <td>12529.0</td>
+      <td>Ashley Cole</td>
+      <td>Sulzeer Jeremiah ''Sol' Campbell</td>
+      <td>15637.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>31</td>
+      <td>11.1</td>
+      <td>9.7</td>
+      <td>7.7</td>
+      <td>21.5</td>
+      <td>12529.0</td>
+      <td>Ashley Cole</td>
+      <td>Sulzeer Jeremiah ''Sol' Campbell</td>
+      <td>15637.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>75</td>
+      <td>17.7</td>
+      <td>11.5</td>
+      <td>26.2</td>
+      <td>8.1</td>
+      <td>12529.0</td>
+      <td>Ashley Cole</td>
+      <td>Robert Pirès</td>
+      <td>19312.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>97</td>
+      <td>25.3</td>
+      <td>29.3</td>
+      <td>30.0</td>
+      <td>49.1</td>
+      <td>38412.0</td>
+      <td>Kolo Habib Touré</td>
+      <td>Laureano Bisan-Etame Mayer</td>
+      <td>40222.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2>画图</h2>
+<pre><code class="language-python"># 计算位置和大小
+scatter = pd.DataFrame()
+for i, _id in enumerate(passes[&#x27;player_id&#x27;].unique()):
+    pass_x = passes.loc[passes[&#x27;player_id&#x27;] == _id][&#x27;x&#x27;].to_numpy()
+    pass_y = passes.loc[passes[&#x27;player_id&#x27;] == _id][&#x27;y&#x27;].to_numpy()
+    rec_x = passes.loc[passes[&#x27;pass_recipient_id&#x27;] == _id][&#x27;end_x&#x27;].to_numpy()
+    rec_y = passes.loc[passes[&#x27;pass_recipient_id&#x27;] == _id][&#x27;end_y&#x27;].to_numpy()
+    scatter.at[i, &#x27;player_id&#x27;] = _id
+    
+    # 计算每个点的 x 和 y，位置为传球和接球的平均值
+    scatter.at[i, &#x27;x&#x27;] = np.mean(np.concatenate([pass_x, rec_x]))
+    scatter.at[i, &#x27;y&#x27;] = np.mean(np.concatenate([pass_y, rec_y]))
+    
+    # 计算传球数
+    scatter.at[i, &#x27;count&#x27;] = passes.loc[
+        passes[&#x27;player_id&#x27;] == _id].count().iloc[0]
+</code></pre>
+<pre><code class="language-python"># 位置大小
+scatter[&#x27;marker_size&#x27;] = scatter[&#x27;count&#x27;] / scatter[&#x27;count&#x27;].max() * 3000
+</code></pre>
+<pre><code class="language-python"># 合并名字
+scatter = pd.merge(
+    scatter,
+    invincible_11,
+    on=&#x27;player_id&#x27;
+)
+</code></pre>
+<pre><code class="language-python"># 计算球员之间的传球次数
+passes[&#x27;pair_key&#x27;] = passes.apply(
+    lambda x: &#x27;-&#x27;.join(sorted([str(x[&#x27;player_id&#x27;]), 
+                               str(x[&#x27;pass_recipient_id&#x27;])])),
+    axis=1,
+)
+lines = passes.groupby([&#x27;pair_key&#x27;]).x.count().reset_index()
+lines.rename({&#x27;x&#x27;: &#x27;pass_count&#x27;}, axis=&#x27;columns&#x27;, inplace=True)
+
+# 设定一个阈值，可以尝试研究它在更改时如何变化
+lines = lines[lines[&#x27;pass_count&#x27;] &gt; 4 * 38]
+
+# 绘制球场
+pitch = Pitch(line_color=&#x27;grey&#x27;)
+fig, ax = pitch.grid(
+    grid_height=0.9, title_height=0.06, axis=False,
+    endnote_height=0.04, title_space=0, endnote_space=0,
+)
+# 球场上的位置
+pitch.scatter(
+    scatter.x, scatter.y, s=scatter.marker_size, 
+    color=&#x27;red&#x27;, edgecolors=&#x27;grey&#x27;, linewidth=1, alpha=0.8,
+    ax=ax[&#x27;pitch&#x27;], zorder=3,
+)
+
+# 填充球员名字
+for i, row in scatter.iterrows():
+    pitch.annotate(
+        row.player_nickname, xy=(row.x, row.y), c=&#x27;black&#x27;, 
+        va=&#x27;center&#x27;, ha=&#x27;center&#x27;, weight=&quot;bold&quot;, 
+        size=14, ax=ax[&quot;pitch&quot;], zorder=4,
+    )
+    
+for i, row in lines.iterrows():
+    player1 = float(row[&#x27;pair_key&#x27;].split(&#x27;-&#x27;)[0])
+    player2 = float(row[&#x27;pair_key&#x27;].split(&#x27;-&#x27;)[1])
+    
+    # 取球员的平均位置在他们之间画一条线
+    player1_x = scatter.loc[scatter[&#x27;player_id&#x27;] == player1][&#x27;x&#x27;].iloc[0]
+    player1_y = scatter.loc[scatter[&#x27;player_id&#x27;] == player1][&#x27;y&#x27;].iloc[0]
+    player2_x = scatter.loc[scatter[&#x27;player_id&#x27;] == player2][&#x27;x&#x27;].iloc[0]
+    player2_y = scatter.loc[scatter[&#x27;player_id&#x27;] == player2][&#x27;y&#x27;].iloc[0]
+    passes_count = row[&#x27;pass_count&#x27;]
+    # 调整线宽，传球的次数越多，线越宽
+    line_width = passes_count / lines[&#x27;pass_count&#x27;].max() * 15
+
+    pitch.lines(
+        player1_x, player1_y, player2_x, player2_y,
+        alpha=0.8, lw=line_width, zorder=2, color=&#x27;red&#x27;, ax=ax[&#x27;pitch&#x27;]
+    )
+    
+fig.suptitle(&#x27;Invincible 11&#x27;, fontsize=30)
+plt.show()
+
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/15/LN5KPG6efpjFRMC.png" alt="invincible_11_passing_networks.png" /></p>
+<h2>结论</h2>
+<p>高中时期我和好友无数次在实况足球里面模拟这一套 442，现在看到还原出来蛮感慨</p>
+<ol>
+<li>莱曼的出球线路，图雷，较少直接找两个边后卫，很少开大脚</li>
+<li>图雷担任出球中卫</li>
+<li>劳伦这一侧的球权比想象中多</li>
+<li>吉尔伯托在后场出球系统中几乎和维埃拉同样重要，但他没有向前传球的路线</li>
+<li>托后三人组，坎贝尔，图雷，吉尔伯托</li>
+<li>阿什利科尔 - 皮雷 - 亨利是主要的推进线路</li>
+<li>永贝里的主要进攻路线是传中找亨利</li>
+<li>皮雷当之无愧的进攻核心</li>
+<li>所有的进攻球都在找亨利</li>
+<li>博格坎普可能受制于出场时间，并没有想象中重要</li>
+</ol>
+
+    </content>
+  </entry>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 01</title>
     <link href="https://tanzhijian.org/posts/invincible01"></link>
@@ -755,32 +1008,6 @@ plt.show()
 </li>
 </ul>
 <p>把准备工作先做了。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>随便写，随便看 01</title>
-    <link href="https://tanzhijian.org/posts/dev01"></link>
-    <id>1677072862.7375624</id>
-    <updated>2023-02-22T21:34:22Z</updated>
-    <published>2023-02-22T21:34:22Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>又一次在模型调试不顺利发生争吵后忘记关闭微信语音，独自整理着愈发庞大的代码库。片刻之后合伙人问我：“失望吗？”
-</summary>
-    <content type="html">
-      <h2>随便写，随便看 01</h2>
-<p>又一次在模型调试不顺利发生争吵后忘记关闭微信语音，独自整理着愈发庞大的代码库。片刻之后合伙人问我：“失望吗？”</p>
-<p>我说：“还好吧，有点难过，但也不至于失望。”</p>
-<p>不知道为什么，当我每天面对这堆代码库的时候，脑海里总会把它想象成一部巨大的机器。具体来说，他头部的几个部件暴露在外，这些部件由我拼接，像乐高积木一样——身处当下这个时代的优势，几乎可以在全球范围内找到想要使用的任何部件，然后写很少的代码把它们拼接在一起。这便是我的主要工作，得心应手，但也仅此而已。这部机器的绝大多数被封装在若干个黑盒子里形成中下部，对他们的了解仅限于一些连绵不断的术语，试图去了解具体组件的流程却发现每一个都像一座迷宫。“完全不明白是如何工作的。”对此只能战战兢兢，期待着每一次的输入输出都如约而至，能够随时保持着更新，同时性能不会有纰漏。</p>
-<p>所幸运气还不错，一直以来都能与不同行业的人打交道，纵然不是每个人都令我仰慕钦佩，但大多数至少都是让人尊敬的出色人物。更加幸运的是，总能在困难时刻得到他们中一些有意无意的，或是提点或是帮助，有时还会加入到工作。黑盒子便大致以这样微妙的方式，协同整部机器有序运作起来。</p>
-<p>但是没有机器能理解具有无限变量的运动，在这种运动中，情感起着根本性作用，而随机性将随着比赛进程一直存在。</p>
-<p>我们捕捉了社交媒体和新闻的大多数主观情感内容，这与比赛的主观情感只存在相关性，并没有什么因果关系。我们捕捉了尽量多的比赛特征，把比赛对抗模拟成矩阵乘法进入神经网络迭代，可又有多少特征没被捕捉到，真的是这些特征决定的比赛走向吗？没有上下文的数据没有任何意义。</p>
-<blockquote>
-<p>只是再怎么模拟，也无法实现真正意义上的数字孪生，因为数字化的成本超出了这个世界的承受能力。必须做一定程度的抽象，不能基于因果律和牛顿的机械宇宙观来做，因此精确的数字孪生是不存在的，一切都是概率和规律。但在模拟解决现实世界预测问题的同时，则可以沉淀出我们真正需要的计算系统。</p>
-<p><a href="https://mp.weixin.qq.com/s/DfYTxdWx8vC7X80gyeEgLw">《聊聊我要做的计算》</a></p>
-</blockquote>
-<p>一切都是概率和规律。</p>
-<p>年龄增长带来的好事，便是不大在乎得失带来的情绪，而更在乎得失带来的收益。以前看不到的东西现在可以看到了，不明白的东西现在弄明白了，这无论如何都谈不上失望，倒像是人生中白捡了一个便宜。只是接下来又有更多的工作要做了。</p>
 
     </content>
   </entry>
