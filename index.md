@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [阿森纳不败赛季传球路线图探索 03](https://tanzhijian.org/posts/invincible_03)
+
 * [阿森纳不败赛季传球路线图探索 02](https://tanzhijian.org/posts/invincible_02)
 
 * [阿森纳不败赛季传球路线图探索 01](https://tanzhijian.org/posts/invincible01)
@@ -17,8 +19,6 @@
 * [《Football Hackers》读书笔记 02](https://tanzhijian.org/posts/football_hackers_02)
 
 * [《Football Hackers》读书笔记 01](https://tanzhijian.org/posts/football_hackers_01)
-
-* [《Soccermatics》读书笔记 00](https://tanzhijian.org/posts/soccermatics00)
 
 [更多](https://tanzhijian.org/archive)
 

@@ -2,10 +2,199 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-15T03:48:03Z</updated>
+  <updated>2023-04-19T23:55:13Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>阿森纳不败赛季传球路线图探索 03</title>
+    <link href="https://tanzhijian.org/posts/invincible_03"></link>
+    <id>1681919713.6794004</id>
+    <updated>2023-04-19T23:55:13Z</updated>
+    <published>2023-04-19T23:55:13Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。
+</summary>
+    <content type="html">
+      <h1>阿森纳不败赛季传球路线图探索 03</h1>
+<p>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。</p>
+<p>前面获取数据部分和上一篇大致相同</p>
+<h2>import</h2>
+<pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+from mplsoccer import Pitch, Sbopen, VerticalPitch
+</code></pre>
+<pre><code class="language-python">parser = Sbopen()
+matches = parser.match(competition_id=2, season_id=44)
+matches_events = []
+for match_id in matches[&#x27;match_id&#x27;]:
+    data = parser.event(match_id)
+    events.append(data[0])
+</code></pre>
+<h2>获取危险传球</h2>
+<p>获取阿森纳所有比赛的射门和准确传球，且传球不是定位球，然后寻找射门前 15 秒的传球，对于时间需要考虑上下半场，伤停补时的特殊处理</p>
+<pre><code class="language-python">danger_passes = pd.DataFrame()
+for events in matches_events:
+    # 上下半场
+    for period in [1, 2]:
+        # 只保留没有定位球的准确传球
+        pass_filter = (
+            events.team_name == &#x27;Arsenal&#x27;) &amp; (
+            events.type_name == &quot;Pass&quot;) &amp; (
+            events.outcome_name.isnull()) &amp; (
+            events.period == period) &amp; (
+            events.sub_type_name.isnull())
+        passes = events.loc[
+            pass_filter, 
+            [
+                &quot;x&quot;, &quot;y&quot;, &quot;end_x&quot;, &quot;end_y&quot;, 
+                &quot;minute&quot;, &quot;second&quot;, &quot;player_name&quot;,
+            ],
+        ]
+        # 只保留阿森纳的射门
+        shot_filter = (
+            events.team_name == &#x27;Arsenal&#x27;) &amp; (
+            events.type_name == &quot;Shot&quot;) &amp; (
+            events.period == period)
+        shots = events.loc[shot_filter, [&quot;minute&quot;, &quot;second&quot;]]
+        shot_times = shots[&#x27;minute&#x27;] * 60 + shots[&#x27;second&#x27;]
+        
+        # 设置为射门前 15 秒
+        shot_anchor = 15
+        shot_start = shot_times - shot_anchor
+        
+        # 处理时间
+        shot_start = shot_start.apply(lambda i: i if i &gt; 0 else (period - 1) * 45)
+        pass_times = passes[&#x27;minute&#x27;] * 60 + passes[&#x27;second&#x27;]
+
+        pass_to_shot = pass_times.apply(
+            lambda x: True in ((shot_start &lt; x) &amp; (x &lt; shot_times)).unique())
+
+        # 只保留危险传球
+        danger_passes_period = passes.loc[pass_to_shot]
+        danger_passes = pd.concat(
+            [danger_passes, danger_passes_period], 
+            ignore_index=True
+        )
+</code></pre>
+<pre><code class="language-python">danger_passes.head()
+</code></pre>
+<div>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>end_x</th>
+      <th>end_y</th>
+      <th>minute</th>
+      <th>second</th>
+      <th>player_name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>52.6</td>
+      <td>54.3</td>
+      <td>54.6</td>
+      <td>45.0</td>
+      <td>8</td>
+      <td>4</td>
+      <td>Patrick Vieira</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>69.9</td>
+      <td>28.5</td>
+      <td>102.0</td>
+      <td>26.9</td>
+      <td>8</td>
+      <td>8</td>
+      <td>Eduardo César Daude Gaspar</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>102.0</td>
+      <td>26.9</td>
+      <td>104.7</td>
+      <td>37.6</td>
+      <td>8</td>
+      <td>10</td>
+      <td>Ashley Cole</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>60.0</td>
+      <td>45.6</td>
+      <td>68.9</td>
+      <td>33.9</td>
+      <td>12</td>
+      <td>7</td>
+      <td>Robert Pirès</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>68.5</td>
+      <td>33.9</td>
+      <td>79.1</td>
+      <td>31.1</td>
+      <td>12</td>
+      <td>9</td>
+      <td>Eduardo César Daude Gaspar</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2>绘制热区图</h2>
+<p>这次在球场上使用 6 * 5 的格子来制作，其中宽度区域对应中肋边路，六块长度区域在瓜迪奥拉的战术板经常能看到</p>
+<pre><code class="language-python">pitch = Pitch(line_zorder=2, line_color=&#x27;grey&#x27;)
+fig, ax = pitch.grid(
+    grid_height=0.9, title_height=0.06, axis=False,
+    endnote_height=0.04, title_space=0, endnote_space=0
+)
+
+bin_statistic = pitch.bin_statistic(
+    danger_passes.x, danger_passes.y, 
+    statistic=&#x27;count&#x27;, bins=(6, 5), normalize=False,
+)
+
+# 绘制热区图
+pcm = pitch.heatmap(
+    bin_statistic, cmap=&#x27;Reds&#x27;, edgecolor=&#x27;black&#x27;, ax=ax[&#x27;pitch&#x27;]
+)
+
+# 绘制说明
+ax_cbar = fig.add_axes((1, 0.093, 0.03, 0.786))
+cbar = plt.colorbar(pcm, cax=ax_cbar)
+
+fig.suptitle(&#x27;Danger passes by Arsenal&#x27;, fontsize=30)
+plt.show()
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/19/9yWTgXGkQbl2vKf.png" alt="arsenal_0304_danger_pass_heatmap.png" /></p>
+<h2>绘制参与危险传球最多球员的图表</h2>
+<p>为了更加清晰的探索，将球员参与的传球次数绘制出来</p>
+<p>这次偷个懒就不与 nickname 结合了</p>
+<pre><code class="language-python">passes_count = danger_passes.groupby([&#x27;player_name&#x27;]).x.count()
+
+ax = passes_count.plot.barh(passes_count)
+ax.set_xlabel(&#x27;Number of danger passes&#x27;)
+ax.set_ylabel(&#x27;&#x27;)
+plt.show()
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/19/IO2bqtkSLTKjhCg.png" alt="number_of_arsenal_0304_danger_pass.png" /></p>
+<h2>结论</h2>
+<ol>
+<li>维埃拉-皮雷-亨利占据了形成射门的大多数传球，球会经过他们很多次，是整个进攻体系的核心</li>
+<li>博格坎普受限于出场(21次首发8次替补)，他的进攻参与度重要性不亚于 1</li>
+<li>亨利作为终结者，在进攻传球网络中也有如此重要的数据，全能</li>
+<li>左路肋部区域承担了推进至禁区的大多任务，</li>
+<li>右路参与的控球大多数会通过中路交到左路，少部分会在右路传到禁区</li>
+</ol>
+
+    </content>
+  </entry>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 02</title>
     <link href="https://tanzhijian.org/posts/invincible_02"></link>
@@ -968,46 +1157,6 @@ plt.show()
 <p>数据本身并不一定能带来更好的分析。相反，数据很容易引起更多的认知偏见。足球不像篮球，单一事件的重要性较低，足球的单一事件影响整个比赛进程的比重过高，使得认知偏见会严重影响判断。</p>
 <p>大多数人倾向于将结果作为起点的判断解释，而不是教练的意图和策略。简而言之：如果结果是积极的，我们假设他的计划或赛前决定是正确的。然而如果结果是负面的，我们很快就会相信他的战术一定很糟糕。</p>
 <p>很多人可能会说这是正确和合乎逻辑的。但这会忽视我们在足球中面临的下一个非常大的问题：表现和结果之间往往存在相当大的差距。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>《Soccermatics》读书笔记 00</title>
-    <link href="https://tanzhijian.org/posts/soccermatics00"></link>
-    <id>1677073007.9952753</id>
-    <updated>2023-02-22T21:36:47Z</updated>
-    <published>2023-02-22T21:36:47Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>几年前在颜强老师那里听说了这本书，在之前只是零星琐碎的通过各种博客论坛文章中读到一些关于 xG，比赛热图的内容，由于常年关注此类数据，也算是个半吊子硬核球迷，大概知道这类数据的研究被用到各类比赛的进程推演以及复盘战术上。但总归是浅尝则止，所以当知道这本书的消息后便四方搜寻，最终在 Google Book 找到了刚发售的电子版（记得不是太清楚，印象中当时 Kindle 并没有找到）。
-</summary>
-    <content type="html">
-      <h1>《Soccermatics》读书笔记 00</h1>
-<p>几年前在颜强老师那里听说了这本书，在之前只是零星琐碎的通过各种博客论坛文章中读到一些关于 xG，比赛热图的内容，由于常年关注此类数据，也算是个半吊子硬核球迷，大概知道这类数据的研究被用到各类比赛的进程推演以及复盘战术上。但总归是浅尝则止，所以当知道这本书的消息后便四方搜寻，最终在 Google Book 找到了刚发售的电子版（记得不是太清楚，印象中当时 Kindle 并没有找到）。</p>
-<p>以我半桶水不求甚解的英文能力，读这样一本随处可见俚语与术语的书籍实在是有些头大。只能是通过当时稍微有所改善但仍是不堪大用的机器翻译引擎过上一遍，然后粘贴到笔记本，再对照原文开始调整词序，校对词义，以求理解起来不至于出现偏差。如此一个多月下来竟然读完了，这也是我从头完整到尾读过的第一本英文书。</p>
-<p>后来我开始从事足球数据的工作，回想起来大致与此书也有些相关性。一本书其实不读也没多大关系，但是读过了，就很难再想象没读过它自己的人生会是什么样子。这可能就是对自己来说“偶然而又关键的事”。</p>
-<p>倒不是说这本书有多好，这甚至算不上一本严肃的知识传播书籍。是的，它并不严肃，数据引用的覆盖面不够，多样性也不够，大部分只是为了佐证自己观点的相关数据，得出的结论也不甚满意，大多是些探讨性的开放结论。</p>
-<p>但这样去苛求一本书未免不现实，总不能让人把完全正确又尘埃落定的答案捧到面前，拿去用便是。要是果真如此，这个世界上只怕没有几本书能用得上。</p>
-<p>我曾与一个同事说过，一本书大概只要满足有一两页能够提供到新的内容，那这本书就是值得的。毕竟这个世界上怎会有那么多新内容，大多不过是把别人嚼烂的东西再嚼一遍。而大多的书只需要遍历一次内容，记住它的目录，以后要用到时知道在曾经哪本书看到过，并且能够索引到，做到这一点足以。</p>
-<p>闲话休提，说回这本书。</p>
-<p>无论是运气好坏，这段时间总算是从高强度开发节奏中暂停了出来，带来的好处是时间变慢了，有大量的空闲可以用来整理和重构代码，生活，和知识结构。其中便包括重新读一遍这本书。它曾经带给我对于足球与现实世界之间相关性的大量方法思路，值得再读。一定有什么曾经忽略了的东西，对此我深信不疑。</p>
-<blockquote>
-<p>我从来不做任何预测，也永远不会这样做。</p>
-</blockquote>
-<p>这是第一章的标题，出自英格兰名宿，传奇中场林皇——哈哈串戏了，出自保罗加斯科因之口。这句话正如他的人生，前半句代表了他放荡不羁的过去，而后半句代表了他毫无规划的未来。而他一直不曾面对的，一些关于生活深刻的事实：任何事情都有可以找到的模式。</p>
-<p>一旦找到了模式，便可以做出预测。</p>
-<p>写到这里我发觉，还是得有一些准备工作，才能继续：</p>
-<ul>
-<li>
-<p>一个可靠的数据源，能够提供书中所提到的各类数据。由于后面几章数据不是非常的规范，大概率需要自己手动爬取整合</p>
-</li>
-<li>
-<p>一个能够在 GitHub Pages 使用的 JavaScript 可视化图表的库</p>
-</li>
-<li>
-<p>如果没有能使用的可视化库，则需要一个图床</p>
-</li>
-</ul>
-<p>把准备工作先做了。</p>
 
     </content>
   </entry>
