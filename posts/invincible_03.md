@@ -20,7 +20,7 @@ matches = parser.match(competition_id=2, season_id=44)
 matches_events = []
 for match_id in matches['match_id']:
     data = parser.event(match_id)
-    events.append(data[0])
+    matches_events.append(data[0])
 ```
 
 ## 获取危险传球

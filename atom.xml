@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-19T23:55:13Z</updated>
+  <updated>2023-04-20T00:00:25Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 03</title>
     <link href="https://tanzhijian.org/posts/invincible_03"></link>
-    <id>1681919713.6794004</id>
-    <updated>2023-04-19T23:55:13Z</updated>
-    <published>2023-04-19T23:55:13Z</published>
+    <id>1681920025.721563</id>
+    <updated>2023-04-20T00:00:25Z</updated>
+    <published>2023-04-20T00:00:25Z</published>
     <author><name>tanzhijian</name></author>
     <summary>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。
 </summary>
@@ -29,7 +29,7 @@ matches = parser.match(competition_id=2, season_id=44)
 matches_events = []
 for match_id in matches[&#x27;match_id&#x27;]:
     data = parser.event(match_id)
-    events.append(data[0])
+    matches_events.append(data[0])
 </code></pre>
 <h2>获取危险传球</h2>
 <p>获取阿森纳所有比赛的射门和准确传球，且传球不是定位球，然后寻找射门前 15 秒的传球，对于时间需要考虑上下半场，伤停补时的特殊处理</p>
