@@ -2,10 +2,196 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-04-20T00:00:25Z</updated>
+  <updated>2023-04-29T15:05:27Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>阿森纳不败赛季传球路线图探索 04</title>
+    <link href="https://tanzhijian.org/posts/invincible_04"></link>
+    <id>1682751927.7004185</id>
+    <updated>2023-04-29T15:05:27Z</updated>
+    <published>2023-04-29T15:05:27Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes
+</summary>
+    <content type="html">
+      <h1>阿森纳不败赛季传球路线图探索 04</h1>
+<p>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes</p>
+<pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+from mplsoccer import Pitch, Sbopen, VerticalPitch
+</code></pre>
+<pre><code class="language-python">danger_passes.head()
+</code></pre>
+<div>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>end_x</th>
+      <th>end_y</th>
+      <th>minute</th>
+      <th>second</th>
+      <th>player_name</th>
+      <th>player_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>52.6</td>
+      <td>54.3</td>
+      <td>54.6</td>
+      <td>45.0</td>
+      <td>8</td>
+      <td>4</td>
+      <td>Patrick Vieira</td>
+      <td>15515.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>69.9</td>
+      <td>28.5</td>
+      <td>102.0</td>
+      <td>26.9</td>
+      <td>8</td>
+      <td>8</td>
+      <td>Eduardo César Daude Gaspar</td>
+      <td>26014.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>102.0</td>
+      <td>26.9</td>
+      <td>104.7</td>
+      <td>37.6</td>
+      <td>8</td>
+      <td>10</td>
+      <td>Ashley Cole</td>
+      <td>12529.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>60.0</td>
+      <td>45.6</td>
+      <td>68.9</td>
+      <td>33.9</td>
+      <td>12</td>
+      <td>7</td>
+      <td>Robert Pirès</td>
+      <td>19312.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>68.5</td>
+      <td>33.9</td>
+      <td>79.1</td>
+      <td>31.1</td>
+      <td>12</td>
+      <td>9</td>
+      <td>Eduardo César Daude Gaspar</td>
+      <td>26014.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2>探索单个球员</h2>
+<p>作为威胁传球的核心，首先来探索皮雷，手动在名单里获取皮雷的 id，然后过滤</p>
+<pre><code class="language-python">bins = (6, 5)
+</code></pre>
+<pre><code class="language-python">pires = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 19312]
+</code></pre>
+<pre><code class="language-python">def plot_player_passes(player, passes):
+    pitch = Pitch(line_zorder=2, line_color=&quot;grey&quot;)
+    fig, ax = pitch.grid(
+        grid_height=0.9,
+        title_height=0.06,
+        axis=False,
+        endnote_height=0.04,
+        title_space=0,
+        endnote_space=0,
+    )
+
+    bin_statistic = pitch.bin_statistic(
+        player.x,
+        player.y,
+        statistic=&quot;count&quot;,
+        bins=bins,
+        normalize=False,
+    )
+
+    # 制作热区图
+    pcm = pitch.heatmap(
+        bin_statistic, 
+        cmap=&quot;Reds&quot;, 
+        # edgecolor=&quot;grey&quot;, 
+        ax=ax[&quot;pitch&quot;],
+    )
+
+    # 绘制传球路线
+    pitch.arrows(
+        passes.x,
+        passes.y,
+        passes.end_x,
+        passes.end_y,
+        color=&quot;black&quot;,
+        alpha=1,
+        width=2,
+        ax=ax[&quot;pitch&quot;],
+    )
+
+    fig.suptitle(f&quot;{player.iloc[0].player_name}&quot;, fontsize=30)
+    plt.show()
+</code></pre>
+<pre><code class="language-python">plot_player_passes(pires, pires)
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/29/6ujT13XKcx7EnOg.png" alt="attacking_play_pires_01.png" /></p>
+<p>这样的路线看起来未免杂乱，这里使用 Opta 的一种传球表现图：球场分成 10 * 10 的区域，每一块区域传球次数越多颜色越深，箭头表示此区域的平均传球方向</p>
+<pre><code class="language-python">bins = (10, 10)
+</code></pre>
+<pre><code class="language-python">def binning_groupby_mean(player):
+    x_bins = [i for i in range(0, 121, 120 // bins[0])]
+    y_bins = [i for i in range(0, 81, 80 // bins[1])]
+    player[&#x27;x_bin&#x27;] = pd.cut(player[&#x27;x&#x27;], x_bins)
+    player[&#x27;y_bin&#x27;] = pd.cut(player[&#x27;y&#x27;], y_bins)
+    return player.groupby([&#x27;x_bin&#x27;, &#x27;y_bin&#x27;]).mean()
+</code></pre>
+<pre><code class="language-python">mean_passes = binning_groupby_mean(pires)
+plot_player_passes(pires, mean_passes)
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/29/OtbKrZBPfMTLyaF.png" alt="attacking_play_pires_02.png" /></p>
+<p>边路进攻核心活动区域，次数最多的是左路肋部区域，在较少拿球的区域传球的距离比较长，到了不是自己的位置会将球传到熟悉的区域而不是就地组织，很少有长距离传中路线</p>
+<pre><code class="language-python">vieira = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15515]
+mean_passes = binning_groupby_mean(vieira)
+plot_player_passes(vieira, mean_passes)
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/29/DmBf7sAeSutwWM1.png" alt="attacking_play_vieira.png" /></p>
+<p>覆盖了整个中场，核心传球区域与皮雷很近，传球选择路线更偏向左路</p>
+<pre><code class="language-python">henry = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15516]
+mean_passes = binning_groupby_mean(henry)
+plot_player_passes(henry, mean_passes)
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/29/dv3SfFq8Z4QpCXb.png" alt="attacking_play_henry.png" /></p>
+<p>与印象不同的是，在中路禁区前沿有着大量的传球，且都是向前的路线，往禁区送出了大量的威胁球，所以在进球同时会收获那么多的助攻</p>
+<pre><code class="language-python">player = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15042]
+mean_passes = binning_groupby_mean(player)
+plot_player_passes(player, mean_passes)
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/29/tPTJrEHj97U5pd1.png" alt="attacking_play_bergkamp.png" /></p>
+<p>活动位置更像是进攻型中场，传球也大多找的禁区前的队友</p>
+<pre><code class="language-python">player = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15754]
+mean_passes = binning_groupby_mean(player)
+plot_player_passes(player, mean_passes)
+</code></pre>
+<p><img src="https://s2.loli.net/2023/04/29/GVHYfwemKSIEyX2.png" alt="attacking_play_ljungberg.png" /></p>
+<p>与皮雷不一样的是，就地选择进攻传球更为频繁，习惯性活动范围固定在几块，可能与他场上位置更多变有关</p>
+<p>传球路线图就到这里了，下一次探索些别的</p>
+
+    </content>
+  </entry>
   <entry>
     <title>阿森纳不败赛季传球路线图探索 03</title>
     <link href="https://tanzhijian.org/posts/invincible_03"></link>
@@ -1116,47 +1302,6 @@ plt.show()
 <p>回到开头，14/15 赛季的多特蒙德，在人员方面没有发生任何重大变化的情况下，打进了 29 个进球，丢了 16 球，赢得了 31 分——几乎与 Trainor 计算中上半赛季的得分完全相同。</p>
 <p>他们不遗余力地试图根除糟糕结果的原因。但是，如果他们意识到当时有可能衡量巧合的影响，他和克洛普今天就不会在利物浦了。</p>
 <p>Graham 在 2019 年 3 月的 OptaPro 会议上说：“我们真的认为多特蒙德运气不好。这与球员和教练的系统性问题无关。这真的很重要，因为俱乐部必须做出的最大战略决定之一是聘请一名新教练。如果我们想聘请克洛普，我们必须了解多特蒙德是否有问题。统计分析说得非常清楚和强烈：不。”</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>《Football Hackers》读书笔记 01</title>
-    <link href="https://tanzhijian.org/posts/football_hackers_01"></link>
-    <id>1677073125.7405462</id>
-    <updated>2023-02-22T21:38:45Z</updated>
-    <published>2023-02-22T21:38:45Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>去年读《莱斯特手稿》时我就在想，我也要像这样来写东西，现在总算能行动了。tanzhijian.org 以前也写了大概一百来篇博客，总是想着为别人读而写，想让别人读得舒服，尽可能的构思一些通俗易读不失优美的句子，但其实并没有多少人会读(笑)，对于我这样的非专业写作者，构思这些是一件很累的事情，很难坚持长久。所以这一次为自己写，整理思绪写得舒服，自己能看懂即可，看能坚持多久吧。
-</summary>
-    <content type="html">
-      <h1>《Football Hackers》读书笔记 01</h1>
-<p>去年读《莱斯特手稿》时我就在想，我也要像这样来写东西，现在总算能行动了。tanzhijian.org 以前也写了大概一百来篇博客，总是想着为别人读而写，想让别人读得舒服，尽可能的构思一些通俗易读不失优美的句子，但其实并没有多少人会读(笑)，对于我这样的非专业写作者，构思这些是一件很累的事情，很难坚持长久。所以这一次为自己写，整理思绪写得舒服，自己能看懂即可，看能坚持多久吧。</p>
-<h2>序章</h2>
-<p>从 2011 年巴萨对曼联华丽的欧冠决赛，谈到 2017 年伦敦的一场普通比赛，其变化在于工作空间内充满了各式各样的电脑屏幕，相机视角，监控传感器，场上的每一样动作都被瞬间捕捉，并且转换为可观测数据，且连接速度几乎也可以无缝。</p>
-<p>八年前足球成为了数字游戏，但有一个问题是足球与数据关联不大（是吗？疑问）。到现在革命正在发生了，数据量与理解数据能力不断增加，有一句我很喜欢的话：“If you ignore it, you’ve only got yourself to blame. Whether we like it or not, the game has reached its digital tidal point.” 如果你忽略它，你只能怪自己，不管我们喜欢与否，数字足球已经来到了他的潮点。</p>
-<p>接下来谈到了 Heimir Hallgrímsson，我不认识(笑)，于是查了一下，履历对比起名帅不漂亮，偏远俱乐部+小国国家队，用不大有天赋的球员，只有很少的钱，但可能传达了一个概念，这本书并不是以瓜迪奥拉这样的名帅视角来展开的，尽可能在小球队中获取到一些优势。但他正是通过数据与数字化在不断的旅途中找到了他的合适的搭档，一些特殊的，任性的，不寻常的人才。划重点，足球黑客，是那些颠覆系统并试图击败他的人。</p>
-<p>足球的未来不是属于那些拥有最佳数据的人，而是那些从他们掌握的数据信息中得出最佳结论的人。</p>
-<h2>第一章</h2>
-<p>这一章的主题是错误判断(?)与认知偏见。足球是一项情感构成的游戏，争论也大多数由情感而不是事实决定的。伊比舍维奇可以在一场比赛中得到的评分由2分跨度到5分，那些跑得更多、冲刺次数更多、传球传球更好或射门更频繁的人赢得了更多的比赛吗？显然，这些参数都没有在统计学上证明，可以保证任何的胜利。</p>
-<p>那是不是如果现有数据没有帮助球队赢得比赛的倾向，就需要找到新的和更好的数据呢，这里开始引出了 packing，那这个词就很熟悉了，我一直的理解是成功传球穿越对手的人头数，决定项有三，成功传球，成功接球，以及穿越对手。最好是同位置的球员相比，比说你的传球区域经常在前场。这项数据能够很好的描述托尼克罗斯这样的球员助攻不多，但是顶级传球手。而布莱顿则拥有多位 packing 很高的球员，所以这两年成绩非常优异。</p>
-<p>认知偏见有一些很有意思的观点：</p>
-<ul>
-<li>
-<p>如果球探去考察球员时事先参考了一些既定数据，是不是会影响对这名球员的判断呢</p>
-</li>
-<li>
-<p>长期在温暖气候踢球的球员会不会高估自己去高寒地带的发挥呢</p>
-</li>
-<li>
-<p>瓜迪奥拉那个位置换个人也能赢下比赛吗</p>
-</li>
-<li>
-<p>如果连续两场比赛一支球队都在定位球上丢球是不是就可以认为他定位球防守差呢</p>
-</li>
-</ul>
-<p>数据本身并不一定能带来更好的分析。相反，数据很容易引起更多的认知偏见。足球不像篮球，单一事件的重要性较低，足球的单一事件影响整个比赛进程的比重过高，使得认知偏见会严重影响判断。</p>
-<p>大多数人倾向于将结果作为起点的判断解释，而不是教练的意图和策略。简而言之：如果结果是积极的，我们假设他的计划或赛前决定是正确的。然而如果结果是负面的，我们很快就会相信他的战术一定很糟糕。</p>
-<p>很多人可能会说这是正确和合乎逻辑的。但这会忽视我们在足球中面临的下一个非常大的问题：表现和结果之间往往存在相当大的差距。</p>
 
     </content>
   </entry>
