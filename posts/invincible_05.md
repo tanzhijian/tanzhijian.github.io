@@ -29,7 +29,7 @@ tracks.y = tracks.y.apply(y_formula)
 
 ## 特征提取
 
-如何选择特征呢，既然使用 Statsbomb 的数据，不妨找找他在这方面的资料，于是找到了 Statsbomb 发布的这条推特 https://twitter.com/StatsBomb/status/1650847925197471745 已经有了答案：
+如何选择特征呢，既然使用 Statsbomb 的数据，不妨找找他在这方面的资料，于是找到了 Statsbomb 发布的这条推特 [https://twitter.com/StatsBomb/status/1650847925197471745](https://twitter.com/StatsBomb/status/1650847925197471745)已经有了答案：
 
 > Not all xG is created equal.
 >
@@ -56,7 +56,7 @@ tracks.y = tracks.y.apply(y_formula)
 
 而射门时球的高度在没有具体的数据情况下是个更难的特征，大致原理为球的高度越高，xG 越低，脚射门比较准，而头球在同样距离的情况下更难把握住。Statsbomb 射门事件关于这一项特征 body_part_name 其中只包含了['Right Foot', 'Head', 'Left Foot', 'Other']，所以仍然需要假设。询问 chatgpt，男子足球运动员平均身高为 1.8 米（感觉偏高？），所以假设头球的高度统一为 1.8，脚下射门为 0.01, 其他可以理解为胸口，大腿等非常规部位，为 1.0
 
-由于特征提取是一项不小的工程，所以在 GitHub 创建了一个库 https://github.com/tanzhijian/football_calculator ，如果查看时代码已经修改了，可以回滚到这篇文章写的日期，也就是 2023-05-14
+由于特征提取是一项不小的工程，所以在 GitHub 创建了一个库 [https://github.com/tanzhijian/football_calculator](https://github.com/tanzhijian/football_calculator) ，如果查看时代码已经修改了，可以回滚到这篇文章写的日期，也就是 2023-05-14
 
 ## 训练模型
 
