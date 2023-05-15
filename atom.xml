@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-05-14T20:38:55Z</updated>
+  <updated>2023-05-15T21:39:40Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>阿森纳不败赛季射门探索 01: xG</title>
     <link href="https://tanzhijian.org/posts/invincible_05"></link>
-    <id>1684067935.1432714</id>
-    <updated>2023-05-14T20:38:55Z</updated>
-    <published>2023-05-14T20:38:55Z</published>
+    <id>1684157980.5444288</id>
+    <updated>2023-05-15T21:39:40Z</updated>
+    <published>2023-05-15T21:39:40Z</published>
     <author><name>tanzhijian</name></author>
     <summary>从 xG 开始。训练一个 xG 的模型方便之后的探索使用
 </summary>
@@ -62,7 +62,7 @@ tracks.y = tracks.y.apply(y_formula)
 </ul>
 <p>其中干扰射门的防守球员是一个不好把握的特征，在这里假设射门时球半径 1 米内的防守球员都属于干扰射门</p>
 <p>而射门时球的高度在没有具体的数据情况下是个更难的特征，大致原理为球的高度越高，xG 越低，脚射门比较准，而头球在同样距离的情况下更难把握住。Statsbomb 射门事件关于这一项特征 body_part_name 其中只包含了['Right Foot', 'Head', 'Left Foot', 'Other']，所以仍然需要假设。询问 chatgpt，男子足球运动员平均身高为 1.8 米（感觉偏高？），所以假设头球的高度统一为 1.8，脚下射门为 0.01, 其他可以理解为胸口，大腿等非常规部位，为 1.0</p>
-<p>由于特征提取是一项不小的工程，所以在 GitHub 创建了一个库 <a href="https://github.com/tanzhijian/football_calculator">https://github.com/tanzhijian/football_calculator</a> ，如果查看时代码已经修改了，可以回滚到这篇文章写的日期，也就是 2023-05-14</p>
+<p>由于特征提取是一项不小的工程，所以在 GitHub 创建了一个库 <a href="https://github.com/tanzhijian/football-calculator">https://github.com/tanzhijian/football-calculator</a> ，如果查看时代码已经修改了，可以回滚到这篇文章写的日期，也就是 2023-05-14</p>
 <h2>训练模型</h2>
 <p>特征提取完毕以后可以得到一个 (19174, 10) 型状的数据集，开始创建一个神经网络进行训练，由于我并不擅长机器学习，所以随便写了一个先训练着，训练数据集和验证数据集 8:2，然后创建模型：</p>
 <pre><code class="language-python">model = tf.keras.Sequential([
