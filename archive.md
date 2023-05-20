@@ -1,5 +1,7 @@
 ## 目录
 
+* [阿森纳不败赛季射门探索 02: xG 特征](https://tanzhijian.org/posts/invincible_06)
+
 * [阿森纳不败赛季射门探索 01: xG](https://tanzhijian.org/posts/invincible_05)
 
 * [阿森纳不败赛季传球路线图探索 04](https://tanzhijian.org/posts/invincible_04)
