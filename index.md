@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [score-simulator 的一些想法](https://tanzhijian.org/posts/score_simulator)
+
 * [阿森纳不败赛季射门探索 02: xG 特征](https://tanzhijian.org/posts/invincible_06)
 
 * [阿森纳不败赛季射门探索 01: xG](https://tanzhijian.org/posts/invincible_05)
@@ -17,8 +19,6 @@
 * [《萤》读书笔记](https://tanzhijian.org/posts/firefly)
 
 * [《Football Hackers》读书笔记 04, 瓜迪奥拉](https://tanzhijian.org/posts/football_hackers_04)
-
-* [《刺杀骑士团长》读书笔记](https://tanzhijian.org/posts/commendatore)
 
 [更多](https://tanzhijian.org/archive)
 
