@@ -1,5 +1,7 @@
 ## 目录
 
+* [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_woo)
+
 * [score-simulator 的一些想法](https://tanzhijian.org/posts/score_simulator)
 
 * [阿森纳不败赛季射门探索 02: xG 特征](https://tanzhijian.org/posts/invincible_06)
