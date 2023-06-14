@@ -34,7 +34,7 @@ def convert(text: list[str], timestamp: float, name: str) -> dict:
     return {
         "id": timestamp,
         "title": text[0].lstrip("# ").rstrip("\n"),
-        "url": f"https://tanzhijian.org/posts/{name.rstrip('.md')}",
+        "url": f"https://tanzhijian.org/posts/{name.split('.')[0]}",
         "summary": get_summary(text),
         "html": html,
         "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.localtime(timestamp)),

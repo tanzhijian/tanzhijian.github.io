@@ -1,6 +1,6 @@
 ## 最近更新
 
-* [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_woo)
+* [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_wood)
 
 * [score-simulator 的一些想法](https://tanzhijian.org/posts/score_simulator)
 
