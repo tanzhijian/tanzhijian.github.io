@@ -2,10 +2,61 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-06-14T21:38:01Z</updated>
+  <updated>2023-08-06T16:22:54Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>xPass 模型的特征探索</title>
+    <link href="https://tanzhijian.org/posts/xpass_features_exploration"></link>
+    <id>1691310174.9075835</id>
+    <updated>2023-08-06T16:22:54Z</updated>
+    <published>2023-08-06T16:22:54Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 [Using xPass To Measure The Impact Of Gamestate On Team Style ](https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/) 提到的：
+</summary>
+    <content type="html">
+      <h1>xPass 模型的特征探索</h1>
+<p>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 <a href="https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/">Using xPass To Measure The Impact Of Gamestate On Team Style </a> 提到的：</p>
+<blockquote>
+<p>The definition that you’ll find on our Assist website is: The estimated likelihood of an attempted pass being completed successfully based on the location of the pitch and context the pass is attempted under, and location of the target location of the pass.</p>
+<p>In its simplest form it is a measurement of the difficulty of completing a pass. A pass with a high pass success probability (xPass) is likely to be completed a high percentage of the time - you can think of these as safe, low-risk passes. A pass across the back between two CBs, who aren’t being pressured, would have a high xPass value, for example.</p>
+<p>By contrast, a pass with a low xPass value is likely to be completed a low percentage of the time - you can think of these as risky, more direct passes. Consider a full back playing a ball from his own half into the channels, whilst being pressured by an opponent, for example.</p>
+<p>Loosely speaking, playing more high xPass passes would equate to being more measured in possession and playing more ‘safe’ passes, whereas playing passes with a lower xPass value would indicate a more direct style of play.</p>
+</blockquote>
+<p>有几个比较重要的句子划一下：</p>
+<ul>
+<li>根据球场位置、传球的环境以及传球目标的位置，完成传球成功的可能性</li>
+<li>
+最简单的用法是衡量完成传球的难度：<ul>
+<li>较高的 xPass 可能会在很高比例的时间内完成，可以将其视为安全低风险的传球，比如两名中后卫之间的回传球</li>
+<li>较低的 xPass 占有的时间比率很低，可以将其视为有风险的更加直接的传球</li>
+</ul>
+</li>
+</ul>
+<p>通过上面的描述可以得到训练一个 xPass 模型主要的特征：</p>
+<ul>
+<li>传球队员坐标</li>
+<li>接球队员坐标</li>
+</ul>
+<p>这两者可能是最重要的特征了，从中可以得出一些计算特征：</p>
+<ul>
+<li>传球距离</li>
+<li>传球队员和接球队员的区域划分?：是否需要把场上位置划分为一些区域来分块，这个特征不是很确定</li>
+<li>传球队员和接球队员的位置？需不需要一个 passmap 来确定场上位置？也不确定</li>
+</ul>
+<p>接下来是传球的环境，可以理解为：</p>
+<ul>
+<li>传球队员的受干扰程度，根据 xG 的干扰射门特征的计算可以假设成传球事件坐标半径 1 米内有无防守队员</li>
+<li>接球队员受干扰程度，同上</li>
+<li>是否有球员干扰传球路线，在传球路线上下各延伸出 0.5 米形成一个长方形区域，区域内是否有球员，区分队友和对手</li>
+</ul>
+<p>作为衍生物，甚至可以顺便计算了 packing :)</p>
+<p>而 label, 则通过下一次事件来确定是否为一次成功的传球，比如传球事件的下一次事件换成了对手的事件，或者定位球事件，则不是一次成功的传球</p>
+<p>接来下将抽时间使用 StatsBomb 的公开数据来训练一个基于上面假设的 xPass 模型，只是 StatsBomb 公开数据并没有他们已经计算好的 xPass 作为参考，但可以通过他们对于 xPass 的运用来做一些验证，这些之后再探讨</p>
+
+    </content>
+  </entry>
   <entry>
     <title>《挪威的森林》读书笔记</title>
     <link href="https://tanzhijian.org/posts/norwegian_wood"></link>
@@ -1541,40 +1592,6 @@ plt.show()
 </blockquote>
 <p>不足的地方还很多，比如日期是读取文件修改日期，简介只是粗暴的截取第一段填充字数，这些随着使用过程再改了。</p>
 <p>关于之后能写的目标，尽量做到避免文章标题复制给 ai 能写出相似更好的内容，这样太糟糕了。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>《萤》读书笔记</title>
-    <link href="https://tanzhijian.org/posts/firefly"></link>
-    <id>1679403673.5903647</id>
-    <updated>2023-03-21T21:01:13Z</updated>
-    <published>2023-03-21T21:01:13Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>翻开这本书时想起了一个小插曲。几年前由于工作原因，需要经常和一个朋友交接，一来二去熟络起来后，偶尔会聊上一些生活。有一次朋友说起正在看一部叫《燃烧》的电影，我没有听说过。
-</summary>
-    <content type="html">
-      <h1>《萤》读书笔记</h1>
-<p>翻开这本书时想起了一个小插曲。几年前由于工作原因，需要经常和一个朋友交接，一来二去熟络起来后，偶尔会聊上一些生活。有一次朋友说起正在看一部叫《燃烧》的电影，我没有听说过。</p>
-<p>“就是村上春树的小说《烧仓房》改编的。”</p>
-<p>“我也没读过《烧仓房》。”</p>
-<p>“这。。。你不是很喜欢他吗？”</p>
-<p>“不过是个随波逐流的读者罢了。短篇小说陆陆续续读一些，但不记得有这一篇了。”</p>
-<p>几天后我收到一个快递，是《萤》这本书。封页写上了一行寄语：“镜子里显现出的，只是表面的真相。”字体秀气。</p>
-<p>博尔赫斯的诗。但我并未去想它的含义，也并未去读这本书，很快被我放进书柜了。当时周围不断发生着各种各样的事，应付这些已经精疲力竭，根本没有余力停下步子，等到我再次想起这个朋友时，已经随着工作的变迁渐行渐远了。我仍然能记起朋友说话时永远一副小心翼翼的模样，只是，朋友叫什么名字来着？</p>
-<p>言归正传，说回这本书。</p>
-<p>《烧仓房》依然是村上春树万年不变的主题，高度发达的资本主义社会与社会边缘人物，这次直白探讨了它们之间的关系。一共有三个人物，我，年轻女孩，她的富哥男朋友，其中我和年轻女孩——一个是无所事事的落魄作家，一个是打零工赚取必要生活开支——社会边缘人物，而富哥男朋友：“做什么不知道，反正就是有钱，谜一样的小伙子。”“简直成了菲茨杰拉德的《了不起的盖茨比》。”</p>
-<p>谈到这篇小说的隐喻无非就两个，年轻女孩，以及仓房。富哥男朋友告诉我，他有一种叫做烧仓房的嗜好，就是偷偷地用汽油点燃别人家废弃的仓房，并用望远镜观看火焰。他说这样做是为了维持一种道德上的平衡感。小说中对于仓房的描述：</p>
-<blockquote>
-<p>海边孤零零的仓房，田地中间的仓房……反正各种各样的仓房。只消十五分钟就烧的一干二净，简直像压根儿不存在那玩意儿。谁都不伤心。只是——消失而已，忽地。</p>
-<p>第三处仓房和第四处仓房酷似又老又丑的双胞胎，相距也不过两百米，哪个都那么陈旧那么污秽，甚至叫人觉得要烧索性一起烧掉罢了。</p>
-<p>建筑物——我不知道能否称其为建筑物——几乎已经开始解体。的确如他所说，看上去果真像在静等谁来点上一把火。</p>
-</blockquote>
-<p>社会边缘人物。</p>
-<p>故事的最后我碰到了富哥男朋友，他说他已经烧掉了附近最好最值得烧的，但却不是我所找的的任何一个仓房。我还想追问，被他打住了，随后问起年轻女孩的下落，消失了。</p>
-<p>我看了很多解读，包括电影《燃烧》，到这里都在讨论，烧仓房只是象征，被真正“烧”掉的是年轻女孩，以及随之而来的阶层固化，上层阶级对于道德甚至法律的话语权，等等。</p>
-<p>在我看来本书的结尾处理才是这篇小说仅仅想要表达的主题，一个更绝望的主题：只需要安排一个结局罢了。</p>
-<p>至于哪座仓房被真正烧掉了，年轻女孩又是否真的消失了，谁在意呢？</p>
 
     </content>
   </entry>

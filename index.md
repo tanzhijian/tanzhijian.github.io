@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [xPass 模型的特征探索](https://tanzhijian.org/posts/xpass_features_exploration)
+
 * [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_wood)
 
 * [score-simulator 的一些想法](https://tanzhijian.org/posts/score_simulator)
@@ -17,8 +19,6 @@
 * [阿森纳不败赛季传球路线图探索 01](https://tanzhijian.org/posts/invincible01)
 
 * [关于这个博客](https://tanzhijian.org/posts/about_blog)
-
-* [《萤》读书笔记](https://tanzhijian.org/posts/firefly)
 
 [更多](https://tanzhijian.org/archive)
 
