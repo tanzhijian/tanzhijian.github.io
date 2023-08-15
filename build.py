@@ -6,60 +6,60 @@ import marko
 from jinja2 import Template
 
 
-posts = Path(Path.cwd(), "posts").glob("**/*")
-atom_template = Path(Path.cwd(), "atom_template.xml")
-index_template = Path(Path.cwd(), "index_template.txt")
-archive_template = Path(Path.cwd(), "archive_template.txt")
-atom = Path(Path.cwd(), "atom.xml")
-index = Path(Path.cwd(), "index.md")
-archive = Path(Path.cwd(), "archive.md")
+class Post:
+    def __init__(
+        self,
+        name: str,
+        timestamp: float,
+        text_lines: list[str],
+    ) -> None:
+        self.id = timestamp
+        self.title = text_lines[0].lstrip("# ").rstrip("\n")
+        self.url = f"https://tanzhijian.org/posts/{name.split('.')[0]}"
+        self.summary = self._get_summary(text_lines)
+        self.html = marko.convert("".join(text_lines))
+        self.time = time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.localtime(timestamp)
+        )
+
+    def _get_summary(self, text_lines: list[str]) -> str:
+        for line in text_lines:
+            if line != "\n" and line[0] != "#":
+                return marko.convert(line)
+        return ""
 
 
-def get_summary(text: list[str]) -> str:
-    for line in text:
-        if line != "\n" and line[0] != "#":
-            return line
-    return ""
+def read(path: Path) -> Post:
+    with open(path) as f:
+        text_lines = f.readlines()
+    timestamp = os.path.getmtime(path)
+    return Post(path.name, timestamp, text_lines)
 
 
-def read(post: Path) -> tuple:
-    with open(post) as f:
-        text = f.readlines()
-    timestamp = os.path.getmtime(post)
-    return text, timestamp, post.name
-
-
-def convert(text: list[str], timestamp: float, name: str) -> dict:
-    html = marko.convert("".join(text))
-    return {
-        "id": timestamp,
-        "title": text[0].lstrip("# ").rstrip("\n"),
-        "url": f"https://tanzhijian.org/posts/{name.split('.')[0]}",
-        "summary": get_summary(text),
-        "html": html,
-        "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.localtime(timestamp)),
-    }
-
-
-def export(data: list[dict], template: Path, file: Path) -> None:
-    with open(template) as f:
-        content = f.read()
-    render = Template(content).render(entries=data)
-    with open(file, "w") as f:
+def export(posts: list[Post], template_path: Path, export_path: Path) -> None:
+    with open(template_path) as f:
+        template = f.read()
+    render = Template(template).render(posts=posts)
+    with open(export_path, "w") as f:
         f.write(render)
 
 
 def main() -> None:
-    data = []
-    for post in posts:
-        text, timestamp, name = read(post)
-        data.append(convert(text, timestamp, name))
+    post_paths = Path(Path.cwd(), "posts").glob("**/*")
+    atom_template = Path(Path.cwd(), "atom_template.xml")
+    index_template = Path(Path.cwd(), "index_template.txt")
+    archive_template = Path(Path.cwd(), "archive_template.txt")
+    atom_path = Path(Path.cwd(), "atom.xml")
+    index_path = Path(Path.cwd(), "index.md")
+    archive_path = Path(Path.cwd(), "archive.md")
 
-    data.sort(key=lambda x: x["id"], reverse=True)
+    posts = [read(path) for path in post_paths]
+    posts.sort(key=lambda post: post.id, reverse=True)
+    posts_10 = posts[:10]
 
-    export(data, archive_template, archive)
-    export(data[:10], index_template, index)
-    export(data[:10], atom_template, atom)
+    export(posts, archive_template, archive_path)
+    export(posts_10, index_template, index_path)
+    export(posts_10, atom_template, atom_path)
 
 
 if __name__ == "__main__":

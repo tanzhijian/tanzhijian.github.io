@@ -2,20 +2,20 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>{{ entries[0]['time'] }}</updated>
+  <updated>{{ posts[0].time }}</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
-  {% for entry in entries %}<entry>
-    <title>{{ entry['title'] }}</title>
-    <link href="{{ entry['url'] }}"></link>
-    <id>{{entry['id']}}</id>
-    <updated>{{ entry['time'] }}</updated>
-    <published>{{ entry['time'] }}</published>
+  {% for post in posts %}<entry>
+    <title>{{ post.title }}</title>
+    <link href="{{ post.url }}"></link>
+    <id>{{post.id}}</id>
+    <updated>{{ post.time }}</updated>
+    <published>{{ post.time }}</published>
     <author><name>tanzhijian</name></author>
-    <summary>{{ entry.summary }}</summary>
+    <summary>{{ post.summary }}</summary>
     <content type="html">
-      {{ entry['html'] }}
+      {{ post.html }}
     </content>
   </entry>
   {% endfor %}

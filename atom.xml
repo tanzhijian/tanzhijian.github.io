@@ -13,7 +13,7 @@
     <updated>2023-08-06T16:22:54Z</updated>
     <published>2023-08-06T16:22:54Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 [Using xPass To Measure The Impact Of Gamestate On Team Style ](https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/) 提到的：
+    <summary><p>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 <a href="https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/">Using xPass To Measure The Impact Of Gamestate On Team Style </a> 提到的：</p>
 </summary>
     <content type="html">
       <h1>xPass 模型的特征探索</h1>
@@ -64,7 +64,7 @@
     <updated>2023-06-14T21:38:01Z</updated>
     <published>2023-06-14T21:38:01Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>即使过了很多年，我仍然抑制不住对这本书的偏爱。
+    <summary><p>即使过了很多年，我仍然抑制不住对这本书的偏爱。</p>
 </summary>
     <content type="html">
       <h1>《挪威的森林》读书笔记</h1>
@@ -128,7 +128,7 @@
     <updated>2023-06-11T17:59:48Z</updated>
     <published>2023-06-11T17:59:48Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>最近在利用业余时间入门 2023 年前端的新姿势，前两天无聊趁着欧冠决赛前夜，用目前所学到的写了一个前端的比分模拟器 [score-simulator](https://score-simulator.tanzhijian.org/)，小规模发给了一些朋友 roll，反响居然不错，都 roll 得蛮开心的。所以想说一下模拟比赛的原理，以及之后会完善的一些思路。
+    <summary><p>最近在利用业余时间入门 2023 年前端的新姿势，前两天无聊趁着欧冠决赛前夜，用目前所学到的写了一个前端的比分模拟器 <a href="https://score-simulator.tanzhijian.org/">score-simulator</a>，小规模发给了一些朋友 roll，反响居然不错，都 roll 得蛮开心的。所以想说一下模拟比赛的原理，以及之后会完善的一些思路。</p>
 </summary>
     <content type="html">
       <h1>score-simulator 的一些想法</h1>
@@ -169,7 +169,7 @@ def play_game():
     <updated>2023-05-20T15:50:35Z</updated>
     <published>2023-05-20T15:50:35Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>b 站刷到了一个 StatsBomb 的 xG 教学视频 [https://www.bilibili.com/video/BV13V4y1k77j](https://www.bilibili.com/video/BV13V4y1k77j), 更详细介绍了他们使用的 xG 特征，其视频后段也列了出来，重要的特征还标注了星标：
+    <summary><p>b 站刷到了一个 StatsBomb 的 xG 教学视频 <a href="https://www.bilibili.com/video/BV13V4y1k77j">https://www.bilibili.com/video/BV13V4y1k77j</a>, 更详细介绍了他们使用的 xG 特征，其视频后段也列了出来，重要的特征还标注了星标：</p>
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季射门探索 02: xG 特征</h1>
@@ -207,7 +207,7 @@ def play_game():
     <updated>2023-05-15T21:39:40Z</updated>
     <published>2023-05-15T21:39:40Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>从 xG 开始。训练一个 xG 的模型方便之后的探索使用
+    <summary><p>从 xG 开始。训练一个 xG 的模型方便之后的探索使用</p>
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季射门探索 01: xG</h1>
@@ -467,7 +467,7 @@ weighted avg       0.90      0.91      0.88       832
     <updated>2023-04-29T15:05:27Z</updated>
     <published>2023-04-29T15:05:27Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes
+    <summary><p>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes</p>
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季传球路线图探索 04</h1>
@@ -653,7 +653,7 @@ plot_player_passes(player, mean_passes)
     <updated>2023-04-20T00:00:25Z</updated>
     <published>2023-04-20T00:00:25Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。
+    <summary><p>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。</p>
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季传球路线图探索 03</h1>
@@ -842,7 +842,7 @@ plt.show()
     <updated>2023-04-15T03:48:03Z</updated>
     <published>2023-04-15T03:48:03Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>上篇文章选取了其中一场的比赛，其主力阵容除了右边前卫帕洛尔，其余都是不败赛季夺冠的常规主力，这次的探索目标为整个赛季的所有比赛，作为常规主力的十一人传球路线图
+    <summary><p>上篇文章选取了其中一场的比赛，其主力阵容除了右边前卫帕洛尔，其余都是不败赛季夺冠的常规主力，这次的探索目标为整个赛季的所有比赛，作为常规主力的十一人传球路线图</p>
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季传球路线图探索 02</h1>
@@ -1095,7 +1095,7 @@ plt.show()
     <updated>2023-04-12T01:34:00Z</updated>
     <published>2023-04-12T01:34:00Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。
+    <summary><p>statsbomb 有一些有趣的公开数据，比如梅西的职业生涯，阿森纳的不败赛季，最近在上足球数据可视化的课程，刚好拿来玩一玩。</p>
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季传球路线图探索 01</h1>
@@ -1579,7 +1579,7 @@ plt.show()
     <updated>2023-04-08T14:52:21Z</updated>
     <published>2023-04-08T14:52:21Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>内容没什么好说的，无非就是 GitHub Pages，加上比较懒，样式主题都没改，不过无所谓，以前把博客弄得好看回头文章几年没写一次也不是没有过。
+    <summary><p>内容没什么好说的，无非就是 GitHub Pages，加上比较懒，样式主题都没改，不过无所谓，以前把博客弄得好看回头文章几年没写一次也不是没有过。</p>
 </summary>
     <content type="html">
       <h1>关于这个博客</h1>

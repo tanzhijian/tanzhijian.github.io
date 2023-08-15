@@ -1,5 +1,5 @@
 ## 目录
 
-{% for entry in entries %}* [{{ entry.title }}]({{ entry.url }})
+{% for post in posts %}* [{{ post.title }}]({{ post.url }})
 
 {% endfor %}
