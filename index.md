@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [statsbombpy-local](https://tanzhijian.org/posts/statsbombpy_local)
+
 * [xPass 模型的特征探索](https://tanzhijian.org/posts/xpass_features_exploration)
 
 * [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_wood)
@@ -17,8 +19,6 @@
 * [阿森纳不败赛季传球路线图探索 02](https://tanzhijian.org/posts/invincible_02)
 
 * [阿森纳不败赛季传球路线图探索 01](https://tanzhijian.org/posts/invincible01)
-
-* [关于这个博客](https://tanzhijian.org/posts/about_blog)
 
 [更多](https://tanzhijian.org/archive)
 

@@ -2,10 +2,44 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-08-06T16:22:54Z</updated>
+  <updated>2023-08-31T00:05:01Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>statsbombpy-local</title>
+    <link href="https://tanzhijian.org/posts/statsbombpy_local"></link>
+    <id>1693411501.353491</id>
+    <updated>2023-08-31T00:05:01Z</updated>
+    <published>2023-08-31T00:05:01Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary><p>最近频繁使用 statsbombpy 获取数据，等待网络请求是件很烦的事情，所以想着改写一下这个库，反正都是在 GitHub 请求公开数据，把它的 open-data 拉到本地，每次从本地读取岂不是很爽。</p>
+</summary>
+    <content type="html">
+      <h1>statsbombpy-local</h1>
+<p>最近频繁使用 statsbombpy 获取数据，等待网络请求是件很烦的事情，所以想着改写一下这个库，反正都是在 GitHub 请求公开数据，把它的 open-data 拉到本地，每次从本地读取岂不是很爽。</p>
+<p>最开始想着 fork 一个分支直接修改，确实很省事，在 public.py 里添加一个本地读取的函数，然后把使用 requests 的地方换成本地读取，再修改一些配置，设定好本地环境变量，改一下测试通过即可。</p>
+<p>但是这样做的缺点是如果主分支每次有新版本都得去合并，由于修改删除的代码处数还不少，合并多了就会很烦，所以还是作罢。不过代码还在，<a href="https://github.com/tanzhijian/statsbombpy-local-old/blob/master/statsbombpy/public.py">statsbombpy-local-old </a>，想用的仍然可以用。</p>
+<p>新建一个从外部扩展功能的库，原代码比较烦的一点是全写的函数，而且没有什么接口可以修改到内部，原本想的是像 requests-file 这样通过 file:// URLs 访问本地文件系统</p>
+<pre><code class="language-python">s = requests.Session()
+s.mount(&#x27;file://&#x27;, FileAdapter())
+
+resp = s.get(&#x27;file:///path/to/file&#x27;)
+</code></pre>
+<p>又或者继承一个 Requests 类来改写，但原代码</p>
+<pre><code class="language-python">def get_response(path):
+    response = req.get(path)
+    response.raise_for_status()
+    data = response.json()
+    return data
+</code></pre>
+<p>这样的写法是摸不到内部，所以只能换一个思路，也就是目前使用的 mock，拦截掉网络请求，从本地本地读取文件后返回请求，但这样的做法可能不是很优雅，因为 mock 通常用于测试。。。</p>
+<p>然后就是写。目前可以从 statsbombpy-local 使用 statsbombpy 的所有方法，但只有 competitions, matches, lineups, events 和 frames 从本地读取，其他的几个，player_match_stats，player_season_stats，team_season_stats 需要 key 才能使用，不作考虑保持原样。</p>
+<p>而 competition_events，competition_frames，它们的流程是先获取赛事赛季 id，然后获取所有的比赛 id，再获取所有的 events 或者 frames，组一起得到一个 DataFrame。我能做的只是顺着它的思路，获取到赛事，比赛，事件的查询 id 从本地读取文件后注册到 mock，再调用原本函数开始请求，但原本函数里使用了多进程 Pool，于是导致了很多莫名其妙的 ConnectingError，懒得去探究了，就此作罢，继续使用原函数。要用类似的功能现写也用不了几行代码。</p>
+<p>暂时这样了，想要使用的 pip 安装即可。</p>
+
+    </content>
+  </entry>
   <entry>
     <title>xPass 模型的特征探索</title>
     <link href="https://tanzhijian.org/posts/xpass_features_exploration"></link>
@@ -1569,29 +1603,6 @@ fig.suptitle(&#x27;2004-04-25, Tottenham Hotspur vs Arsenal&#x27;, fontsize=30)
 plt.show()
 </code></pre>
 <p><img src="https://s2.loli.net/2023/04/11/1GzYOeHoiubdvLF.png" alt="ARS_VS_HOT_0304_passing_networks.png" /></p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>关于这个博客</title>
-    <link href="https://tanzhijian.org/posts/about_blog"></link>
-    <id>1680936741.073004</id>
-    <updated>2023-04-08T14:52:21Z</updated>
-    <published>2023-04-08T14:52:21Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary><p>内容没什么好说的，无非就是 GitHub Pages，加上比较懒，样式主题都没改，不过无所谓，以前把博客弄得好看回头文章几年没写一次也不是没有过。</p>
-</summary>
-    <content type="html">
-      <h1>关于这个博客</h1>
-<p>内容没什么好说的，无非就是 GitHub Pages，加上比较懒，样式主题都没改，不过无所谓，以前把博客弄得好看回头文章几年没写一次也不是没有过。</p>
-<p>但好歹要有一些必须的页面，所以写了一个<a href="https://github.com/tanzhijian/tanzhijian.github.io/blob/master/build.py">脚本</a>生成了 index，archive，以及最重要的 rss，以下是用 ChatGPT 生成的介绍：</p>
-<blockquote>
-<p>这段代码是一个用 Python 语言写的脚本，可以帮助我们生成一个博客网站。这个博客网站可以展示使用 Markdown 格式编写的博客文章。脚本会读取 &quot;posts&quot; 文件夹中的 Markdown 文件，将它们转换为 HTML 格式，并且使用 Jinja2 模板语言生成 Atom 订阅源、主页和归档页。</p>
-<p>代码中定义了一些函数，它们会将 Markdown 文件转换为字典，然后使用 Jinja2 模板渲染字典数据，最终生成网站文件。其中 main 函数是整个程序的主要逻辑，它会读取 Markdown 文件夹中的所有文件，将它们转换为字典并排序，然后将字典数据填充到 Jinja2 模板中，最终生成网站文件。</p>
-<p>这个脚本是一个简单的示例，可以作为生成静态网站的基础。</p>
-</blockquote>
-<p>不足的地方还很多，比如日期是读取文件修改日期，简介只是粗暴的截取第一段填充字数，这些随着使用过程再改了。</p>
-<p>关于之后能写的目标，尽量做到避免文章标题复制给 ai 能写出相似更好的内容，这样太糟糕了。</p>
 
     </content>
   </entry>

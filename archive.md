@@ -1,5 +1,7 @@
 ## 目录
 
+* [statsbombpy-local](https://tanzhijian.org/posts/statsbombpy_local)
+
 * [xPass 模型的特征探索](https://tanzhijian.org/posts/xpass_features_exploration)
 
 * [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_wood)
