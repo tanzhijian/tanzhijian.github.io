@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 import time
 
 import marko
@@ -32,7 +31,7 @@ class Post:
 def read(path: Path) -> Post:
     with open(path) as f:
         text_lines = f.readlines()
-    timestamp = os.path.getmtime(path)
+    timestamp = path.stat().st_mtime
     return Post(path.name, timestamp, text_lines)
 
 
