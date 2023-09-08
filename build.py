@@ -12,20 +12,38 @@ class Post:
         timestamp: float,
         text_lines: list[str],
     ) -> None:
-        self.id = timestamp
-        self.title = text_lines[0].lstrip("# ").rstrip("\n")
-        self.url = f"https://tanzhijian.org/posts/{name.split('.')[0]}"
-        self.summary = self._get_summary(text_lines)
-        self.html = marko.convert("".join(text_lines))
-        self.time = time.strftime(
-            "%Y-%m-%dT%H:%M:%SZ", time.localtime(timestamp)
-        )
+        self.name = name
+        self.timestamp = timestamp
+        self.text_lines = text_lines
 
-    def _get_summary(self, text_lines: list[str]) -> str:
-        for line in text_lines:
+    @property
+    def id(self) -> float:
+        return self.timestamp
+
+    @property
+    def title(self) -> str:
+        return self.text_lines[0].lstrip("# ").rstrip("\n")
+
+    @property
+    def url(self) -> str:
+        return f"https://tanzhijian.org/posts/{self.name.split('.')[0]}"
+
+    @property
+    def summary(self) -> str:
+        for line in self.text_lines:
             if line != "\n" and line[0] != "#":
                 return marko.convert(line)
         return ""
+
+    @property
+    def html(self) -> str:
+        return marko.convert("".join(self.text_lines))
+
+    @property
+    def time(self) -> str:
+        return time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ", time.localtime(self.timestamp)
+        )
 
 
 def read(path: Path) -> Post:

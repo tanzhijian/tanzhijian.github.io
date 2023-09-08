@@ -1,5 +1,9 @@
 # statsbombpy-local
 
+更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock
+
+---
+
 最近频繁使用 statsbombpy 获取数据，等待网络请求是件很烦的事情，所以想着改写一下这个库，反正都是在 GitHub 请求公开数据，把它的 open-data 拉到本地，每次从本地读取岂不是很爽。
 
 最开始想着 fork 一个分支直接修改，确实很省事，在 public.py 里添加一个本地读取的函数，然后把使用 requests 的地方换成本地读取，再修改一些配置，设定好本地环境变量，改一下测试通过即可。

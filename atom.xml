@@ -2,21 +2,23 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-08-31T00:05:01Z</updated>
+  <updated>2023-09-08T10:31:47Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>statsbombpy-local</title>
     <link href="https://tanzhijian.org/posts/statsbombpy_local"></link>
-    <id>1693411501.353491</id>
-    <updated>2023-08-31T00:05:01Z</updated>
-    <published>2023-08-31T00:05:01Z</published>
+    <id>1694140307.1707118</id>
+    <updated>2023-09-08T10:31:47Z</updated>
+    <published>2023-09-08T10:31:47Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>最近频繁使用 statsbombpy 获取数据，等待网络请求是件很烦的事情，所以想着改写一下这个库，反正都是在 GitHub 请求公开数据，把它的 open-data 拉到本地，每次从本地读取岂不是很爽。</p>
+    <summary><p>更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock</p>
 </summary>
     <content type="html">
       <h1>statsbombpy-local</h1>
+<p>更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock</p>
+<hr />
 <p>最近频繁使用 statsbombpy 获取数据，等待网络请求是件很烦的事情，所以想着改写一下这个库，反正都是在 GitHub 请求公开数据，把它的 open-data 拉到本地，每次从本地读取岂不是很爽。</p>
 <p>最开始想着 fork 一个分支直接修改，确实很省事，在 public.py 里添加一个本地读取的函数，然后把使用 requests 的地方换成本地读取，再修改一些配置，设定好本地环境变量，改一下测试通过即可。</p>
 <p>但是这样做的缺点是如果主分支每次有新版本都得去合并，由于修改删除的代码处数还不少，合并多了就会很烦，所以还是作罢。不过代码还在，<a href="https://github.com/tanzhijian/statsbombpy-local-old/blob/master/statsbombpy/public.py">statsbombpy-local-old </a>，想用的仍然可以用。</p>
