@@ -1,5 +1,7 @@
 ## 目录
 
+* [关于在 fusion-stat 中使用 rapidfuzz 匹配名字](https://tanzhijian.org/posts/fusion_stat_and_rapidfuzz)
+
 * [statsbombpy-local](https://tanzhijian.org/posts/statsbombpy_local)
 
 * [xPass 模型的特征探索](https://tanzhijian.org/posts/xpass_features_exploration)
