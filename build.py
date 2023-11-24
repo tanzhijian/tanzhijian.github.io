@@ -32,7 +32,7 @@ class Post:
     def summary(self) -> str:
         for line in self.text_lines:
             if line != "\n" and line[0] != "#":
-                return marko.convert(line)
+                return line
         return ""
 
     @property
@@ -64,10 +64,10 @@ def export(posts: list[Post], template_path: Path, export_path: Path) -> None:
 def main() -> None:
     post_paths = Path(Path.cwd(), "posts").glob("**/*")
     atom_template = Path(Path.cwd(), "atom_template.xml")
-    index_template = Path(Path.cwd(), "index_template.txt")
-    archive_template = Path(Path.cwd(), "archive_template.txt")
     atom_path = Path(Path.cwd(), "atom.xml")
+    index_template = Path(Path.cwd(), "index_template.txt")
     index_path = Path(Path.cwd(), "index.md")
+    archive_template = Path(Path.cwd(), "archive_template.txt")
     archive_path = Path(Path.cwd(), "archive.md")
 
     posts = [read(path) for path in post_paths]
