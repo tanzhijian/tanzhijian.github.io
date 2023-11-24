@@ -1,5 +1,7 @@
 ## 目录
 
+* [介绍一下 fusion-stat](https://tanzhijian.org/posts/fusion_stat_intro)
+
 * [关于在 fusion-stat 中使用 rapidfuzz 匹配名字](https://tanzhijian.org/posts/fusion_stat_and_rapidfuzz)
 
 * [statsbombpy-local](https://tanzhijian.org/posts/statsbombpy_local)

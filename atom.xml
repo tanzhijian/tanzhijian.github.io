@@ -2,18 +2,77 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-10-11T23:36:05Z</updated>
+  <updated>2023-11-24T19:13:31Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
+    <title>介绍一下 fusion-stat</title>
+    <link href="https://tanzhijian.org/posts/fusion_stat_intro"></link>
+    <id>1700824411.351321</id>
+    <updated>2023-11-24T19:13:31Z</updated>
+    <published>2023-11-24T19:13:31Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>最初只是想给 score-simulator 写一个获取数据的脚本，但写着写着应该可以写成一个工具，可以方便获取网络上免费公开足球数据的爬虫工具，到目前为止可以正常给 score-simulator 提供数据了，于是发布了一个版本到 pip 方便自己使用。
+</summary>
+    <content type="html">
+      <h1>介绍一下 fusion-stat</h1>
+<p>最初只是想给 score-simulator 写一个获取数据的脚本，但写着写着应该可以写成一个工具，可以方便获取网络上免费公开足球数据的爬虫工具，到目前为止可以正常给 score-simulator 提供数据了，于是发布了一个版本到 pip 方便自己使用。</p>
+<p>他的特点是同时从不同的数据源获取然后组合在一起。因为这确实是获取足球数据一个很麻烦的事情，从一个数据源获取一些数据，从另一个数据源获取另一些数据，他们大多数基础数据是相同的，只有一些不同的特色数据，而 fusion-stat 便是在获取数据时就把它们最大程度的拼接在一起，通过一次调用就可以获得一份尽可能全面的数据。</p>
+<pre><code class="language-python">competitions = Competitions()
+fusion = await competitions.gather()
+</code></pre>
+<p>使用 httpx 完成 downloader 类似的功能，所以提供了可以在初始化时传入 httpx.AsyncClient 的一些参数，比如 <code>competitions = Competitions(proxies=PROXIES)</code>，由于是通过 <code>**kwargs</code>，缺乏参数类型补全提示，后续还会改进。每个类都会初始化一个 AsyncClient 作为 client，如果是大量爬取势必会增加开销，所以还可以提前创建好一个 client 每次传入使用:</p>
+<pre><code class="language-python">async with httpx.AsyncClient(proxies=PROXIES) as client:
+    competition = Competition(
+        fotmob_id=&quot;47&quot;, 
+        fbref_id=&quot;9&quot;, 
+        fbref_path_name=&quot;Premier-League&quot;,
+        official_name=&quot;Premier League&quot;,
+        season=2022,
+        client=client,
+    )
+</code></pre>
+<p>关于参数，最初的设想是只需要传入一个具有唯一特征同时还有可读性的参数，比如：</p>
+<pre><code class="language-python">member = Member(&quot;Bukayo Saka&quot;)
+</code></pre>
+<p>很漂亮但显然不具有可行性。且不说唯一性，单是如何通过一行字符串到最终完成不同数据源的请求 url 都很困难，如果只是赛事，或者球队，即使规模扩大到很大，几百个赛事，几千支球队，可以通过缓存一份数据来提供查询，但更多的球员名，随时在增加的比赛，就不大可能缓存下来了，这无异于还得提供一个数据库。</p>
+<p>所以目前采用这样一种方法，不是很方便手动输入，但可以通过上一级获取到的 index 来使用：</p>
+<pre><code class="language-python">fusion = await team.gather()
+saka = fusion.members_index()[-2]
+saka
+</code></pre>
+<pre><code>{&#x27;fotmob_id&#x27;: &#x27;961995&#x27;,
+ &#x27;fbref_id&#x27;: &#x27;bc7dc64d&#x27;,
+ &#x27;fbref_path_name&#x27;: &#x27;Bukayo-Saka&#x27;}
+</code></pre>
+<pre><code class="language-python">member = Member(**saka)
+fusion = await member.gather()
+</code></pre>
+<p>如果需要长期使用，在第一次获取时本地缓存一份 index，就可以极大的方便后续使用了。</p>
+<p>目前数据源只写了很小的一部分，只满足了 score-simulator 的需求，之后会继续完善。如果想要添加更多的数据，或者更多的来源，在 spiders 里面新建一个模块继承 Spider 类，然后实现 request 和 parse:</p>
+<pre><code class="language-python">class Futbol(Spider):
+
+    @property
+    def request(self) -&gt; httpx.Request:
+        ...
+
+    def parse(self, response: httpx.Response) -&gt; Any:
+        ...
+</code></pre>
+<p>可以参考其他的爬虫写法。之后在对应的 fusion 添加进去即可，欢迎提交 pr。</p>
+<p>总体来说，目前处于一个能用但不好用的地步。需要改进的地方太多，比如最后的数据类 Fusion，虽然都是 fusion，但方法大相径庭，需要一个更好的方案；models 里面的各种杂乱的数据模型类看起来很糟糕；也没有文档，想要正常使用得看源代码。慢慢写了，最初设计的时候并没有规划太多，大部分都是写一步看一步。</p>
+
+    </content>
+  </entry>
+  <entry>
     <title>关于在 fusion-stat 中使用 rapidfuzz 匹配名字</title>
     <link href="https://tanzhijian.org/posts/fusion_stat_and_rapidfuzz"></link>
-    <id>1697038565.9680073</id>
+    <id>1697038565.0</id>
     <updated>2023-10-11T23:36:05Z</updated>
     <published>2023-10-11T23:36:05Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>最近一有时间就在写一个叫 <a href="https://github.com/tanzhijian/fusion-stat">fusion-stat</a> 的开源项目，这是我一直想做却一直搁置直到最近才下决心开坑的东西，这个世界上有很多免费公开的足球数据源，每个数据源有相同的数据也有特有的数据，很多时候这些数据都是分散的，fusion-stat 就是想做这么一件事，把各类数据源的不同数据寻找到相关的特征从而把它们匹配连接起来，使得一次调用便可以获取到多个来源的数据，譬如</p>
+    <summary>最近一有时间就在写一个叫 [fusion-stat](https://github.com/tanzhijian/fusion-stat) 的开源项目，这是我一直想做却一直搁置直到最近才下决心开坑的东西，这个世界上有很多免费公开的足球数据源，每个数据源有相同的数据也有特有的数据，很多时候这些数据都是分散的，fusion-stat 就是想做这么一件事，把各类数据源的不同数据寻找到相关的特征从而把它们匹配连接起来，使得一次调用便可以获取到多个来源的数据，譬如
 </summary>
     <content type="html">
       <h1>关于在 fusion-stat 中使用 rapidfuzz 匹配名字</h1>
@@ -79,11 +138,11 @@ process.extractOne(
   <entry>
     <title>statsbombpy-local</title>
     <link href="https://tanzhijian.org/posts/statsbombpy_local"></link>
-    <id>1694140307.1707118</id>
+    <id>1694140307.0</id>
     <updated>2023-09-08T10:31:47Z</updated>
     <published>2023-09-08T10:31:47Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock</p>
+    <summary>更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock
 </summary>
     <content type="html">
       <h1>statsbombpy-local</h1>
@@ -115,11 +174,11 @@ resp = s.get(&#x27;file:///path/to/file&#x27;)
   <entry>
     <title>xPass 模型的特征探索</title>
     <link href="https://tanzhijian.org/posts/xpass_features_exploration"></link>
-    <id>1691310174.9075835</id>
+    <id>1691310174.0</id>
     <updated>2023-08-06T16:22:54Z</updated>
     <published>2023-08-06T16:22:54Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 <a href="https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/">Using xPass To Measure The Impact Of Gamestate On Team Style </a> 提到的：</p>
+    <summary>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 [Using xPass To Measure The Impact Of Gamestate On Team Style ](https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/) 提到的：
 </summary>
     <content type="html">
       <h1>xPass 模型的特征探索</h1>
@@ -166,11 +225,11 @@ resp = s.get(&#x27;file:///path/to/file&#x27;)
   <entry>
     <title>《挪威的森林》读书笔记</title>
     <link href="https://tanzhijian.org/posts/norwegian_wood"></link>
-    <id>1686749881.8541014</id>
+    <id>1686749881.0</id>
     <updated>2023-06-14T21:38:01Z</updated>
     <published>2023-06-14T21:38:01Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>即使过了很多年，我仍然抑制不住对这本书的偏爱。</p>
+    <summary>即使过了很多年，我仍然抑制不住对这本书的偏爱。
 </summary>
     <content type="html">
       <h1>《挪威的森林》读书笔记</h1>
@@ -230,11 +289,11 @@ resp = s.get(&#x27;file:///path/to/file&#x27;)
   <entry>
     <title>score-simulator 的一些想法</title>
     <link href="https://tanzhijian.org/posts/score_simulator"></link>
-    <id>1686477588.3136425</id>
+    <id>1686477588.0</id>
     <updated>2023-06-11T17:59:48Z</updated>
     <published>2023-06-11T17:59:48Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>最近在利用业余时间入门 2023 年前端的新姿势，前两天无聊趁着欧冠决赛前夜，用目前所学到的写了一个前端的比分模拟器 <a href="https://score-simulator.tanzhijian.org/">score-simulator</a>，小规模发给了一些朋友 roll，反响居然不错，都 roll 得蛮开心的。所以想说一下模拟比赛的原理，以及之后会完善的一些思路。</p>
+    <summary>最近在利用业余时间入门 2023 年前端的新姿势，前两天无聊趁着欧冠决赛前夜，用目前所学到的写了一个前端的比分模拟器 [score-simulator](https://score-simulator.tanzhijian.org/)，小规模发给了一些朋友 roll，反响居然不错，都 roll 得蛮开心的。所以想说一下模拟比赛的原理，以及之后会完善的一些思路。
 </summary>
     <content type="html">
       <h1>score-simulator 的一些想法</h1>
@@ -271,11 +330,11 @@ def play_game():
   <entry>
     <title>阿森纳不败赛季射门探索 02: xG 特征</title>
     <link href="https://tanzhijian.org/posts/invincible_06"></link>
-    <id>1684569035.9120426</id>
+    <id>1684569035.0</id>
     <updated>2023-05-20T15:50:35Z</updated>
     <published>2023-05-20T15:50:35Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>b 站刷到了一个 StatsBomb 的 xG 教学视频 <a href="https://www.bilibili.com/video/BV13V4y1k77j">https://www.bilibili.com/video/BV13V4y1k77j</a>, 更详细介绍了他们使用的 xG 特征，其视频后段也列了出来，重要的特征还标注了星标：</p>
+    <summary>b 站刷到了一个 StatsBomb 的 xG 教学视频 [https://www.bilibili.com/video/BV13V4y1k77j](https://www.bilibili.com/video/BV13V4y1k77j), 更详细介绍了他们使用的 xG 特征，其视频后段也列了出来，重要的特征还标注了星标：
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季射门探索 02: xG 特征</h1>
@@ -309,11 +368,11 @@ def play_game():
   <entry>
     <title>阿森纳不败赛季射门探索 01: xG</title>
     <link href="https://tanzhijian.org/posts/invincible_05"></link>
-    <id>1684157980.5444288</id>
+    <id>1684157980.0</id>
     <updated>2023-05-15T21:39:40Z</updated>
     <published>2023-05-15T21:39:40Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>从 xG 开始。训练一个 xG 的模型方便之后的探索使用</p>
+    <summary>从 xG 开始。训练一个 xG 的模型方便之后的探索使用
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季射门探索 01: xG</h1>
@@ -569,11 +628,11 @@ weighted avg       0.90      0.91      0.88       832
   <entry>
     <title>阿森纳不败赛季传球路线图探索 04</title>
     <link href="https://tanzhijian.org/posts/invincible_04"></link>
-    <id>1682751927.7004185</id>
+    <id>1682751927.0</id>
     <updated>2023-04-29T15:05:27Z</updated>
     <published>2023-04-29T15:05:27Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes</p>
+    <summary>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季传球路线图探索 04</h1>
@@ -755,11 +814,11 @@ plot_player_passes(player, mean_passes)
   <entry>
     <title>阿森纳不败赛季传球路线图探索 03</title>
     <link href="https://tanzhijian.org/posts/invincible_03"></link>
-    <id>1681920025.721563</id>
+    <id>1681920025.0</id>
     <updated>2023-04-20T00:00:25Z</updated>
     <published>2023-04-20T00:00:25Z</published>
     <author><name>tanzhijian</name></author>
-    <summary><p>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。</p>
+    <summary>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。
 </summary>
     <content type="html">
       <h1>阿森纳不败赛季传球路线图探索 03</h1>
@@ -937,259 +996,6 @@ plt.show()
 <li>亨利作为终结者，在进攻传球网络中也有如此重要的数据，全能</li>
 <li>左路肋部区域承担了推进至禁区的大多任务，</li>
 <li>右路参与的控球大多数会通过中路交到左路，少部分会在右路传到禁区</li>
-</ol>
-
-    </content>
-  </entry>
-  <entry>
-    <title>阿森纳不败赛季传球路线图探索 02</title>
-    <link href="https://tanzhijian.org/posts/invincible_02"></link>
-    <id>1681501683.1309137</id>
-    <updated>2023-04-15T03:48:03Z</updated>
-    <published>2023-04-15T03:48:03Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary><p>上篇文章选取了其中一场的比赛，其主力阵容除了右边前卫帕洛尔，其余都是不败赛季夺冠的常规主力，这次的探索目标为整个赛季的所有比赛，作为常规主力的十一人传球路线图</p>
-</summary>
-    <content type="html">
-      <h1>阿森纳不败赛季传球路线图探索 02</h1>
-<p>上篇文章选取了其中一场的比赛，其主力阵容除了右边前卫帕洛尔，其余都是不败赛季夺冠的常规主力，这次的探索目标为整个赛季的所有比赛，作为常规主力的十一人传球路线图</p>
-<p>首先是获取 38 场比赛的数据集</p>
-<h2>import</h2>
-<pre><code class="language-python">import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from mplsoccer import Pitch, Sbopen
-</code></pre>
-<pre><code class="language-python"># 获取所有比赛的 id
-parser = Sbopen()
-matches = parser.match(competition_id=2, season_id=44)
-</code></pre>
-<pre><code class="language-python"># 获取所有比赛的事件数据集
-events = []
-for match_id in matches[&#x27;match_id&#x27;]:
-    data = parser.event(match_id)
-    # data[0] 为 event
-    events.append(data[0])
-</code></pre>
-<h2>获取需要的数据</h2>
-<p>现在需要找到首发 11 人的 player_id, 这一步手动来完成了，也就是上一篇文章的首发阵容 id，然后把帕洛尔换成永贝里</p>
-<pre><code class="language-python">invincible_11 = [
-    20015,
-    40222, 38412, 15637, 12529,
-    15754, 40221, 15515, 19312,
-    15042, 15516,
-]
-</code></pre>
-<pre><code class="language-python"># 手动获取一场全部 11 人阵容的比赛
-lineup = parser.lineup(3749257)
-invincible_11 = pd.merge(
-    pd.DataFrame({&#x27;player_id&#x27;: invincible_11}),
-    lineup[[&#x27;player_id&#x27;, &#x27;player_nickname&#x27;,]],
-    on=&#x27;player_id&#x27;
-)
-</code></pre>
-<p>接下来设置过滤条件，和上一篇文章差不多：</p>
-<ol>
-<li>对手的事件</li>
-<li>失败的传球</li>
-<li>传球队员与接球队员是否 invincible_11</li>
-</ol>
-<pre><code class="language-python">def mask(events):
-    _filter = (
-    events.type_name == &#x27;Pass&#x27;) &amp; (
-    events.team_name == &quot;Arsenal&quot;) &amp; (
-    events.player_id.isin(invincible_11.player_id)) &amp; (
-    events.pass_recipient_id.isin(invincible_11.player_id)) &amp; (
-    events.outcome_name.isnull())
-    
-    passes = events.loc[_filter, [
-        &#x27;x&#x27;, &#x27;y&#x27;, &#x27;end_x&#x27;, &#x27;end_y&#x27;,
-        &#x27;player_id&#x27;, &#x27;player_name&#x27;, &#x27;pass_recipient_name&#x27;, &#x27;pass_recipient_id&#x27;
-    ]]
-    return passes
-</code></pre>
-<pre><code class="language-python">passes = pd.concat([mask(event) for event in events])
-</code></pre>
-<pre><code class="language-python">passes = passes.reset_index()
-passes.head()
-</code></pre>
-<div>
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th>index</th>
-      <th>x</th>
-      <th>y</th>
-      <th>end_x</th>
-      <th>end_y</th>
-      <th>player_id</th>
-      <th>player_name</th>
-      <th>pass_recipient_name</th>
-      <th>pass_recipient_id</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>4</td>
-      <td>61.0</td>
-      <td>40.1</td>
-      <td>61.4</td>
-      <td>43.6</td>
-      <td>15516.0</td>
-      <td>Thierry Henry</td>
-      <td>Dennis Bergkamp</td>
-      <td>15042.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>12</td>
-      <td>37.6</td>
-      <td>2.9</td>
-      <td>23.4</td>
-      <td>24.7</td>
-      <td>12529.0</td>
-      <td>Ashley Cole</td>
-      <td>Sulzeer Jeremiah ''Sol' Campbell</td>
-      <td>15637.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>31</td>
-      <td>11.1</td>
-      <td>9.7</td>
-      <td>7.7</td>
-      <td>21.5</td>
-      <td>12529.0</td>
-      <td>Ashley Cole</td>
-      <td>Sulzeer Jeremiah ''Sol' Campbell</td>
-      <td>15637.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>75</td>
-      <td>17.7</td>
-      <td>11.5</td>
-      <td>26.2</td>
-      <td>8.1</td>
-      <td>12529.0</td>
-      <td>Ashley Cole</td>
-      <td>Robert Pirès</td>
-      <td>19312.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>97</td>
-      <td>25.3</td>
-      <td>29.3</td>
-      <td>30.0</td>
-      <td>49.1</td>
-      <td>38412.0</td>
-      <td>Kolo Habib Touré</td>
-      <td>Laureano Bisan-Etame Mayer</td>
-      <td>40222.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-<h2>画图</h2>
-<pre><code class="language-python"># 计算位置和大小
-scatter = pd.DataFrame()
-for i, _id in enumerate(passes[&#x27;player_id&#x27;].unique()):
-    pass_x = passes.loc[passes[&#x27;player_id&#x27;] == _id][&#x27;x&#x27;].to_numpy()
-    pass_y = passes.loc[passes[&#x27;player_id&#x27;] == _id][&#x27;y&#x27;].to_numpy()
-    rec_x = passes.loc[passes[&#x27;pass_recipient_id&#x27;] == _id][&#x27;end_x&#x27;].to_numpy()
-    rec_y = passes.loc[passes[&#x27;pass_recipient_id&#x27;] == _id][&#x27;end_y&#x27;].to_numpy()
-    scatter.at[i, &#x27;player_id&#x27;] = _id
-    
-    # 计算每个点的 x 和 y，位置为传球和接球的平均值
-    scatter.at[i, &#x27;x&#x27;] = np.mean(np.concatenate([pass_x, rec_x]))
-    scatter.at[i, &#x27;y&#x27;] = np.mean(np.concatenate([pass_y, rec_y]))
-    
-    # 计算传球数
-    scatter.at[i, &#x27;count&#x27;] = passes.loc[
-        passes[&#x27;player_id&#x27;] == _id].count().iloc[0]
-</code></pre>
-<pre><code class="language-python"># 位置大小
-scatter[&#x27;marker_size&#x27;] = scatter[&#x27;count&#x27;] / scatter[&#x27;count&#x27;].max() * 3000
-</code></pre>
-<pre><code class="language-python"># 合并名字
-scatter = pd.merge(
-    scatter,
-    invincible_11,
-    on=&#x27;player_id&#x27;
-)
-</code></pre>
-<pre><code class="language-python"># 计算球员之间的传球次数
-passes[&#x27;pair_key&#x27;] = passes.apply(
-    lambda x: &#x27;-&#x27;.join(sorted([str(x[&#x27;player_id&#x27;]), 
-                               str(x[&#x27;pass_recipient_id&#x27;])])),
-    axis=1,
-)
-lines = passes.groupby([&#x27;pair_key&#x27;]).x.count().reset_index()
-lines.rename({&#x27;x&#x27;: &#x27;pass_count&#x27;}, axis=&#x27;columns&#x27;, inplace=True)
-
-# 设定一个阈值，可以尝试研究它在更改时如何变化
-lines = lines[lines[&#x27;pass_count&#x27;] &gt; 4 * 38]
-
-# 绘制球场
-pitch = Pitch(line_color=&#x27;grey&#x27;)
-fig, ax = pitch.grid(
-    grid_height=0.9, title_height=0.06, axis=False,
-    endnote_height=0.04, title_space=0, endnote_space=0,
-)
-# 球场上的位置
-pitch.scatter(
-    scatter.x, scatter.y, s=scatter.marker_size, 
-    color=&#x27;red&#x27;, edgecolors=&#x27;grey&#x27;, linewidth=1, alpha=0.8,
-    ax=ax[&#x27;pitch&#x27;], zorder=3,
-)
-
-# 填充球员名字
-for i, row in scatter.iterrows():
-    pitch.annotate(
-        row.player_nickname, xy=(row.x, row.y), c=&#x27;black&#x27;, 
-        va=&#x27;center&#x27;, ha=&#x27;center&#x27;, weight=&quot;bold&quot;, 
-        size=14, ax=ax[&quot;pitch&quot;], zorder=4,
-    )
-    
-for i, row in lines.iterrows():
-    player1 = float(row[&#x27;pair_key&#x27;].split(&#x27;-&#x27;)[0])
-    player2 = float(row[&#x27;pair_key&#x27;].split(&#x27;-&#x27;)[1])
-    
-    # 取球员的平均位置在他们之间画一条线
-    player1_x = scatter.loc[scatter[&#x27;player_id&#x27;] == player1][&#x27;x&#x27;].iloc[0]
-    player1_y = scatter.loc[scatter[&#x27;player_id&#x27;] == player1][&#x27;y&#x27;].iloc[0]
-    player2_x = scatter.loc[scatter[&#x27;player_id&#x27;] == player2][&#x27;x&#x27;].iloc[0]
-    player2_y = scatter.loc[scatter[&#x27;player_id&#x27;] == player2][&#x27;y&#x27;].iloc[0]
-    passes_count = row[&#x27;pass_count&#x27;]
-    # 调整线宽，传球的次数越多，线越宽
-    line_width = passes_count / lines[&#x27;pass_count&#x27;].max() * 15
-
-    pitch.lines(
-        player1_x, player1_y, player2_x, player2_y,
-        alpha=0.8, lw=line_width, zorder=2, color=&#x27;red&#x27;, ax=ax[&#x27;pitch&#x27;]
-    )
-    
-fig.suptitle(&#x27;Invincible 11&#x27;, fontsize=30)
-plt.show()
-
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/15/LN5KPG6efpjFRMC.png" alt="invincible_11_passing_networks.png" /></p>
-<h2>结论</h2>
-<p>高中时期我和好友无数次在实况足球里面模拟这一套 442，现在看到还原出来蛮感慨</p>
-<ol>
-<li>莱曼的出球线路，图雷，较少直接找两个边后卫，很少开大脚</li>
-<li>图雷担任出球中卫</li>
-<li>劳伦这一侧的球权比想象中多</li>
-<li>吉尔伯托在后场出球系统中几乎和维埃拉同样重要，但他没有向前传球的路线</li>
-<li>托后三人组，坎贝尔，图雷，吉尔伯托</li>
-<li>阿什利科尔 - 皮雷 - 亨利是主要的推进线路</li>
-<li>永贝里的主要进攻路线是传中找亨利</li>
-<li>皮雷当之无愧的进攻核心</li>
-<li>所有的进攻球都在找亨利</li>
-<li>博格坎普可能受制于出场时间，并没有想象中重要</li>
 </ol>
 
     </content>
