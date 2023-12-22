@@ -2,21 +2,23 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-11-24T19:13:31Z</updated>
+  <updated>2023-12-22T16:32:13Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>介绍一下 fusion-stat</title>
     <link href="https://tanzhijian.org/posts/fusion_stat_intro"></link>
-    <id>1700824411.351321</id>
-    <updated>2023-11-24T19:13:31Z</updated>
-    <published>2023-11-24T19:13:31Z</published>
+    <id>1703233933.8477497</id>
+    <updated>2023-12-22T16:32:13Z</updated>
+    <published>2023-12-22T16:32:13Z</published>
     <author><name>tanzhijian</name></author>
-    <summary>最初只是想给 score-simulator 写一个获取数据的脚本，但写着写着应该可以写成一个工具，可以方便获取网络上免费公开足球数据的爬虫工具，到目前为止可以正常给 score-simulator 提供数据了，于是发布了一个版本到 pip 方便自己使用。
+    <summary>更新：已经更新 API
 </summary>
     <content type="html">
       <h1>介绍一下 fusion-stat</h1>
+<p>更新：已经更新 API</p>
+<hr />
 <p>最初只是想给 score-simulator 写一个获取数据的脚本，但写着写着应该可以写成一个工具，可以方便获取网络上免费公开足球数据的爬虫工具，到目前为止可以正常给 score-simulator 提供数据了，于是发布了一个版本到 pip 方便自己使用。</p>
 <p>他的特点是同时从不同的数据源获取然后组合在一起。因为这确实是获取足球数据一个很麻烦的事情，从一个数据源获取一些数据，从另一个数据源获取另一些数据，他们大多数基础数据是相同的，只有一些不同的特色数据，而 fusion-stat 便是在获取数据时就把它们最大程度的拼接在一起，通过一次调用就可以获得一份尽可能全面的数据。</p>
 <pre><code class="language-python">competitions = Competitions()
