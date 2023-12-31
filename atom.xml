@@ -2,10 +2,156 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-12-22T16:32:13Z</updated>
+  <updated>2023-12-31T20:00:02Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>一些读取环境变量的探讨</title>
+    <link href="https://tanzhijian.org/posts/explore_env"></link>
+    <id>1704024002.7686512</id>
+    <updated>2023-12-31T20:00:02Z</updated>
+    <published>2023-12-31T20:00:02Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>我最早使用，到现在也一直在用的包了，基本覆盖了日常使用的需求，简单，可读性也很好
+</summary>
+    <content type="html">
+      <h1>一些读取环境变量的探讨</h1>
+<h2>python-decouple</h2>
+<p>我最早使用，到现在也一直在用的包了，基本覆盖了日常使用的需求，简单，可读性也很好</p>
+<pre><code class="language-python">def test_decoupe_config() -&gt; None:
+    foobar = config(&#x27;FOOBAR&#x27;)
+    assert foobar == &#x27;foobar&#x27;
+
+    assert config(&#x27;NUMBER&#x27;) == &#x27;1&#x27;
+    assert config(&#x27;NUMBER&#x27;, cast=int) == 1
+
+    with pytest.raises(UndefinedValueError):
+        assert not config(&#x27;FOO&#x27;)
+
+    foo = config(&#x27;FOO&#x27;, default=None)
+    assert foo is None
+</code></pre>
+<p>但是它在一些静态工具里面会丢失类型提示，比如 pyright <code>foobar = config(&#x27;FOOBAR&#x27;)</code> 会被推断为类型 <code>bool | Unknown</code>，以至于每次要正确设置类型的时候需要 <code>foobar: str | None = config(&#x27;FOOBAR&#x27;)</code></p>
+<p>它的主类 <code>def __call__(self, *args, **kwargs):</code>，也不能支持参数的补全提示</p>
+<h2>python-dotenv</h2>
+<p>推荐用法之一是统一调用函数 <code>load_dotenv()</code>，它的具体细节是这样：</p>
+<pre><code class="language-python">def set_as_environment_variables(self) -&gt; bool:
+    &quot;&quot;&quot;
+    Load the current dotenv as system environment variable.
+    &quot;&quot;&quot;
+    if not self.dict():
+        return False
+
+    for k, v in self.dict().items():
+        if k in os.environ and not self.override:
+            continue
+        if v is not None:
+            os.environ[k] = v
+
+    return True
+</code></pre>
+<p>把读取到的 .env 通过 <code>os.environ[k] = v</code> 写到环境变量，使用时 <code>os.getenv()</code> 读取即可，好处是使用逻辑比较统一，但我个人并不喜欢这样用，因为会污染到环境变量</p>
+<p>不过它提供一个用来专门读取 .env 的函数 dotenv_values</p>
+<pre><code class="language-python">def test_dotenv_values() -&gt; None:
+    dotenv = dotenv_values(&#x27;.env&#x27;)
+    foobar = dotenv[&#x27;FOOBAR&#x27;]
+    assert foobar == &#x27;foobar&#x27;
+
+    assert dotenv[&#x27;NUMBER&#x27;] == &#x27;1&#x27;
+
+    with pytest.raises(KeyError):
+        assert not dotenv[&#x27;FOO&#x27;]
+
+    foo = dotenv.get(&#x27;FOO&#x27;)
+    assert foo is None
+</code></pre>
+<p>默认是读取 <code>.env</code>，也可以传入其他文件名，返回值是一个 dict，使用就和操作 dict 一样，可以通过 <code>.get</code> 返回 <code>str | None</code>，也可以直接抛出 <code>KeyError</code>，很方便。还可以通过解包的形式读取多个配置以及环境变量</p>
+<pre><code class="language-python">config = {
+    **dotenv_values(),
+    **dotenv_values(&#x27;.env.test&#x27;),
+    **os.environ,
+}
+</code></pre>
+<p>缺点是纯手动，也没有自带的类型转换，其实关系不大，无论是简单的还是复杂的转换无非就是自己多写这行代码还是通过参数传入逻辑的区别。也有单个读取 <code>get_key()</code></p>
+<pre><code class="language-python">def test_dotenv_get_key() -&gt; None:
+    foobar = get_key(&#x27;.env&#x27;, &#x27;FOOBAR&#x27;)
+    assert foobar == &#x27;foobar&#x27;
+
+    foo = get_key(&#x27;.env&#x27;, &#x27;FOO&#x27;)
+    assert foo is None
+</code></pre>
+<pre><code class="language-python">def get(key: str) -&gt; str | None:
+    if (value := get_key(&#x27;.env&#x27;, key)) is not None:
+        return value
+    return os.getenv(key)
+</code></pre>
+<p>缺点还是纯手动。但它依然是使用者最多的包，很适合用来在此基础上开发更多的功能</p>
+<h2>pydantic-settings</h2>
+<p>pydantic-settings 便是使用了 python-dotenv 支持 .env 读取</p>
+<pre><code class="language-python">class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=&#x27;.env&#x27;,
+        env_file_encoding=&#x27;utf-8&#x27;,
+    )
+
+    FOOBAR: str | None = None
+    NUMBER: int | None = None
+
+
+def test_pydantic_settings() -&gt; None:
+    settings = Settings()
+    assert settings.FOOBAR == &#x27;foobar&#x27;
+    assert settings.NUMBER == 1
+</code></pre>
+<p>通过 pydantic 优秀的验证和转换，可以实现很好的类型转换。如果项目中使用了 pydantic 可以优先使用它</p>
+<h2>starlette.config</h2>
+<p>starlette.config 在我看来是 python-decouple 最完美的替代品了，而且它和 python-decouple 也算是渊源颇深。用法基本一致</p>
+<pre><code class="language-python">def test_starlette_config() -&gt; None:
+    config = Config(&#x27;.env&#x27;)
+    foobar = config(&#x27;FOOBAR&#x27;)
+    assert foobar == &#x27;foobar&#x27;
+
+    assert config(&#x27;NUMBER&#x27;) == &#x27;1&#x27;
+    assert config(&#x27;NUMBER&#x27;, cast=int) == 1
+    assert config(&#x27;NUMBER&#x27;, cast=bool) is True
+
+    with pytest.raises(KeyError):
+        assert not config(&#x27;FOO&#x27;)
+
+    foo = config(&#x27;FOO&#x27;, default=None)
+    assert foo is None
+</code></pre>
+<p>类型提示，参数补全的问题被解决掉了，同时它还有一个实现的很有意思的 Secret 类用来读取敏感数据</p>
+<pre><code class="language-python">class Secret:
+    &quot;&quot;&quot;
+    Holds a string value that should not be revealed in tracebacks etc.
+    You should cast the value to `str` at the point it is required.
+    &quot;&quot;&quot;
+
+    def __init__(self, value: str):
+        self._value = value
+
+    def __repr__(self) -&gt; str:
+        class_name = self.__class__.__name__
+        return f&quot;{class_name}(&#x27;**********&#x27;)&quot;
+
+    def __str__(self) -&gt; str:
+        return self._value
+
+    def __bool__(self) -&gt; bool:
+        return bool(self._value)
+</code></pre>
+<pre><code class="language-python">def test_starlette_config_secret() -&gt; None:
+    config = Config(&#x27;.env&#x27;)
+    secret = config(&#x27;FOOBAR&#x27;, cast=Secret)
+    assert repr(secret) == &quot;Secret(&#x27;**********&#x27;)&quot;
+    assert str(secret) == &#x27;foobar&#x27;
+</code></pre>
+<p>没有用加密手段却规避了在调试时的信息泄露。但它的不方便之处在于，不可能为了只使用而安装整个 Starlette。于是大多数时候都是用 python-dotenv 自己写一个读取的类</p>
+
+    </content>
+  </entry>
   <entry>
     <title>介绍一下 fusion-stat</title>
     <link href="https://tanzhijian.org/posts/fusion_stat_intro"></link>
@@ -810,195 +956,6 @@ plot_player_passes(player, mean_passes)
 <p><img src="https://s2.loli.net/2023/04/29/GVHYfwemKSIEyX2.png" alt="attacking_play_ljungberg.png" /></p>
 <p>与皮雷不一样的是，就地选择进攻传球更为频繁，习惯性活动范围固定在几块，可能与他场上位置更多变有关</p>
 <p>传球路线图就到这里了，下一次探索些别的</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>阿森纳不败赛季传球路线图探索 03</title>
-    <link href="https://tanzhijian.org/posts/invincible_03"></link>
-    <id>1681920025.0</id>
-    <updated>2023-04-20T00:00:25Z</updated>
-    <published>2023-04-20T00:00:25Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。
-</summary>
-    <content type="html">
-      <h1>阿森纳不败赛季传球路线图探索 03</h1>
-<p>这次用热区图的形式来探索，与平时所看的全场比赛事件分布热区图不一样的是，用的是危险传球——这次把射门前 15 秒内的传球都视为危险传球。</p>
-<p>前面获取数据部分和上一篇大致相同</p>
-<h2>import</h2>
-<pre><code class="language-python">import pandas as pd
-import matplotlib.pyplot as plt
-from mplsoccer import Pitch, Sbopen, VerticalPitch
-</code></pre>
-<pre><code class="language-python">parser = Sbopen()
-matches = parser.match(competition_id=2, season_id=44)
-matches_events = []
-for match_id in matches[&#x27;match_id&#x27;]:
-    data = parser.event(match_id)
-    matches_events.append(data[0])
-</code></pre>
-<h2>获取危险传球</h2>
-<p>获取阿森纳所有比赛的射门和准确传球，且传球不是定位球，然后寻找射门前 15 秒的传球，对于时间需要考虑上下半场，伤停补时的特殊处理</p>
-<pre><code class="language-python">danger_passes = pd.DataFrame()
-for events in matches_events:
-    # 上下半场
-    for period in [1, 2]:
-        # 只保留没有定位球的准确传球
-        pass_filter = (
-            events.team_name == &#x27;Arsenal&#x27;) &amp; (
-            events.type_name == &quot;Pass&quot;) &amp; (
-            events.outcome_name.isnull()) &amp; (
-            events.period == period) &amp; (
-            events.sub_type_name.isnull())
-        passes = events.loc[
-            pass_filter, 
-            [
-                &quot;x&quot;, &quot;y&quot;, &quot;end_x&quot;, &quot;end_y&quot;, 
-                &quot;minute&quot;, &quot;second&quot;, &quot;player_name&quot;,
-            ],
-        ]
-        # 只保留阿森纳的射门
-        shot_filter = (
-            events.team_name == &#x27;Arsenal&#x27;) &amp; (
-            events.type_name == &quot;Shot&quot;) &amp; (
-            events.period == period)
-        shots = events.loc[shot_filter, [&quot;minute&quot;, &quot;second&quot;]]
-        shot_times = shots[&#x27;minute&#x27;] * 60 + shots[&#x27;second&#x27;]
-        
-        # 设置为射门前 15 秒
-        shot_anchor = 15
-        shot_start = shot_times - shot_anchor
-        
-        # 处理时间
-        shot_start = shot_start.apply(lambda i: i if i &gt; 0 else (period - 1) * 45)
-        pass_times = passes[&#x27;minute&#x27;] * 60 + passes[&#x27;second&#x27;]
-
-        pass_to_shot = pass_times.apply(
-            lambda x: True in ((shot_start &lt; x) &amp; (x &lt; shot_times)).unique())
-
-        # 只保留危险传球
-        danger_passes_period = passes.loc[pass_to_shot]
-        danger_passes = pd.concat(
-            [danger_passes, danger_passes_period], 
-            ignore_index=True
-        )
-</code></pre>
-<pre><code class="language-python">danger_passes.head()
-</code></pre>
-<div>
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th>x</th>
-      <th>y</th>
-      <th>end_x</th>
-      <th>end_y</th>
-      <th>minute</th>
-      <th>second</th>
-      <th>player_name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>52.6</td>
-      <td>54.3</td>
-      <td>54.6</td>
-      <td>45.0</td>
-      <td>8</td>
-      <td>4</td>
-      <td>Patrick Vieira</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>69.9</td>
-      <td>28.5</td>
-      <td>102.0</td>
-      <td>26.9</td>
-      <td>8</td>
-      <td>8</td>
-      <td>Eduardo César Daude Gaspar</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>102.0</td>
-      <td>26.9</td>
-      <td>104.7</td>
-      <td>37.6</td>
-      <td>8</td>
-      <td>10</td>
-      <td>Ashley Cole</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>60.0</td>
-      <td>45.6</td>
-      <td>68.9</td>
-      <td>33.9</td>
-      <td>12</td>
-      <td>7</td>
-      <td>Robert Pirès</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>68.5</td>
-      <td>33.9</td>
-      <td>79.1</td>
-      <td>31.1</td>
-      <td>12</td>
-      <td>9</td>
-      <td>Eduardo César Daude Gaspar</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-<h2>绘制热区图</h2>
-<p>这次在球场上使用 6 * 5 的格子来制作，其中宽度区域对应中肋边路，六块长度区域在瓜迪奥拉的战术板经常能看到</p>
-<pre><code class="language-python">pitch = Pitch(line_zorder=2, line_color=&#x27;grey&#x27;)
-fig, ax = pitch.grid(
-    grid_height=0.9, title_height=0.06, axis=False,
-    endnote_height=0.04, title_space=0, endnote_space=0
-)
-
-bin_statistic = pitch.bin_statistic(
-    danger_passes.x, danger_passes.y, 
-    statistic=&#x27;count&#x27;, bins=(6, 5), normalize=False,
-)
-
-# 绘制热区图
-pcm = pitch.heatmap(
-    bin_statistic, cmap=&#x27;Reds&#x27;, edgecolor=&#x27;black&#x27;, ax=ax[&#x27;pitch&#x27;]
-)
-
-# 绘制说明
-ax_cbar = fig.add_axes((1, 0.093, 0.03, 0.786))
-cbar = plt.colorbar(pcm, cax=ax_cbar)
-
-fig.suptitle(&#x27;Danger passes by Arsenal&#x27;, fontsize=30)
-plt.show()
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/19/9yWTgXGkQbl2vKf.png" alt="arsenal_0304_danger_pass_heatmap.png" /></p>
-<h2>绘制参与危险传球最多球员的图表</h2>
-<p>为了更加清晰的探索，将球员参与的传球次数绘制出来</p>
-<p>这次偷个懒就不与 nickname 结合了</p>
-<pre><code class="language-python">passes_count = danger_passes.groupby([&#x27;player_name&#x27;]).x.count()
-
-ax = passes_count.plot.barh(passes_count)
-ax.set_xlabel(&#x27;Number of danger passes&#x27;)
-ax.set_ylabel(&#x27;&#x27;)
-plt.show()
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/19/IO2bqtkSLTKjhCg.png" alt="number_of_arsenal_0304_danger_pass.png" /></p>
-<h2>结论</h2>
-<ol>
-<li>维埃拉-皮雷-亨利占据了形成射门的大多数传球，球会经过他们很多次，是整个进攻体系的核心</li>
-<li>博格坎普受限于出场(21次首发8次替补)，他的进攻参与度重要性不亚于 1</li>
-<li>亨利作为终结者，在进攻传球网络中也有如此重要的数据，全能</li>
-<li>左路肋部区域承担了推进至禁区的大多任务，</li>
-<li>右路参与的控球大多数会通过中路交到左路，少部分会在右路传到禁区</li>
-</ol>
 
     </content>
   </entry>

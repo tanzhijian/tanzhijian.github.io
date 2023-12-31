@@ -1,5 +1,7 @@
 ## 目录
 
+* [一些读取环境变量的探讨](https://tanzhijian.org/posts/explore_env)
+
 * [介绍一下 fusion-stat](https://tanzhijian.org/posts/fusion_stat_intro)
 
 * [关于在 fusion-stat 中使用 rapidfuzz 匹配名字](https://tanzhijian.org/posts/fusion_stat_and_rapidfuzz)
