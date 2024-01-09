@@ -2,10 +2,109 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2023-12-31T20:00:02Z</updated>
+  <updated>2024-01-10T01:29:23Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>关于在 fusion_stat.models 中使用 shortlist 作为匹配辅助的探讨</title>
+    <link href="https://tanzhijian.org/posts/fusion_stat_shortlist"></link>
+    <id>1704821363.2208958</id>
+    <updated>2024-01-10T01:29:23Z</updated>
+    <published>2024-01-10T01:29:23Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>fusion-stat 有一个一直让我不安的地方，就是在使用 rapidfuzz.process.extractOne 匹配时返回唯一结果的正确性，我并不确定他在扩展越来越多的数据源后能不能继续保持良好的运转，所以一直在探索一些方法解决。而今晚想到一个暂且看上去还不错，但也不是很好的，先上代码吧
+</summary>
+    <content type="html">
+      <h1>关于在 fusion_stat.models 中使用 shortlist 作为匹配辅助的探讨</h1>
+<p>fusion-stat 有一个一直让我不安的地方，就是在使用 rapidfuzz.process.extractOne 匹配时返回唯一结果的正确性，我并不确定他在扩展越来越多的数据源后能不能继续保持良好的运转，所以一直在探索一些方法解决。而今晚想到一个暂且看上去还不错，但也不是很好的，先上代码吧</p>
+<pre><code class="language-python">import typing
+import warnings
+from abc import ABC
+
+from rapidfuzz import fuzz, process
+
+T = typing.TypeVar(&#x27;T&#x27;)
+_S1 = typing.TypeVar(&#x27;_S1&#x27;)
+_S2 = typing.TypeVar(&#x27;_S2&#x27;)
+
+
+MINIMUM_SIMILARITY = 50
+SIMILARITY_DIFFERENCE = 5
+
+
+class BaseModel(ABC):
+    def __init__(self, show_warning: bool = True) -&gt; None:
+        self.show_warning = show_warning
+        self._shortlist: list[typing.Any] = []
+
+    @property
+    def shortlist(self) -&gt; list[typing.Any]:
+        return self._shortlist
+
+    def extract(
+        self,
+        query: _S1,
+        choices: list[_S2],
+        scorer: typing.Callable[..., int | float] = fuzz.WRatio,
+        processor: typing.Callable[..., typing.Sequence[typing.Hashable]]
+        | None = None,
+        score_cutoff: int | float | None = None,
+    ) -&gt; _S2:
+        results = process.extract(
+            query,
+            choices,
+            scorer=scorer,
+            processor=processor,
+            score_cutoff=score_cutoff,
+        )
+
+        first = results[0]
+        second = results[1] if len(results) &gt; 1 else None
+        if first[1] &lt; MINIMUM_SIMILARITY:
+            if self.show_warning:
+                warnings.warn(
+                    (
+                        &#x27;The result similarity is less than 50%, &#x27;
+                        &#x27;please check the shortlist.&#x27;
+                    ),
+                    SimilarityWarnings,
+                )
+            self._shortlist.append((query, results))
+        elif (
+            second is not None
+            and abs(first[1] - second[1]) &lt; SIMILARITY_DIFFERENCE
+        ):
+            if self.show_warning:
+                warnings.warn(
+                    (
+                        &#x27;There are results that are too similar, &#x27;
+                        &#x27;please check the shortlist.&#x27;
+                    ),
+                    SimilarityWarnings,
+                )
+            self._shortlist.append((query, results))
+
+        return results[0][0]
+
+
+class SimilarityWarnings(Warning):
+    pass
+</code></pre>
+<p>我的大致思路是每个 model 都继承 BaseModel 获得 shortlist 和 extract，extract 是对 rapidfuzz.process.extract 的扩写，基本就是通过 rapidfuzz.process.extract 先获得初步结果 results，然后再进行一系列的判定：</p>
+<ul>
+<li>如果最接近的结果小于 50% 则提示</li>
+<li>如果最接近的两个结果过于相似也提示</li>
+<li>并把所有的结果放到候选列表 shortlist</li>
+<li>最终仍然会返回最接近的结果</li>
+</ul>
+<p>在使用 rapidfuzz.process.extractOne 的地方替换成使用 self.extract。当然了上面的代码只是一个初步的草稿，并没有考虑太多的条件，数值胡乱设一些，shortlist 也没有封装，但大致思路是，在程序一些不能很好判定的时候，把检查核对交给使用者</p>
+<p>但不好的地方在于，fusion-stat 面对的足球数据源通常只有两类：每个数据源都能够一一对应的数据类型，比如赛事，参赛球队，比赛，历史数据；每个数据源不能一一对应上的数据类型，比如球员名单，一些数据源会包含二队，青年队，位置参数，每个数据源对于位置的理解是有差别；而 extractOne 基本是在匹配后一类时会出错，所以 self.extract 并不能成为一个通用方法，而是专用方法</p>
+<p>另一个顾虑是，在使用 extractOne 匹配不能一一对应的数据时目前是设置了 score_cutoff 参数一刀切，最小匹配策略，而如果想在这上面优化，默认返回的匹配结果将会是一个很大的问题，因为没有达到标准，如果要返回大概率将会是一个错误的结果，而同时还需要把 shorlist 交给使用者判定，如果使用者没有注意到 shortlist 呢，或者只是想把它跑在一个自动化程序里面并不想每天去观察改动呢</p>
+<p>所以原本打算在 0.0.5 使用上这个功能，但又暂时不考虑了</p>
+
+    </content>
+  </entry>
   <entry>
     <title>一些读取环境变量的探讨</title>
     <link href="https://tanzhijian.org/posts/explore_env"></link>
@@ -770,192 +869,6 @@ weighted avg       0.90      0.91      0.88       832
 </table>
 </div>
 <p>暂时可以用，之后时间再来优化了</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>阿森纳不败赛季传球路线图探索 04</title>
-    <link href="https://tanzhijian.org/posts/invincible_04"></link>
-    <id>1682751927.0</id>
-    <updated>2023-04-29T15:05:27Z</updated>
-    <published>2023-04-29T15:05:27Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes
-</summary>
-    <content type="html">
-      <h1>阿森纳不败赛季传球路线图探索 04</h1>
-<p>这一次探索单个球员的进攻传球路线。首先还是画出热区图，准备数据的部分和前面一篇相同，就不重复写了，直接跳到 danger_passes</p>
-<pre><code class="language-python">import pandas as pd
-import matplotlib.pyplot as plt
-from mplsoccer import Pitch, Sbopen, VerticalPitch
-</code></pre>
-<pre><code class="language-python">danger_passes.head()
-</code></pre>
-<div>
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th>x</th>
-      <th>y</th>
-      <th>end_x</th>
-      <th>end_y</th>
-      <th>minute</th>
-      <th>second</th>
-      <th>player_name</th>
-      <th>player_id</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>52.6</td>
-      <td>54.3</td>
-      <td>54.6</td>
-      <td>45.0</td>
-      <td>8</td>
-      <td>4</td>
-      <td>Patrick Vieira</td>
-      <td>15515.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>69.9</td>
-      <td>28.5</td>
-      <td>102.0</td>
-      <td>26.9</td>
-      <td>8</td>
-      <td>8</td>
-      <td>Eduardo César Daude Gaspar</td>
-      <td>26014.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>102.0</td>
-      <td>26.9</td>
-      <td>104.7</td>
-      <td>37.6</td>
-      <td>8</td>
-      <td>10</td>
-      <td>Ashley Cole</td>
-      <td>12529.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>60.0</td>
-      <td>45.6</td>
-      <td>68.9</td>
-      <td>33.9</td>
-      <td>12</td>
-      <td>7</td>
-      <td>Robert Pirès</td>
-      <td>19312.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>68.5</td>
-      <td>33.9</td>
-      <td>79.1</td>
-      <td>31.1</td>
-      <td>12</td>
-      <td>9</td>
-      <td>Eduardo César Daude Gaspar</td>
-      <td>26014.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-<h2>探索单个球员</h2>
-<p>作为威胁传球的核心，首先来探索皮雷，手动在名单里获取皮雷的 id，然后过滤</p>
-<pre><code class="language-python">bins = (6, 5)
-</code></pre>
-<pre><code class="language-python">pires = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 19312]
-</code></pre>
-<pre><code class="language-python">def plot_player_passes(player, passes):
-    pitch = Pitch(line_zorder=2, line_color=&quot;grey&quot;)
-    fig, ax = pitch.grid(
-        grid_height=0.9,
-        title_height=0.06,
-        axis=False,
-        endnote_height=0.04,
-        title_space=0,
-        endnote_space=0,
-    )
-
-    bin_statistic = pitch.bin_statistic(
-        player.x,
-        player.y,
-        statistic=&quot;count&quot;,
-        bins=bins,
-        normalize=False,
-    )
-
-    # 制作热区图
-    pcm = pitch.heatmap(
-        bin_statistic, 
-        cmap=&quot;Reds&quot;, 
-        # edgecolor=&quot;grey&quot;, 
-        ax=ax[&quot;pitch&quot;],
-    )
-
-    # 绘制传球路线
-    pitch.arrows(
-        passes.x,
-        passes.y,
-        passes.end_x,
-        passes.end_y,
-        color=&quot;black&quot;,
-        alpha=1,
-        width=2,
-        ax=ax[&quot;pitch&quot;],
-    )
-
-    fig.suptitle(f&quot;{player.iloc[0].player_name}&quot;, fontsize=30)
-    plt.show()
-</code></pre>
-<pre><code class="language-python">plot_player_passes(pires, pires)
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/29/6ujT13XKcx7EnOg.png" alt="attacking_play_pires_01.png" /></p>
-<p>这样的路线看起来未免杂乱，这里使用 Opta 的一种传球表现图：球场分成 10 * 10 的区域，每一块区域传球次数越多颜色越深，箭头表示此区域的平均传球方向</p>
-<pre><code class="language-python">bins = (10, 10)
-</code></pre>
-<pre><code class="language-python">def binning_groupby_mean(player):
-    x_bins = [i for i in range(0, 121, 120 // bins[0])]
-    y_bins = [i for i in range(0, 81, 80 // bins[1])]
-    player[&#x27;x_bin&#x27;] = pd.cut(player[&#x27;x&#x27;], x_bins)
-    player[&#x27;y_bin&#x27;] = pd.cut(player[&#x27;y&#x27;], y_bins)
-    return player.groupby([&#x27;x_bin&#x27;, &#x27;y_bin&#x27;]).mean()
-</code></pre>
-<pre><code class="language-python">mean_passes = binning_groupby_mean(pires)
-plot_player_passes(pires, mean_passes)
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/29/OtbKrZBPfMTLyaF.png" alt="attacking_play_pires_02.png" /></p>
-<p>边路进攻核心活动区域，次数最多的是左路肋部区域，在较少拿球的区域传球的距离比较长，到了不是自己的位置会将球传到熟悉的区域而不是就地组织，很少有长距离传中路线</p>
-<pre><code class="language-python">vieira = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15515]
-mean_passes = binning_groupby_mean(vieira)
-plot_player_passes(vieira, mean_passes)
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/29/DmBf7sAeSutwWM1.png" alt="attacking_play_vieira.png" /></p>
-<p>覆盖了整个中场，核心传球区域与皮雷很近，传球选择路线更偏向左路</p>
-<pre><code class="language-python">henry = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15516]
-mean_passes = binning_groupby_mean(henry)
-plot_player_passes(henry, mean_passes)
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/29/dv3SfFq8Z4QpCXb.png" alt="attacking_play_henry.png" /></p>
-<p>与印象不同的是，在中路禁区前沿有着大量的传球，且都是向前的路线，往禁区送出了大量的威胁球，所以在进球同时会收获那么多的助攻</p>
-<pre><code class="language-python">player = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15042]
-mean_passes = binning_groupby_mean(player)
-plot_player_passes(player, mean_passes)
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/29/tPTJrEHj97U5pd1.png" alt="attacking_play_bergkamp.png" /></p>
-<p>活动位置更像是进攻型中场，传球也大多找的禁区前的队友</p>
-<pre><code class="language-python">player = danger_passes.loc[danger_passes[&#x27;player_id&#x27;] == 15754]
-mean_passes = binning_groupby_mean(player)
-plot_player_passes(player, mean_passes)
-</code></pre>
-<p><img src="https://s2.loli.net/2023/04/29/GVHYfwemKSIEyX2.png" alt="attacking_play_ljungberg.png" /></p>
-<p>与皮雷不一样的是，就地选择进攻传球更为频繁，习惯性活动范围固定在几块，可能与他场上位置更多变有关</p>
-<p>传球路线图就到这里了，下一次探索些别的</p>
 
     </content>
   </entry>

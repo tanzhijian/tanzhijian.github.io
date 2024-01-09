@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [关于在 fusion_stat.models 中使用 shortlist 作为匹配辅助的探讨](https://tanzhijian.org/posts/fusion_stat_shortlist)
+
 * [一些读取环境变量的探讨](https://tanzhijian.org/posts/explore_env)
 
 * [介绍一下 fusion-stat](https://tanzhijian.org/posts/fusion_stat_intro)
@@ -17,8 +19,6 @@
 * [阿森纳不败赛季射门探索 02: xG 特征](https://tanzhijian.org/posts/invincible_06)
 
 * [阿森纳不败赛季射门探索 01: xG](https://tanzhijian.org/posts/invincible_05)
-
-* [阿森纳不败赛季传球路线图探索 04](https://tanzhijian.org/posts/invincible_04)
 
 [更多](https://tanzhijian.org/archive)
 
