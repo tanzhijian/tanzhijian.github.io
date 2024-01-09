@@ -9,7 +9,6 @@ from abc import ABC
 
 from rapidfuzz import fuzz, process
 
-T = typing.TypeVar('T')
 _S1 = typing.TypeVar('_S1')
 _S2 = typing.TypeVar('_S2')
 

@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-01-10T01:29:23Z</updated>
+  <updated>2024-01-10T01:35:42Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>关于在 fusion_stat.models 中使用 shortlist 作为匹配辅助的探讨</title>
     <link href="https://tanzhijian.org/posts/fusion_stat_shortlist"></link>
-    <id>1704821363.2208958</id>
-    <updated>2024-01-10T01:29:23Z</updated>
-    <published>2024-01-10T01:29:23Z</published>
+    <id>1704821742.058141</id>
+    <updated>2024-01-10T01:35:42Z</updated>
+    <published>2024-01-10T01:35:42Z</published>
     <author><name>tanzhijian</name></author>
     <summary>fusion-stat 有一个一直让我不安的地方，就是在使用 rapidfuzz.process.extractOne 匹配时返回唯一结果的正确性，我并不确定他在扩展越来越多的数据源后能不能继续保持良好的运转，所以一直在探索一些方法解决。而今晚想到一个暂且看上去还不错，但也不是很好的，先上代码吧
 </summary>
@@ -24,7 +24,6 @@ from abc import ABC
 
 from rapidfuzz import fuzz, process
 
-T = typing.TypeVar(&#x27;T&#x27;)
 _S1 = typing.TypeVar(&#x27;_S1&#x27;)
 _S2 = typing.TypeVar(&#x27;_S2&#x27;)
 
