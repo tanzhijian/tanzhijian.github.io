@@ -1,5 +1,7 @@
 ## 目录
 
+* [fusion-stat 能否使用可读性 id](https://tanzhijian.org/posts/fusion_stat_id_explore)
+
 * [介绍一下 fifacodes](https://tanzhijian.org/posts/fifacodes_intro)
 
 * [关于在 fusion_stat.models 中使用 shortlist 作为匹配辅助的探讨](https://tanzhijian.org/posts/fusion_stat_shortlist)

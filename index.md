@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [fusion-stat 能否使用可读性 id](https://tanzhijian.org/posts/fusion_stat_id_explore)
+
 * [介绍一下 fifacodes](https://tanzhijian.org/posts/fifacodes_intro)
 
 * [关于在 fusion_stat.models 中使用 shortlist 作为匹配辅助的探讨](https://tanzhijian.org/posts/fusion_stat_shortlist)
@@ -17,8 +19,6 @@
 * [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_wood)
 
 * [score-simulator 的一些想法](https://tanzhijian.org/posts/score_simulator)
-
-* [阿森纳不败赛季射门探索 02: xG 特征](https://tanzhijian.org/posts/invincible_06)
 
 [更多](https://tanzhijian.org/archive)
 
