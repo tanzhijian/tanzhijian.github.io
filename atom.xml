@@ -2,10 +2,108 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-02-27T21:54:50Z</updated>
+  <updated>2024-04-07T13:49:34Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>我所设想的 fusion-stat 数据模型</title>
+    <link href="https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas"></link>
+    <id>1712468974.2391882</id>
+    <updated>2024-04-07T13:49:34Z</updated>
+    <published>2024-04-07T13:49:34Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>目前 fusion-stat 模型总共分为 Competitions, Competition, Team, Staff, Player, Matches, Match, 他们之间自成一派，并没有什么关联，且最大的问题是数据规则是写死的，即开发者制定了所有的规则，用户能修改或定制的部分很少，要么便是自己 import spiders 来重写。
+</summary>
+    <content type="html">
+      <h1>我所设想的 fusion-stat 数据模型</h1>
+<p>目前 fusion-stat 模型总共分为 Competitions, Competition, Team, Staff, Player, Matches, Match, 他们之间自成一派，并没有什么关联，且最大的问题是数据规则是写死的，即开发者制定了所有的规则，用户能修改或定制的部分很少，要么便是自己 import spiders 来重写。</p>
+<p>我的设想是统一数据模型。目前为止每个爬虫子模块里面的 item 都是单独定义，很灵活，但当你需要从其他地方导入的时候就不是很优雅，比如会出现大段大段的 <code>spiders.transfermarkt.competition.Item</code> 这样的字段，统一设计数据模型之后，就可以从 models 里面导入。</p>
+<p>大概思路是这样，以 competition 作为例子：</p>
+<pre><code class="language-python">class Stat:
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        **fields: typing.Any,
+    ) -&gt; None:
+        self.id = id
+        self.name = name
+        self.fields = fields
+
+
+class Competition(Stat):
+    def __init__(
+        self,
+        id: str,
+        name: str,
+        country_code: str,
+        teams: list[&#x27;Team&#x27;] | None = None,
+        matches: list[&#x27;Match&#x27;] | None = None,
+    ) -&gt; None:
+        super().__init__(id, name)
+        self.country_code = country_code
+        if teams is None:
+            teams = []
+        self.teams = teams
+        if matches is None:
+            matches = []
+        self.matches = matches
+</code></pre>
+<p>每个爬虫子模块的 Competition Item 从父类继承，只要满足父类对于 Competition 定义的字段即可，每个爬虫的特殊字段都塞到 fields 中，至于数据结构，是类还是 dict，又或者其他再讨论。待到从每个爬虫模块收集的数据完毕之后，他们的合并方式，统一在每个类中实现一些 merge 方法，定义了合并之后字段处理的规则，然后再实现 <code>add</code> 方法，每两个数据类结果想要相加，直接调用方法即可，类似于 <code>competition1.add(competition2)</code>，甚至可以实现 <code>__add__</code> 通过运算符操作</p>
+<pre><code class="language-python">def add(self, new: &#x27;Competition&#x27;) -&gt; &#x27;Competition&#x27;:
+    teams = self._concat_teams(new.teams)
+    matches = self._concat_matches(new.matches)
+    fields = self.fields | new.fields
+    return Competition(
+        id=self.id,
+        name=self.name,
+        country_code=self.country_code,
+        teams=teams,
+        matches=matches,
+        **fields,
+    )
+
+def _merge_teams(
+    self,
+    news: typing.Sequence[&#x27;Team&#x27;],
+) -&gt; list[&#x27;Team&#x27;]:
+    results: list[&#x27;Team&#x27;] = []
+    for query in self.teams:
+        selected = process.extractOne(
+            query,
+            news,
+            processor=lambda x: x.name,
+        )
+        result = selected[0]
+        results.append(query.add(result))
+    return results
+
+def _concat_matches(
+    self,
+    news: typing.Sequence[&#x27;Match&#x27;],
+) -&gt; list[&#x27;Match&#x27;]:
+    ...
+</code></pre>
+<p>开发者可以任意调整预先要用到的数据类，把他们 add 到一起，比起现版本</p>
+<pre><code class="language-python">class Competition:
+    def __init__(
+        self,
+        fotmob: spiders.fotmob.competition.Item,
+        fbref: spiders.fbref.competition.Item,
+        official: spiders.official.competition.Item,
+        transfermarkt: spiders.transfermarkt.competition.Item,
+    ) -&gt; None:
+        self._fotmob = fotmob
+        self._fbref = fbref
+        self._official = official
+        self._transfermarkt = transfermarkt
+</code></pre>
+<p>这样的形式优雅很多，然后定义数据规则方法，提供 api。</p>
+<p>如果用户不认同这些规则，也可以自己 add，比起现版本也会方便很多。</p>
+
+    </content>
+  </entry>
   <entry>
     <title>fusion-stat 能否使用可读性 id</title>
     <link href="https://tanzhijian.org/posts/fusion_stat_id_explore"></link>
@@ -621,47 +719,6 @@ resp = s.get(&#x27;file:///path/to/file&#x27;)
 <p>故事的最后，渡边送别了玲子，打电话给绿子，一切从头开始。</p>
 <p>绿子问渡边“你现在在哪里？”，小说到这里结束，渡边早已不再困惑，引用之前永泽的话说：“只是他这小子还没有清楚的认识这点。”</p>
 <p>而答案其实在书的中间一段，渡边第一次去“阿美寮”时与直子的一次对话中就已清楚给出：“你太悲观了，在黑夜，噩梦，私人的力量面前太胆小了。你必须做的是忘记这些。”这便是渡边早已明白，却一直无法认清的。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>score-simulator 的一些想法</title>
-    <link href="https://tanzhijian.org/posts/score_simulator"></link>
-    <id>1686477588.0</id>
-    <updated>2023-06-11T17:59:48Z</updated>
-    <published>2023-06-11T17:59:48Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>最近在利用业余时间入门 2023 年前端的新姿势，前两天无聊趁着欧冠决赛前夜，用目前所学到的写了一个前端的比分模拟器 [score-simulator](https://score-simulator.tanzhijian.org/)，小规模发给了一些朋友 roll，反响居然不错，都 roll 得蛮开心的。所以想说一下模拟比赛的原理，以及之后会完善的一些思路。
-</summary>
-    <content type="html">
-      <h1>score-simulator 的一些想法</h1>
-<p>最近在利用业余时间入门 2023 年前端的新姿势，前两天无聊趁着欧冠决赛前夜，用目前所学到的写了一个前端的比分模拟器 <a href="https://score-simulator.tanzhijian.org/">score-simulator</a>，小规模发给了一些朋友 roll，反响居然不错，都 roll 得蛮开心的。所以想说一下模拟比赛的原理，以及之后会完善的一些思路。</p>
-<p>score-simulator 的模型设想是通过简化的方式来模拟一场比赛，在比赛中随机出现进球，但不能是完全随机，需要参考现实中的表现参数。所以首先是每分钟的射门事件，主队 + 客队本赛季的平均每 90 分钟射门次数，得到比赛每分钟射门的概率。</p>
-<p>接下来如果产生了射门，那么是谁的。这里使用了一方射门数 / 射门总数得出主客队射门占比。</p>
-<p>但由于两队实力的不均衡，使用了队伍的排名 <a href="http://www.clubelo.com/">clubelo</a> 作为权重，强的队伍 = 1, 弱的队伍 /= 强的队伍。</p>
-<p>再使用双方赛季总预期进球 / 赛季总射门次数，得到双方的每次射门的平均预期进球 xG/Sh，来确定本次射门是否进球。</p>
-<p>到这里模拟了每分钟的事件，运行 90 次得到一场比赛的结果。</p>
-<pre><code class="language-python">def whoscored(home_goal: int = 0, away_goal: int = 0) -&gt; tuple[int, int]:
-    attempt = rnd.rand(1, 1)
-    if attempt &lt; shot_prob_per_minute:
-        who = rnd.rand(1, 1)
-        if who &lt; shot_percentage:
-            shot = rnd.rand(1, 1)
-            if shot &lt; home_xg_per_shot:
-                home_goal += 1
-        else:
-            shot = rnd.rand(1, 1)
-            if shot &lt; away_xg_per_shot:
-                away_goal += 1
-    return home_goal, away_goal
-
-
-def play_game():
-    for _ in range(90):
-        pass
-</code></pre>
-<p>之后会完善一下模拟比赛的模型，比如加上一些正态分布，使得比分结果更为合理，比如一些考虑到防守质量的参数。</p>
-<p>还会获取现实的赛程表和数据，也能自己编辑队伍，使得在更多的比赛开场前都能玩一玩。</p>
 
     </content>
   </entry>

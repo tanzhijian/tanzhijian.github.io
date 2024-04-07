@@ -1,5 +1,7 @@
 ## 目录
 
+* [我所设想的 fusion-stat 数据模型](https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas)
+
 * [fusion-stat 能否使用可读性 id](https://tanzhijian.org/posts/fusion_stat_id_explore)
 
 * [介绍一下 fifacodes](https://tanzhijian.org/posts/fifacodes_intro)
