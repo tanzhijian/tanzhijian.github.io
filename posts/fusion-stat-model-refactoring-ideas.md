@@ -42,8 +42,8 @@ class Competition(Stat):
 
 ```python
 def add(self, new: 'Competition') -> 'Competition':
-    teams = self._concat_teams(new.teams)
-    matches = self._concat_matches(new.matches)
+    teams = self._merge_teams(new.teams)
+    matches = self._merge_matches(new.matches)
     fields = self.fields | new.fields
     return Competition(
         id=self.id,
@@ -69,7 +69,7 @@ def _merge_teams(
         results.append(query.add(result))
     return results
 
-def _concat_matches(
+def _merge_matches(
     self,
     news: typing.Sequence['Match'],
 ) -> list['Match']:

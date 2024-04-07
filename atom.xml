@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-04-07T13:49:34Z</updated>
+  <updated>2024-04-07T14:04:01Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>我所设想的 fusion-stat 数据模型</title>
     <link href="https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas"></link>
-    <id>1712468974.2391882</id>
-    <updated>2024-04-07T13:49:34Z</updated>
-    <published>2024-04-07T13:49:34Z</published>
+    <id>1712469841.6559868</id>
+    <updated>2024-04-07T14:04:01Z</updated>
+    <published>2024-04-07T14:04:01Z</published>
     <author><name>tanzhijian</name></author>
     <summary>目前 fusion-stat 模型总共分为 Competitions, Competition, Team, Staff, Player, Matches, Match, 他们之间自成一派，并没有什么关联，且最大的问题是数据规则是写死的，即开发者制定了所有的规则，用户能修改或定制的部分很少，要么便是自己 import spiders 来重写。
 </summary>
@@ -52,8 +52,8 @@ class Competition(Stat):
 </code></pre>
 <p>每个爬虫子模块的 Competition Item 从父类继承，只要满足父类对于 Competition 定义的字段即可，每个爬虫的特殊字段都塞到 fields 中，至于数据结构，是类还是 dict，又或者其他再讨论。待到从每个爬虫模块收集的数据完毕之后，他们的合并方式，统一在每个类中实现一些 merge 方法，定义了合并之后字段处理的规则，然后再实现 <code>add</code> 方法，每两个数据类结果想要相加，直接调用方法即可，类似于 <code>competition1.add(competition2)</code>，甚至可以实现 <code>__add__</code> 通过运算符操作</p>
 <pre><code class="language-python">def add(self, new: &#x27;Competition&#x27;) -&gt; &#x27;Competition&#x27;:
-    teams = self._concat_teams(new.teams)
-    matches = self._concat_matches(new.matches)
+    teams = self._merge_teams(new.teams)
+    matches = self._merge_matches(new.matches)
     fields = self.fields | new.fields
     return Competition(
         id=self.id,
@@ -79,7 +79,7 @@ def _merge_teams(
         results.append(query.add(result))
     return results
 
-def _concat_matches(
+def _merge_matches(
     self,
     news: typing.Sequence[&#x27;Match&#x27;],
 ) -&gt; list[&#x27;Match&#x27;]:
