@@ -1,5 +1,7 @@
 ## 目录
 
+* [open-data events 文档笔记](https://tanzhijian.org/posts/ope_data_events)
+
 * [我所设想的 fusion-stat 数据模型](https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas)
 
 * [fusion-stat 能否使用可读性 id](https://tanzhijian.org/posts/fusion_stat_id_explore)

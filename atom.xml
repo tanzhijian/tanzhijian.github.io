@@ -2,10 +2,578 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-04-07T14:04:01Z</updated>
+  <updated>2024-06-25T19:39:35Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>open-data events 文档笔记</title>
+    <link href="https://tanzhijian.org/posts/ope_data_events"></link>
+    <id>1719315575.7717075</id>
+    <updated>2024-06-25T19:39:35Z</updated>
+    <published>2024-06-25T19:39:35Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>原文档 pdf 不方便查阅特做整理, 机器翻译手动整理结构
+</summary>
+    <content type="html">
+      <h1>open-data events 文档笔记</h1>
+<p>原文档 pdf 不方便查阅特做整理, 机器翻译手动整理结构</p>
+<p>v4.0</p>
+<p>本文档描述了StatsBomb开放事件数据的JSON格式。</p>
+<h2>Format</h2>
+<p>data/events 目录中的比赛文件将采用 JSON 格式。文件名将采用 1234.json 格式，其中 1234 是比赛 ID。内容是一个包含两支球队的事件信息的数组。一些元素有子元素（通常是名称/ID 对）或子数组（这些将在文档后面详细介绍）。</p>
+<ul>
+<li>
+<p>id: uuid, 每个事件的唯一标识符</p>
+</li>
+<li>
+<p>index: int, 每场比赛中事件排序的序列符号。自增的整数</p>
+</li>
+<li>
+<p>preiod: int, 时间戳对应的比赛部分</p>
+<ul>
+<li>1: 1st Half</li>
+<li>2: 2nd Half</li>
+<li>3: 3rd Period</li>
+<li>4: 4th Period</li>
+<li>5: Penalty Shootout</li>
+</ul>
+</li>
+<li>
+<p>timestamp: timestamp, 比赛中事件发生的时间，精确到毫秒。</p>
+</li>
+<li>
+<p>minute: int, 事件发生时时钟上的分钟数。半场结束时重置为 45 分钟，加时赛开始时重置为 90 分钟。</p>
+</li>
+<li>
+<p>second: int, timestamp 的第二部分</p>
+</li>
+<li>
+<p>type: object, (id: int, name: str), event 事件类型的 ID/名称。</p>
+<ul>
+<li>42, Ball Receipt, 接到传球</li>
+<li>2, Ball Recovery, 尝试夺回球权</li>
+<li>3, Dispossessed, 球员被防守球员拦截而带球失败，因此丢失球权</li>
+<li>4, Duel, 比赛中对立双方两名球员之间 50 对 50 的较量</li>
+<li>5, Camera On, 发出信号停止摄像机捕捉比赛过程以进行重播/视频剪辑</li>
+<li>6, Block, 站在球的路径上阻挡球</li>
+<li>8, Offside, 越位。由射门或解围（非传球）导致的事件。对于造成越位的传球，请查看传球部分</li>
+<li>9, Clearance, 防守球员为消除危险而采取的行动，并非有意将球传给队友</li>
+<li>10, Interception, 通过移动到传球路线/做出反应进行拦截，阻止对手的传球到达队友手中</li>
+<li>14, Dribble, 球员试图带球突破对手</li>
+<li>16, Shot, 用身体任何（合法）部位试图进球</li>
+<li>17, Pressure, 对接球、带球或传球的对方球员施加压迫</li>
+<li>18, Half Start, 裁判吹哨开始一个部分的比赛</li>
+<li>19, Substitution</li>
+<li>20, Own Goal Against, 对方球员的乌龙球</li>
+<li>21, Foul Won, 犯规获胜的定义是，一名球员在遭到对方球员犯规后，为本队赢得任意球或点球</li>
+<li>22, Foul Committed, 任何被裁判判为犯规的违规行为, 越位不被视为犯规</li>
+<li>23, Goal Keeper, 守门员可以执行的动作</li>
+<li>24, Bad Behaviour, 当球员由于比赛之外的违规行为而收到黄牌时</li>
+<li>25, Own Goal For, 该队进了一粒乌龙球</li>
+<li>26, Player On, 球员离开事件发生后，球员返回球场</li>
+<li>27, Player Off, 一名球员未经替换就离开/被抬出球场</li>
+<li>28, Shield, 球员保护出界的球以防止对手继续比赛</li>
+<li>30, Pass, 球在队友之间传递</li>
+<li>33, 50/50, 两名球员争夺无球权的球</li>
+<li>34, Half End, 向裁判发出哨声，表示某一场比赛部分结束</li>
+<li>35, Starting XI, 标明首发 11 名球员、他们的位置以及球队阵型</li>
+<li>36, Tactical Shift, 表示球队的战术变化，显示球员的新位置和球队的新阵型</li>
+<li>37, Error, 当一名球员被判定犯下控球失误，从而导致射门时</li>
+<li>38, Miscontrol, 球员因触球失误丢球</li>
+<li>39, Dribbled Past, 球员被对手带球突破</li>
+<li>40, Injury Stoppage, 因受伤而停止比赛</li>
+<li>41, Referee Ball-Drop, 因伤病暂停后，裁判放下球，继续比赛</li>
+<li>43, Carry, 球员在移动或站立时控制脚下的球</li>
+</ul>
+</li>
+<li>
+<p>possession: int, 表示比赛中当前唯一的一次控球。一次控球表示在比赛期间，球处于比赛状态，并且由一支球队控制球</p>
+</li>
+<li>
+<p>possession_team: object, (id: int), 开始控球的球队的 ID。请注意，即使在控球期间试图铲球等对手事件中，此 ID 也会显示</p>
+</li>
+<li>
+<p>play_pattern: object, (id: int, name: str), 与此事件相关的比赛模式的 ID/名称</p>
+<ul>
+<li>1, Regular Play, 该事件不属于以下任何 play_patterns</li>
+<li>2, From Corner, 该事件是角球之后比赛进程的一部分</li>
+<li>3, From Free Kick, 该事件是任意球之后比赛过程的一部分</li>
+<li>4, From Throw In, 此事件是界外球之后比赛过程的一部分</li>
+<li>5, Other</li>
+<li>
+6, From Counter 该事件是反击的一部分:<ul>
+<li>控球开始于反击球队最后三分之一区域外的一次常规比赛失误</li>
+<li>控球至少有 75% 直接朝向球门（以我们的控球链指标衡量）</li>
+<li>反击向球门前进了至少 18 码。</li>
+<li>此定义不是收集的一部分，而是从上述逻辑中得出的</li>
+</ul>
+</li>
+<li>7, From Goal Kick, 该事件是球门球后比赛过程的一部分</li>
+<li>8, From Keeper, 这一事件是守门员开球后比赛进程的一部分</li>
+<li>9, From Kick Off, 该事件是开球后比赛进程的一部分</li>
+</ul>
+</li>
+<li>
+<p>team: object, (id: int, name: str), 此事件所关联的球队的 ID/名称。仅当事件与特定球队相关时，才会显示对象</p>
+</li>
+<li>
+<p>player: object, (id: int, name: str), 与该事件相关的球员的 ID/名称（仅当事件与特定球员相关时才会显示对象）</p>
+</li>
+<li>
+<p>position: object, (id: int, name: str), 事件发生时球员所处位置的 ID / 名称</p>
+<ul>
+<li>1, GK, Goalkeeper</li>
+<li>2, RB, Right Back</li>
+<li>3, RCB, Right Center Back</li>
+<li>4, CB, Center Back</li>
+<li>5, LCB, Left Center Back</li>
+<li>6, LB. Left Back</li>
+<li>7, RWB, Right Wing Back</li>
+<li>8, LWB, Left Wing Back</li>
+<li>9, RDM, Right Defensive Midfield</li>
+<li>10, CDM, Center Defensive Midfield</li>
+<li>11, LDM, Left Defensive Midfield</li>
+<li>12, RM, Right Midfield</li>
+<li>13, RCM, Right Center Midfield</li>
+<li>14, CM, Center Midfield</li>
+<li>15, LCM, Left Center Midfield</li>
+<li>16, LM, Left Midfield</li>
+<li>17, RW, Right Wing</li>
+<li>18, RAM, Right Attacking Midfield</li>
+<li>19, CAM, Center Attacking Midfield</li>
+<li>20, LAM, Left Attacking Midfield</li>
+<li>21, LW, Left Wing</li>
+<li>22, RCF, Right Center Forward</li>
+<li>23, ST, Striker</li>
+<li>24, LCF, Left Center Forward</li>
+<li>25, SS, Sencondary Striker</li>
+</ul>
+</li>
+<li>
+<p>location: array, (x: int, y: int), 包含两个整数值的数组。这些是事件的 x 和 y 坐标（仅当事件具有高度坐标时才显示）</p>
+</li>
+<li>
+<p>duration: float, 如果相关，则事件持续的时间（以秒为单位）</p>
+</li>
+<li>
+<p>under_pressure: bool, 该动作是在对手施加压力的情况下做出的</p>
+</li>
+<li>
+<p>off_camera: bool: 事件发生时，摄像机处于关闭状态</p>
+</li>
+<li>
+<p>out, bool, 如果事件的结果是球出界，则添加</p>
+</li>
+<li>
+<p>related_events: <code>array[uuid]</code>, 相关事件 ID 的逗号分隔列表。例如，射门可能与守门员事件和拦截事件相关。相应事件的 related_events 列中将包含射门的 ID</p>
+</li>
+<li>
+<p>tactics: object</p>
+<ul>
+<li>formation: int, 对于“首发 XI 或战术换班”类型的事件，添加了“战术”对象。阵型项目描述了正在使用的阵型, 433</li>
+<li>lineup: <code>array[player: object[id: int, name: str], position: object[id: int, name: str], jersey_number: int]</code>, 对于“首发 XI 或战术换人”类型的事件，添加了“战术”对象。阵容项描述了球员及其位置</li>
+</ul>
+</li>
+</ul>
+<h2>Event Type Objects</h2>
+<p>如果事件属于具有附加详细信息的类型，则这些详细信息将嵌套在以该事件类型命名的对象中。例如，Shot 类型的事件将具有嵌套数据框，其中包含描述该事件类型的附加变量。以下是按字母顺序排列的嵌套数据框列表及其包含的变量。</p>
+<ul>
+<li>
+<p>50-50</p>
+<ul>
+<li>
+outcome: object, (id: int, name: str), 50 50争夺结果的ID/名称, values:<ul>
+<li>108, Won</li>
+<li>109, Lost</li>
+<li>147, Success To Team, 球员赢得 50/50 并将球控制到己方</li>
+<li>148, Success To Opposition, 球员赢得 50/50，但将球踢到对方</li>
+</ul>
+</li>
+<li>counterpress: bool, 在 open play 转换后 5 秒内采取压迫</li>
+</ul>
+</li>
+<li>
+<p>Bad Behaviour: object, (id: int, name: str), 红黄牌的 ID/名称</p>
+<ul>
+<li>65, Yellow Card</li>
+<li>66, Second Yellow</li>
+<li>67, Red Card</li>
+</ul>
+</li>
+<li>
+<p>Ball Receipt: object, (id: int, name: str), 指定球接收结果的属性选项的 ID/名称</p>
+<ul>
+<li>9, Incomplete</li>
+</ul>
+</li>
+<li>
+<p>Ball Recovery
+offensive: bool, 如果恢复进攻则添加
+recovery_failure: bool: 如果恢复失败则添加</p>
+</li>
+<li>
+<p>Block</p>
+<ul>
+<li>deflection: bool, 如果是偏转则添加</li>
+<li>offensive: bool, 如果该阻挡具有攻击性则添加</li>
+<li>save_block: bool, 如果阻挡了射门则添加</li>
+<li>counterpress: bool, 在常规比赛转换后 5 秒内采取紧逼行动</li>
+</ul>
+</li>
+<li>
+<p>Carry</p>
+<ul>
+<li>end_location: array, (x: int, y: int)</li>
+</ul>
+</li>
+<li>
+<p>Clearance</p>
+<ul>
+<li>aerial_won: bool, 如果高空解围则添加</li>
+<li>
+body_part: object, (id: int, name: str), 触球身体部位的 ID/名称<ul>
+<li>37, Head</li>
+<li>38, Left Foot</li>
+<li>40, Right Foot</li>
+<li>70, Other</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Dribble</p>
+<ul>
+<li>Overrun: bool, 当球越过原来的防守队员进入另一名球员的球权时添加</li>
+<li>Nutmeg: bool, 当球从对方球员腿间穿过时添加</li>
+<li>
+outcome: object, (id: int, name: str)<ul>
+<li>8, Complete</li>
+<li>9, Incomplete</li>
+</ul>
+</li>
+<li>No Touch: bool, 如果球员试图通过将球漏过对手而不是接触球来进行带球</li>
+</ul>
+</li>
+<li>
+<p>Dribbled Past</p>
+<ul>
+<li>counterpress: bool, 在常规比赛转换后 5 秒内采取紧逼行动</li>
+</ul>
+</li>
+<li>
+<p>Duel</p>
+<ul>
+<li>counterpress: bool</li>
+<li>
+type: object, (id: int, name: str), Id/Name 为对抗的类型<ul>
+<li>10, Aerial Lost, 争夺空中对抗但没能抢到球</li>
+<li>11, Tackle, 抢断对方球员的控球权</li>
+</ul>
+</li>
+<li>
+outcome: object, (id: int, name: str), 对抗结果的 Id/名称<ul>
+<li>1， Lost</li>
+<li>4, Won, 抢断最终落入抢断队员手中</li>
+<li>13, Lost In Play, 将球踢向对手的抢断</li>
+<li>14, Lost Out, 铲球将球击出界外，有利于对手</li>
+<li>15, Success</li>
+<li>16, Success In Play, 将球传给队友的抢断</li>
+<li>17， Success Out, 抢断将球击出界外，有利于抢断者的球队</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Foul Committed</p>
+<ul>
+<li>counterpress: bool</li>
+<li>offensive: bool</li>
+<li>
+type: object, (id: int, name: str), Id/Name 为犯规的类型<ul>
+<li>19, 6 Seconds, 因 6 秒违例被判犯规</li>
+<li>20, Backpass Pick, 因回传用手接球违例被判犯规</li>
+<li>21, Dangerous Play, 危险动作导致犯规</li>
+<li>22, Dive, 因假摔而犯规</li>
+<li>23, Foul Out, 因犯规被罚出场</li>
+<li>24, Handball, 手球犯规</li>
+</ul>
+</li>
+<li>advantage: bool, 如果裁判判定为进攻有利比赛继续则添加</li>
+<li>penalty: bool, 如果被判点球添加</li>
+<li>
+card: object, (id: int, name: str), 卡牌的类型<ul>
+<li>5, Yellow Card</li>
+<li>6, Second Yellow</li>
+<li>7, Red Card</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Foul Won</p>
+<ul>
+<li>defensive: bool, 如果在失去控球权的情况下犯规，则添加</li>
+<li>advantage: bool, 如果裁判判定为进攻有利比赛继续则添加</li>
+<li>penalty: bool, 如果判罚点球则添加</li>
+</ul>
+</li>
+<li>
+<p>GoalKeeper</p>
+<ul>
+<li>
+position: object, (id: int, name: str), 守门员射门前站位选项的 ID/名称<ul>
+<li>42, Moving, 射门时守门员正在移动</li>
+<li>43, Prone, 射门时守门员倒在地上</li>
+<li>44, Set, 射门时守门员处于静止状态</li>
+</ul>
+</li>
+<li>
+technique: object, (id: int, name: str), 守门员使用的技术技术选项的 ID/名称<ul>
+<li>45, Diving, 守门员飞身进行扑救</li>
+<li>46, Standing, 守门员站立进行扑救</li>
+</ul>
+</li>
+<li>
+body_part: object, (id: int, name: str), 守门员扑救时使用的身体部位<ul>
+<li>35, Both Hands</li>
+<li>36, Chest</li>
+<li>37, Head</li>
+<li>38, Left Foot</li>
+<li>39, Left Hand</li>
+<li>40, Right Foot</li>
+<li>41, Right Hand</li>
+</ul>
+</li>
+<li>
+type: object, (id: int, name: str), 指定守门员事件类型的 ID/名称。每次射门都会有一个相关的守门员事件。如果没有失球或没有扑救，守门员类型将为“Shot Faced”）<ul>
+<li>25, Collected</li>
+<li>26, Goal Conceded, 失球</li>
+<li>27, Keeper Sweeper, 当守门员离开自己的防线和/或禁区扑球时</li>
+<li>28, Penalty Conceded, 守门员在点球中失球</li>
+<li>29, Penalty Saved</li>
+<li>30, Punch, 守门员拳击球（类似清球）</li>
+<li>31, Save, 守门员扑救非射门</li>
+<li>32, Shot Faced, 射门未导致扑救或失球</li>
+<li>33, Shot Saved, 守门员扑出对方射门</li>
+<li>34, Smother, 相当于禁区外球员的抢断，守门员出来抢断球员</li>
+<li>113, Shot Saved Off T, 守门员扑出了对方偏离目标的射门</li>
+<li>114, Shot Saved To Post, 射门被守门员扑出，击中门柱</li>
+<li>110, Saved To Post, 守门员扑救非射门击中门柱</li>
+<li>109, Penalty Saved To Post</li>
+</ul>
+</li>
+<li>
+outcome: object, (id: int, name: str)<ul>
+<li>47, Claim, 守门员清道夫动作，但是接住了球</li>
+<li>48, Clear, 守门员清道夫动作，但是清除了球</li>
+<li>49, Collected Twice, 守门员在第一次接球失误后，又多次尝试接球</li>
+<li>50, Fail, 动作失败</li>
+<li>51, In Play, 守门员扑救，将球挡回场内</li>
+<li>52, In Play Danger, 守门员扑救，将球挡给对方球员</li>
+<li>53, In Play Safe, 守门员扑救，将球挡给队友</li>
+<li>55, No Touch, 守门员未触球就丢球</li>
+<li>56, Saved Twice, 守门员在第一次扑救失败后，又多次尝试扑救</li>
+<li>15, Success</li>
+<li>58, Touched In, 尽管守门员触球，但还是丢球</li>
+<li>59, Touched Out, 守门员触球出界</li>
+<li>4, Won, 获得球权</li>
+<li>16, Success In Play, 将球传给队友的扑救</li>
+<li>17, Success Out, 将球扑出界外，有利于拦截方的球队</li>
+<li>13， Lost In Play, 将球击向对手的扑救</li>
+<li>14, Lost Out, 将球击出界外，有利于对手</li>
+<li>117, Punched Out, 守门员将球扑出界外</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Half End</p>
+<ul>
+<li>Early Video End: bool, 如果比赛视频不完整且比赛在本节结束前结束，则添加</li>
+<li>Match Suspended: bool, 裁判决定结束或推迟比赛</li>
+</ul>
+</li>
+<li>
+<p>Half Start</p>
+<ul>
+<li>Late Video Start: bool, 如果比赛视频未完成并在开球后开始，则添加</li>
+</ul>
+</li>
+<li>
+<p>Injury Stoppage</p>
+<ul>
+<li>in_chain: bool, 如果比赛暂停前球在受伤球员的球队手中，则添加</li>
+</ul>
+</li>
+<li>
+<p>Interception</p>
+<ul>
+<li>
+outcome, object, (id: int, name: str)<ul>
+<li>1, Lost</li>
+<li>13, Lost In Play, 将球击给对手的拦截</li>
+<li>14, Lost Out, 拦截将球击出界外，有利于对方</li>
+<li>15, Success</li>
+<li>16, Success In Play, 将球传给队友的拦截</li>
+<li>17, Success Out, 拦截将球击出界外，有利于拦截方的球队</li>
+<li>4, Won, 拦截后球落入拦截者手中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Miscontrol</p>
+<ul>
+<li>aerial_won: bool, 如果事件发生在空中，则添加</li>
+</ul>
+</li>
+<li>
+<p>Pass</p>
+<ul>
+<li>recipient: object, (id: int, name: str), Id / Name 传球接收者的球员，或未完成传球的接收者的球员</li>
+<li>length: float, 以码为单位的传球长度, 16.03</li>
+<li>angle: float, 以弧度表示的通过角度，其中 0 指向正前方，0 到 π 之间的正值表示顺时针方向的角度，0 到 -π 之间的负值表示逆时针方向的角度, -2.49</li>
+<li>
+height: object, (id: int, name: str), 传球高度的 ID / 名称<ul>
+<li>1, Ground Pass, 球没有离开地面</li>
+<li>2, Low Pass, 球离开地面但在最高高度时低于肩膀的高度</li>
+<li>3, High Pass, 球在最高高度超过肩膀的高度</li>
+</ul>
+</li>
+<li>end_location: array, (x: int, y: int)</li>
+<li>assisted_shot_id: uuid, 如果这次传球是助攻，那么关联射门的事件 id</li>
+<li>backheel: bool, 如果用脚后跟传球则添加</li>
+<li>deflected: bool, 如果传球偏转则添加</li>
+<li>miscommunication: bool, 如果传球存在沟通不畅则添加</li>
+<li>cross: bool, 如果传球是传中则添加</li>
+<li>cut-back: bool, 如果传球是回传则添加</li>
+<li>switch: bool, 如果传球是转移（球垂直转移了至少 50% 的球场），则添加</li>
+<li>shot-assist: bool, 如果传球是对射门的助攻（但未进球），则添加</li>
+<li>goal-assist: bool, 如果传球助攻进球，则添加</li>
+<li>
+body-part: object, (id: int, name: str)<ul>
+<li>68, Drop Kick, 传球来自守门员的 drop kick</li>
+<li>37, Head, 传球来自头球</li>
+<li>69, Keeper Arm, 传球来自守门员的手手抛球</li>
+<li>38, Left Foot</li>
+<li>70, Other</li>
+<li>40, Right Foot</li>
+<li>106, No Touch, 一名球员故意让球从自己身边经过，而不是接球，而是传给身后的队友。也称为“假动作”）。</li>
+</ul>
+</li>
+<li>
+type: object, (id: int, name: str)<ul>
+<li>61, Corner</li>
+<li>62, Free Kick</li>
+<li>63, Goal Kick</li>
+<li>64, Interception</li>
+<li>65, Kick Off, 比赛开始时或得分后开球时的传球</li>
+<li>66, Recovery, 一触式传球抢断</li>
+<li>67, Throw-in</li>
+</ul>
+</li>
+<li>
+outcome: object, (id: int, name: str)<ul>
+<li>9, Incomplete, 球未到达队友，比赛仍在进行中</li>
+<li>74, Injury Clearance, 因受伤而停止比赛，球出界</li>
+<li>75, Out, 球出界</li>
+<li>76, Pass Offside, 球传到队友手中但传球被判越位</li>
+<li>77, Unknown, 结果未知（即在飞行过程中被判犯规）</li>
+</ul>
+</li>
+<li>
+Technique: object, (id: int, name: str), 传球技术的 ID / 名称<ul>
+<li>104, Inswinging, 适用于内旋高/低角球</li>
+<li>105, Outswinging, 适用于外旋高/低角球</li>
+<li>107, Straight, 不适用于内旋角球或外旋角球</li>
+<li>108, Through Ball, 传球突破最后一道防线</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Player Off</p>
+<ul>
+<li>Permanent: bool, 如果球员永久离开比赛，则添加。适用于没有替补球员但球员因伤无法重返球场的情况</li>
+</ul>
+</li>
+<li>
+<p>Pressure</p>
+<ul>
+<li>counterpress: bool, 在常规比赛转换后 5 秒内采取紧逼行动</li>
+</ul>
+</li>
+<li>
+<p>Shot</p>
+<ul>
+<li>key_pass_id: uuid</li>
+<li>end_location: array, (x: int, y: int)</li>
+<li>aerial_won: bool, 如果射门是空中胜利，则添加</li>
+<li>follows_dribble: bool, 如果射门是在盘带后进行的，则添加</li>
+<li>first_time: bool, 如果射门是第一次触球，则添加</li>
+<li>freeze_frame: array, 每次射门都包含一个名为 freeze_frame 的对象，该对象是一个数组，其中包含射门时相关球员的信息，每个 freezeframe 对象都是一个数据框，每个球员占一行，包括他们的位置、球队、ID、姓名以及位置 ID 和姓名</li>
+<li>open_goal: bool, 如果射门是在空门的情况下进行的，则添加</li>
+<li>statsbomb_xg: float</li>
+<li>deflected: bool, 如果射门偏出则添加</li>
+<li>
+technique: object, (id: int, name: str), 射门技术的 ID / 名称<ul>
+<li>89, Backheel</li>
+<li>90, Diving Header</li>
+<li>91, Half Volley, 半临空</li>
+<li>92, Lob, 为了越过对方球员而射出的球具有较高的弧线</li>
+<li>93, Normal, 不属于任何其他技术的射门</li>
+<li>94, Overhead Kick</li>
+<li>95, Volley</li>
+</ul>
+</li>
+<li>
+body_part: object, (id: int, name: str)<ul>
+<li>37, Head</li>
+<li>38, Laft Foot</li>
+<li>70, Other</li>
+<li>40, Right Foot</li>
+</ul>
+</li>
+<li>
+type: object, (id: int, name: str)<ul>
+<li>61, Corner</li>
+<li>62, Free Kick</li>
+<li>87, Open Play</li>
+<li>88, Penalty</li>
+<li>65, Kick Off, 开球后直接射门</li>
+</ul>
+</li>
+<li>
+outcome: object, (id: int, name: str)<ul>
+<li>96, Blocked</li>
+<li>97, Goal</li>
+<li>98, Off T</li>
+<li>99, Post</li>
+<li>100, Saved</li>
+<li>101, Wayward, 射门毫无威胁，偏离球门太远或力量不足以到达球门线（或球员没有碰到球的失误）</li>
+<li>115, Saved Off T</li>
+<li>116, Saved To Post</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Substitution</p>
+<ul>
+<li>replacement: object, (id: int, name: str), 对于替换，上场球员的 ID/姓名。球员详情（主要事件）描述下场球员。</li>
+<li>
+outcome: object, (id: int, name: str), 替换类型选项的 Id/Name<ul>
+<li>102, Injury</li>
+<li>103, Tactical</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </content>
+  </entry>
   <entry>
     <title>我所设想的 fusion-stat 数据模型</title>
     <link href="https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas"></link>
@@ -655,70 +1223,6 @@ resp = s.get(&#x27;file:///path/to/file&#x27;)
 <p>作为衍生物，甚至可以顺便计算了 packing :)</p>
 <p>而 label, 则通过下一次事件来确定是否为一次成功的传球，比如传球事件的下一次事件换成了对手的事件，或者定位球事件，则不是一次成功的传球</p>
 <p>接来下将抽时间使用 StatsBomb 的公开数据来训练一个基于上面假设的 xPass 模型，只是 StatsBomb 公开数据并没有他们已经计算好的 xPass 作为参考，但可以通过他们对于 xPass 的运用来做一些验证，这些之后再探讨</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>《挪威的森林》读书笔记</title>
-    <link href="https://tanzhijian.org/posts/norwegian_wood"></link>
-    <id>1686749881.0</id>
-    <updated>2023-06-14T21:38:01Z</updated>
-    <published>2023-06-14T21:38:01Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>即使过了很多年，我仍然抑制不住对这本书的偏爱。
-</summary>
-    <content type="html">
-      <h1>《挪威的森林》读书笔记</h1>
-<p>即使过了很多年，我仍然抑制不住对这本书的偏爱。</p>
-<h2>1.</h2>
-<p>这是一个关于青春的故事。轻松，幽默，直白。十八岁的渡边来到东京上大学，住在集中式宿舍，室友是生活习惯规矩而普通的“敢死队”，准时规律起床做操；没有突出的个性，房间里贴运河的贴画，对文学不甚了了。让我想起以前读书那会儿班上农村的孩子，老实上学规矩生活，却被城里见过世面富有个性的孩子当作“怪咖”的笑料。对于理想什么的也没多大见解，只认准“绘地图，毕业去国土地理院”。</p>
-<p>相对来说，随后出现的永泽，则像是以“敢死队”的反面存在的人物。譬如与渡边的对话里表达出的对于理想的见解：“人生中无需那种东西，需要的不是理想，而是行为规范！”，坦诚的痛快。毕业后进入外务省“施展自己的一番拳脚，想看看自己在这臃肿庞大的官僚机构中能爬到什么地步”，对自己有清晰的认识。读过的书“我辈较之他真可谓望尘莫及”。对于事物均有着强烈的个人见解，气质非凡。渡边与之在一起也实则有趣，讨论《了不起的盖茨比》，喝酒，与年轻女性约会，展现年轻人生活应有的部分。在描写中也少见的以相对激进直白的方式。罢课期间的一段描述：</p>
-<blockquote>
-<p>于是我走到他们跟前，问他们何以前来教室而不继续罢课，他们没有回答，也没法回答。他们害怕因缺课过多而拿不到学分。此等人物居然也高喊什么肢解大学，想来令人喷饭。如此卑劣小人，唯有见风使舵投敌变节之能事。</p>
-<p>我说木月，这帮家伙一个不少的拿得大学学分，跨出校门，将不遗余力地构筑一个同样卑劣的社会。</p>
-</blockquote>
-<p>较之小部分的激进，通常的村上则是习惯布局隐喻。结识绿子以后，交谈中一些轻松幽默的段子：</p>
-<blockquote>
-<p>“这里烧着了也不跑？”</p>
-<p>“嗯，死了就死了呗！”</p>
-<p>“好，我明白，奉陪就是，陪你。”</p>
-<p>“和我一块死？”</p>
-<p>“难说，一旦势头不妙我可得逃走。要死你一个人死好了”</p>
-<p>“冷酷。”</p>
-<p>“只讨你一顿午饭，怎么能连命都一块搭进去呢？晚饭也招待的话另当别论。”</p>
-<p>“你这人！算啦算啦。反正现在这儿看一会吧。我来唱歌给你听。”</p>
-<p>“唱歌？”</p>
-</blockquote>
-<p>于是面对失火的场景，渡边一边喝啤酒，一边欣赏绿子弹唱。直白表达宣泄，对周遭事物不屑一顾，这是属于年轻人的专利，不至于被扣上什么“冷漠”“没有公德心”的帽子。</p>
-<p>渡边几乎又是村上笔下那种一个模子刻出来的主角：三十七岁，孤单，话好像不多，并没表现出什么特别才能和特别个性；年轻时候喜好的读书和听音乐，无非是大众都能脱口而出的爱好。我曾经在一篇豆瓣影评里读到这样一段评论日本作家的话：“肆意描写着性，谋杀，毒品以及病态的心。”，《挪威的森林》开篇正是以渡边自我解读内心的情感开始的。渡边的内心世界，敏感而细致，同时又充满巨大的疑惑和否定。</p>
-<p>对于“敢死队”，渡边怀着戏虐的心态，作为笑料的谈资；在“敢死队”离开后，却又不时怀念起，甚至充满羡慕和感激。</p>
-<p>对于永泽，渡边算是真正了解，同时也被真正了解。对于永泽性格的一部分，诚实，潇洒，一些独特的见解，渡边是抱欣赏态度。但同时永泽对于女性的态度，更确切来说对初美的态度，因为他的傲慢，对人生清醒的认识，使得渡边在与初美的交谈中几乎明确的说出：“与永泽是没有未来的”。最后因为初美的自杀，使得渡边对于永泽彻底爆发：“把告知初美死讯的信撕得粉碎，此后再未给他写过信。”</p>
-<p>对于初美，是起初连渡边都不明白的情感，直到书中所说的“十二三年以后”，来到新墨西哥州的圣菲城：</p>
-<blockquote>
-<p>傍晚，我走近附近一家意大利比萨饼店，一边喝啤酒嚼比萨饼，一边眺望美丽的夕阳。天地间的一切全都红彤彤一片。我的手，盘子，桌子，凡是目力所及的东西，无不被染成了红色，而且红得非常鲜艳，俨然被特殊的果汁从上方直淋下来似的。就在这种气势夺人的暮色当中，我猛然想起了初美，并且这时才领悟她给我带来的心灵震撼究竟是什么东西——它类似一种少年时代的憧憬，一种从来不曾实现而且永远不可能实现的憧憬。</p>
-</blockquote>
-<p>书中对于初美的描写可谓是完美：高雅，善良，热情，得体，理智。永泽也曾感叹：“配我太可惜了。”而在渡边领悟到此为何物时，“这种直欲燃烧般的天真烂漫的憧憬，我在很早以前就已遗忘在什么地方了，甚至很长时间里我连它曾在我心中存在过都记不起来了。”“当我恍然大悟时，一时悲怆之极，几欲涕零。”书中的这一段文字极为华美，读到这一段时心中不由泛滥出多种别样的心绪：在年少时也心醉于周围看起来如此美好的女性，常不能自拔，我清楚的知道这与爱情什么的无关，但没办法解析的再明白，直到这一刻才恍然大悟了，它什么都不是，只与年轻有关。</p>
-<h2>2.</h2>
-<p>前面提到了整本书以渡边解读内心的情感开始，贯穿主线的，正是渡边内心不断发展的两条情感主线：一条渴望正常生活，同时也在过着正常生活；另一条陷入一团泥潭，一团因木月之死直子带来的心结的泥潭。</p>
-<p>这好像也映射了渡边内心两种矛盾性格的部分：一部分封闭了自我，只在属于木月，直子的圈子里打转；另一部分却好像已经全然无事的接受了新的生活，上课打工结交新朋友。在书开头的部分木月死后渡边住进宿舍时有一句话：“死并非生的对立面，而作为生的一部分永存”。几乎已经说出了本书的主线：木月直子渡边的牵绊，不可磨灭的存在于渡边今后的生活中。</p>
-<p>渡边第一次去“阿美寮”，剧情上是探望正在与心理做抗争的直子，但我解读成渡边在对自己内心的治疗：与绿子的接触，与永泽在新宿街头游荡，使得渡边的内心一些摇摆的躁动。他应该呆在自己封闭的内心，可现实的诱惑让他无法拒绝。书中则通过了石田玲子——既是治愈直子，同时也治愈着渡边——来说出渡边寻求的答案：“因为那是你的人生，应该由你决定。我要说的，只是希望你不要用不自然的方式磨损自己。懂吗？那是最不得偿失的。”</p>
-<p>之后永泽对渡边的一番解剖挺有意思：</p>
-<blockquote>
-<p>他和我一样，在本质上都是只对自己感兴趣的人，只不过在傲慢和不傲慢上有所差别，自己想什么，自己感受什么，自己如何行动——除此之外对别的没有兴趣，所以才能把自己同别人分开来考虑。我喜欢渡边也无非喜欢他这一点。只是他这小子还没有清楚的认识这点，以致感到迷惘和痛苦。</p>
-</blockquote>
-<p>准确无误，实际上渡边的所有行动都已经倾向了正常的生活，只是他自己还未认识到。</p>
-<p>当渡边读到了玲子的信，得知直子病情已经恶化时，内心已经明晰了：“木月！我和你不同，我决心活下去。”“我已不是十几岁的少年，我已感到自己肩上的责任。”虽然还在等待直子的康复，但不可回避的，两条内心已经合并，走向了结局。</p>
-<h2>3.</h2>
-<p>小林绿子和石田玲子。这两位无疑是《挪威的森林》里的“特殊人物”，唯二享有“全名”的待遇。</p>
-<p>绿子是渡边正常生活的重要组成部分，活力，善解人意，别具一格。与渡边的心理很多的时候都很是合拍，譬如孤独。绿子讨厌自己父亲给选择的高中女校，却从不曾迟到和缺课；被父亲生病折磨的不胜其烦，却还是尽心的照顾。不掩饰自己的好恶，在大骂了一通税务员后抛出了一句耐人寻味的：“我才不信什么革命哩！我只信爱情。”总有那么些稀奇古怪目瞪口呆的脑补，给人感觉却是真实。</p>
-<p>这样的性格仿佛才是渡边在找寻的。</p>
-<p>石田玲子在整本书中担任了“治愈”的角色。渡边去到“阿美寮”；随后与渡边的几番通信；在直子死后来到渡边的出租屋弹唱《挪威的森林》；化解了渡边迟迟无法解开的“好凄凉的葬礼”；最后还以以直子的方式收了在之前埋下身穿直子衣服的伏笔。</p>
-<p>我向来有一种看法，村上塑造的角色，有些不能以”角色“这样的角度来定义。他们更多时候像是扮演一面镜子，为了主角审视混乱不堪的自己而存在。譬如《海边的卡夫卡》里的大岛，冷静的不像话，随时在通过聊天的方式，让田村卡夫卡审视真实的自己。玲子的存在大概也是如此，在用所有的办法让渡边了解了真实的自己。</p>
-<h2>4.</h2>
-<p>关于活下去。</p>
-<p>故事的最后，渡边送别了玲子，打电话给绿子，一切从头开始。</p>
-<p>绿子问渡边“你现在在哪里？”，小说到这里结束，渡边早已不再困惑，引用之前永泽的话说：“只是他这小子还没有清楚的认识这点。”</p>
-<p>而答案其实在书的中间一段，渡边第一次去“阿美寮”时与直子的一次对话中就已清楚给出：“你太悲观了，在黑夜，噩梦，私人的力量面前太胆小了。你必须做的是忘记这些。”这便是渡边早已明白，却一直无法认清的。</p>
 
     </content>
   </entry>

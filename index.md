@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [open-data events 文档笔记](https://tanzhijian.org/posts/ope_data_events)
+
 * [我所设想的 fusion-stat 数据模型](https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas)
 
 * [fusion-stat 能否使用可读性 id](https://tanzhijian.org/posts/fusion_stat_id_explore)
@@ -17,8 +19,6 @@
 * [statsbombpy-local](https://tanzhijian.org/posts/statsbombpy_local)
 
 * [xPass 模型的特征探索](https://tanzhijian.org/posts/xpass_features_exploration)
-
-* [《挪威的森林》读书笔记](https://tanzhijian.org/posts/norwegian_wood)
 
 [更多](https://tanzhijian.org/archive)
 
