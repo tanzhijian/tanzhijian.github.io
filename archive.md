@@ -1,5 +1,7 @@
 ## 目录
 
+* [关于 that-game](https://tanzhijian.org/posts/about_that_game)
+
 * [open-data events 文档笔记](https://tanzhijian.org/posts/ope_data_events)
 
 * [我所设想的 fusion-stat 数据模型](https://tanzhijian.org/posts/fusion-stat-model-refactoring-ideas)

@@ -2,10 +2,382 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-06-25T19:39:35Z</updated>
+  <updated>2024-07-08T20:21:44Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>关于 that-game</title>
+    <link href="https://tanzhijian.org/posts/about_that_game"></link>
+    <id>1720441304.6711888</id>
+    <updated>2024-07-08T20:21:44Z</updated>
+    <published>2024-07-08T20:21:44Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>我在一些足球事件的项目中大量使用了 [kloppy](https://github.com/PySport/kloppy), 也有一些项目使用了 [socceraction](https://github.com/ML-KULeuven/socceraction) 的 spadl，这两个都可以看成“标准化的足球事件数据结构”，也就是把各个数据源的事件数据读取成一个统一的数据结构，方便后面的一系列计算。
+</summary>
+    <content type="html">
+      <h1>关于 that-game</h1>
+<p>我在一些足球事件的项目中大量使用了 <a href="https://github.com/PySport/kloppy">kloppy</a>, 也有一些项目使用了 <a href="https://github.com/ML-KULeuven/socceraction">socceraction</a> 的 spadl，这两个都可以看成“标准化的足球事件数据结构”，也就是把各个数据源的事件数据读取成一个统一的数据结构，方便后面的一系列计算。</p>
+<p>但他们各有各的不方便。socceraction 是基于 pandas，使用 pandera 预设一些字段，也可以做数据验证。既然本质上是个 pd.DataFrame, 就有着 df 不可避免的优点和缺点，数据科学家会很习惯他的操作，但在编写实际代码的时候缺乏很好的自动补全，类型推断，在提供的字段上面也偏少：</p>
+<pre><code class="language-python">sbl = StatsBombLoader(root=data_path, getter=&quot;local&quot;)
+df_games = sbl.games(competition_id=43, season_id=3).set_index(&quot;game_id&quot;)
+game_id = 8657
+df_teams = sbl.teams(game_id)
+df_players = sbl.players(game_id)
+df_events = sbl.events(game_id)
+
+home_team_id = df_games.at[game_id, &quot;home_team_id&quot;]
+df_actions = spadl.statsbomb.convert_to_actions(df_events, home_team_id)
+</code></pre>
+<pre><code class="language-python">df_actions.sample(5)
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>game_id</th>
+      <th>original_event_id</th>
+      <th>period_id</th>
+      <th>time_seconds</th>
+      <th>team_id</th>
+      <th>player_id</th>
+      <th>start_x</th>
+      <th>start_y</th>
+      <th>end_x</th>
+      <th>end_y</th>
+      <th>type_id</th>
+      <th>result_id</th>
+      <th>bodypart_id</th>
+      <th>action_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2307</th>
+      <td>8657</td>
+      <td>206ac85d-9b2d-475f-88c7-bc4ccc2738e7</td>
+      <td>2</td>
+      <td>2482.471</td>
+      <td>768</td>
+      <td>3308.0</td>
+      <td>50.3125</td>
+      <td>59.075</td>
+      <td>39.8125</td>
+      <td>64.175</td>
+      <td>21</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2307</td>
+    </tr>
+    <tr>
+      <th>168</th>
+      <td>8657</td>
+      <td>5e1b54a1-a93b-4c78-a69f-4ed8c708dbd9</td>
+      <td>1</td>
+      <td>346.439</td>
+      <td>782</td>
+      <td>3101.0</td>
+      <td>43.3125</td>
+      <td>27.625</td>
+      <td>42.4375</td>
+      <td>28.475</td>
+      <td>21</td>
+      <td>1</td>
+      <td>0</td>
+      <td>168</td>
+    </tr>
+    <tr>
+      <th>938</th>
+      <td>8657</td>
+      <td>19d08ada-edbc-4fe6-bfd3-00aa03977447</td>
+      <td>1</td>
+      <td>1821.052</td>
+      <td>768</td>
+      <td>3468.0</td>
+      <td>98.4375</td>
+      <td>30.175</td>
+      <td>97.5625</td>
+      <td>30.175</td>
+      <td>21</td>
+      <td>1</td>
+      <td>0</td>
+      <td>938</td>
+    </tr>
+    <tr>
+      <th>2310</th>
+      <td>8657</td>
+      <td>fe9150f6-60d7-429b-8116-115f1b49a1b8</td>
+      <td>2</td>
+      <td>2489.351</td>
+      <td>782</td>
+      <td>3077.0</td>
+      <td>25.8125</td>
+      <td>65.025</td>
+      <td>31.9375</td>
+      <td>64.175</td>
+      <td>21</td>
+      <td>1</td>
+      <td>0</td>
+      <td>2310</td>
+    </tr>
+    <tr>
+      <th>903</th>
+      <td>8657</td>
+      <td>9f489405-7d17-4a0b-9c77-089c49e0b056</td>
+      <td>1</td>
+      <td>1770.533</td>
+      <td>782</td>
+      <td>3176.0</td>
+      <td>65.1875</td>
+      <td>4.675</td>
+      <td>65.1875</td>
+      <td>12.325</td>
+      <td>0</td>
+      <td>1</td>
+      <td>5</td>
+      <td>903</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>读取过程稍显麻烦，一些在我看来的重要信息，比如 team，player，type， result， bodypart 等都是使用数字作为类别，不存在可读性，如果想要搞清楚数字代表的具体含义需要再调用一个函数：</p>
+<pre><code class="language-python">from socceraction.spadl import results_df
+
+results_df()
+</code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>result_id</th>
+      <th>result_name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>fail</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>success</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>offside</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>owngoal</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>yellow_card</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5</td>
+      <td>red_card</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>都是可哈希对象，其实可以使用字符串使其更具有可读性。而且 spadl 作为为这个库主要的目的，计算 xT, VAEP 的数据结构，支持的 type 也偏少。</p>
+<p>kloppy 是则是使用了更为灵活的基于对象的数据模型，有更多的预设读取，如果你只是用他预设的数据源进行操作没什么问题，想更多的自定义操作，他的数据类使用 python dataclass，就没办法有很好的数据验证:</p>
+<pre><code class="language-python">from kloppy.domain import Team, Ground
+
+# 这个是正确输入
+team = Team(team_id=&quot;ars&quot;, name=&quot;Arsenal&quot;, ground=Ground.HOME)
+
+# 但即使输入一些错误的类型也不会有问题
+team = Team(team_id=123, name=123, ground=&quot;HOME&quot;)
+</code></pre>
+<p>只能通过 mypy 之类的工具寄希望于代码执行之前检查类型，并不具有强制性。同时如果想自定义创建一个 EventDataset 需要太多步骤：</p>
+<pre><code class="language-python">from kloppy.domain import (
+    BallState,
+    DatasetFlag,
+    EventDataset,
+    Ground,
+    KloppyCoordinateSystem,
+    Metadata,
+    Orientation,
+    Period,
+    PitchDimensions,
+    Player,
+    Point,
+    Provider,
+    ShotEvent,
+    ShotResult,
+    Team,
+)
+</code></pre>
+<pre><code class="language-python">period = Period(id=1, start_timestamp=0.0, end_timestamp=2827.0)
+team = Team(team_id=&quot;ars&quot;, name=&quot;Arsenal&quot;, ground=Ground.HOME)
+team_2 = Team(team_id=&quot;che&quot;, name=&quot;Chelsea&quot;, ground=Ground.AWAY)
+player = Player(player_id=&quot;saka&quot;, team=team, jersey_no=7, name=&quot;Bukayo Saka&quot;)
+coordinates = Point(x=100, y=50)
+event = ShotEvent(
+    event_id=&quot;1&quot;,
+    period=period,
+    timestamp=217.32,
+    team=team,
+    player=player,
+    coordinates=coordinates,
+    result=ShotResult.OFF_TARGET,
+    raw_event=None,
+    ball_state=BallState.ALIVE,
+    ball_owning_team=team,
+    related_event_ids=[],
+    state={},
+    qualifiers=[],
+    freeze_frame=None,
+)
+</code></pre>
+<pre><code class="language-python">pitch_dimensions = PitchDimensions(x_dim=108, y_dim=68)
+coordinate_system = KloppyCoordinateSystem(normalized=True, length=108, width=68)
+metadata = Metadata(
+    teams=[team, team_2],
+    periods=[period],
+    pitch_dimensions=pitch_dimensions,
+    orientation=Orientation.ACTION_EXECUTING_TEAM,
+    flags=DatasetFlag.BALL_OWNING_TEAM,
+    provider=Provider.OTHER,
+    coordinate_system=coordinate_system,
+)
+</code></pre>
+<pre><code class="language-python">custom_dataset = EventDataset(records=[event], metadata=metadata)
+</code></pre>
+<p>他在描述状态的时候用了大量的 enum，每一个都需要导入，以及确定每一个字段的含义。而我使用最不舒服的一点在构建 team 和 player，他在设计时使用了循环引用:</p>
+<pre><code class="language-python">@dataclass
+class Player:
+    team: &quot;Team&quot;
+
+@dataclass
+class Team:
+    players: List[Player] = field(default_factory=list)
+</code></pre>
+<p>可以读他源代码中读取 statsbomb 的一段：</p>
+<pre><code class="language-python">        def create_team(lineup, ground_type):
+            team = Team(
+                team_id=str(lineup[&quot;team_id&quot;]),
+                name=lineup[&quot;team_name&quot;],
+                ground=ground_type,
+                starting_formation=starting_formations[lineup[&quot;team_id&quot;]],
+            )
+            team.players = [
+                Player(
+                    player_id=str(player[&quot;player_id&quot;]),
+                    team=team,
+                    name=player[&quot;player_name&quot;],
+                    jersey_no=int(player[&quot;jersey_number&quot;]),
+                    starting=str(player[&quot;player_id&quot;]) in player_positions,
+                    position=player_positions.get(str(player[&quot;player_id&quot;])),
+                )
+                for player in lineup[&quot;lineup&quot;]
+            ]
+            return team
+</code></pre>
+<p>循环引用有什么后果不多讨论，单从使用上来说，需要先创建 team，然后创建 player，把 team 塞到 player，再把 player 塞到 team。</p>
+<p>在使用那么久之后，我还是想自己创建一个 Events 的数据格式，便写了 that-game。</p>
+<p>我中和了上面两个库的特性，以及长期的使用习惯，that-game 需要有以下的特点：</p>
+<ul>
+<li>创建简单</li>
+<li>方便计算</li>
+<li>尽可能的扁平化</li>
+<li>支持数据验证</li>
+<li>支持类型推断</li>
+<li>预设常用的数据源读取</li>
+<li>方便导出为常用格式</li>
+<li>方便不同的数据规格（主要是坐标）转换</li>
+<li>兼容尽可能多的事件类型</li>
+<li>方便不同数据源之间匹配和融合</li>
+<li>可读性</li>
+</ul>
+<p>使用 pydantic 来创建数据类可以解决大部分，常用状态使用 typing.Literal 预设字段，既能很好的配合编辑器补全，也能通过 pydantic 进行输入验证。</p>
+<p>在创建新对象的时候，可以导入每个数据类，嫌麻烦也可以这样：</p>
+<pre><code class="language-python">from that_game import Shot
+
+shot = Shot(
+    id=&quot;0001&quot;,
+    type=&quot;shot&quot;,
+    period=&quot;first_half&quot;,
+    seconds=62.0,
+    team={&quot;id&quot;: &quot;ars&quot;, &quot;name&quot;: &quot;Arsenal&quot;},
+    player={&quot;id&quot;: &quot;a7&quot;, &quot;name&quot;: &quot;Bukayo Saka&quot;, &quot;position&quot;: &quot;FW&quot;},
+    location={
+        &quot;x&quot;: 100.1,
+        &quot;y&quot;: 43.2,
+        &quot;pitch&quot;: {&quot;length&quot;: 108, &quot;width&quot;: 68},
+    },
+    end_location={
+        &quot;x&quot;: 108.0,
+        &quot;y&quot;: 43.2,
+        &quot;pitch&quot;: {&quot;length&quot;: 108, &quot;width&quot;: 68},
+    },
+    pattern=&quot;open_play&quot;,
+    body_part=&quot;left_foot&quot;,
+    result=&quot;saved&quot;,
+)
+</code></pre>
+<p>每个数据源之间最大的差异便是坐标系统，使用球场长宽高不同，方向不同，如何方便的转换是一个很大的问题，that-game 的 Location 可以很直观方便的转换：</p>
+<pre><code class="language-python">from that_game import Location, Pitch
+
+location = Location(
+    x=0.4,
+    y=0.6,
+    pitch=Pitch(length=1, width=1),
+)
+
+# 只需要设定好新的 pitch 标准
+pitch = Pitch(
+    length=100,
+    width=100,
+    length_direction=&quot;left&quot;,
+    width_direction=&quot;down&quot;,
+)
+location.transform(pitch)
+print(location.x, location.y)
+</code></pre>
+<pre><code>60.0 40.0
+</code></pre>
+<p>我会在完善 Location 类后添加更多的预设 pitch，更加方便转换。</p>
+<p>目前支持的 type 仅有 shot 和 pass，支持的数据源也仅是 statsbomb，同时还有一个 fusion-events 的调试项目，在这里可以通过网络请求获取一些网站，比如 understat 的 events 进行操作。之后的工作重点便是添加更多的事件类型，添加更多的事件状态，添加更多的字段，比如 shot 预设计算 distance 和 angle, 以及不断调整它们之间的兼容性，更多的 loaders。这个库的难点不在于复杂度，而在于取舍，和更方便的使用。大概会用一年的时间让他变得可用吧。</p>
+
+    </content>
+  </entry>
   <entry>
     <title>open-data events 文档笔记</title>
     <link href="https://tanzhijian.org/posts/ope_data_events"></link>
@@ -1172,57 +1544,6 @@ resp = s.get(&#x27;file:///path/to/file&#x27;)
 <p>然后就是写。目前可以从 statsbombpy-local 使用 statsbombpy 的所有方法，但只有 competitions, matches, lineups, events 和 frames 从本地读取，其他的几个，player_match_stats，player_season_stats，team_season_stats 需要 key 才能使用，不作考虑保持原样。</p>
 <p>而 competition_events，competition_frames，它们的流程是先获取赛事赛季 id，然后获取所有的比赛 id，再获取所有的 events 或者 frames，组一起得到一个 DataFrame。我能做的只是顺着它的思路，获取到赛事，比赛，事件的查询 id 从本地读取文件后注册到 mock，再调用原本函数开始请求，但原本函数里使用了多进程 Pool，于是导致了很多莫名其妙的 ConnectingError，懒得去探究了，就此作罢，继续使用原函数。要用类似的功能现写也用不了几行代码。</p>
 <p>暂时这样了，想要使用的 pip 安装即可。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>xPass 模型的特征探索</title>
-    <link href="https://tanzhijian.org/posts/xpass_features_exploration"></link>
-    <id>1691310174.0</id>
-    <updated>2023-08-06T16:22:54Z</updated>
-    <published>2023-08-06T16:22:54Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 [Using xPass To Measure The Impact Of Gamestate On Team Style ](https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/) 提到的：
-</summary>
-    <content type="html">
-      <h1>xPass 模型的特征探索</h1>
-<p>StatsBomb 最近频繁的使用一个新指标 xPass，根据预期进球 xG 的名字可以暂且把它的中文叫做预期传球，那具体的解释呢，可以看他们在文章 <a href="https://statsbomb.com/articles/soccer/using-xpass-to-measure-the-impact-of-gamestate-on-team-style/">Using xPass To Measure The Impact Of Gamestate On Team Style </a> 提到的：</p>
-<blockquote>
-<p>The definition that you’ll find on our Assist website is: The estimated likelihood of an attempted pass being completed successfully based on the location of the pitch and context the pass is attempted under, and location of the target location of the pass.</p>
-<p>In its simplest form it is a measurement of the difficulty of completing a pass. A pass with a high pass success probability (xPass) is likely to be completed a high percentage of the time - you can think of these as safe, low-risk passes. A pass across the back between two CBs, who aren’t being pressured, would have a high xPass value, for example.</p>
-<p>By contrast, a pass with a low xPass value is likely to be completed a low percentage of the time - you can think of these as risky, more direct passes. Consider a full back playing a ball from his own half into the channels, whilst being pressured by an opponent, for example.</p>
-<p>Loosely speaking, playing more high xPass passes would equate to being more measured in possession and playing more ‘safe’ passes, whereas playing passes with a lower xPass value would indicate a more direct style of play.</p>
-</blockquote>
-<p>有几个比较重要的句子划一下：</p>
-<ul>
-<li>根据球场位置、传球的环境以及传球目标的位置，完成传球成功的可能性</li>
-<li>
-最简单的用法是衡量完成传球的难度：<ul>
-<li>较高的 xPass 可能会在很高比例的时间内完成，可以将其视为安全低风险的传球，比如两名中后卫之间的回传球</li>
-<li>较低的 xPass 占有的时间比率很低，可以将其视为有风险的更加直接的传球</li>
-</ul>
-</li>
-</ul>
-<p>通过上面的描述可以得到训练一个 xPass 模型主要的特征：</p>
-<ul>
-<li>传球队员坐标</li>
-<li>接球队员坐标</li>
-</ul>
-<p>这两者可能是最重要的特征了，从中可以得出一些计算特征：</p>
-<ul>
-<li>传球距离</li>
-<li>传球队员和接球队员的区域划分?：是否需要把场上位置划分为一些区域来分块，这个特征不是很确定</li>
-<li>传球队员和接球队员的位置？需不需要一个 passmap 来确定场上位置？也不确定</li>
-</ul>
-<p>接下来是传球的环境，可以理解为：</p>
-<ul>
-<li>传球队员的受干扰程度，根据 xG 的干扰射门特征的计算可以假设成传球事件坐标半径 1 米内有无防守队员</li>
-<li>接球队员受干扰程度，同上</li>
-<li>是否有球员干扰传球路线，在传球路线上下各延伸出 0.5 米形成一个长方形区域，区域内是否有球员，区分队友和对手</li>
-</ul>
-<p>作为衍生物，甚至可以顺便计算了 packing :)</p>
-<p>而 label, 则通过下一次事件来确定是否为一次成功的传球，比如传球事件的下一次事件换成了对手的事件，或者定位球事件，则不是一次成功的传球</p>
-<p>接来下将抽时间使用 StatsBomb 的公开数据来训练一个基于上面假设的 xPass 模型，只是 StatsBomb 公开数据并没有他们已经计算好的 xPass 作为参考，但可以通过他们对于 xPass 的运用来做一些验证，这些之后再探讨</p>
 
     </content>
   </entry>
