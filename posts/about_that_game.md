@@ -21,22 +21,9 @@ df_actions.sample(5)
 ```
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>game_id</th>
       <th>original_event_id</th>
@@ -153,22 +140,9 @@ results_df()
 ```
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>result_id</th>
       <th>result_name</th>

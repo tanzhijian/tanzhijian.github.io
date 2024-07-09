@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-07-08T20:21:44Z</updated>
+  <updated>2024-07-09T23:53:28Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>关于 that-game</title>
     <link href="https://tanzhijian.org/posts/about_that_game"></link>
-    <id>1720441304.6711888</id>
-    <updated>2024-07-08T20:21:44Z</updated>
-    <published>2024-07-08T20:21:44Z</published>
+    <id>1720540408.808278</id>
+    <updated>2024-07-09T23:53:28Z</updated>
+    <published>2024-07-09T23:53:28Z</published>
     <author><name>tanzhijian</name></author>
     <summary>我在一些足球事件的项目中大量使用了 [kloppy](https://github.com/PySport/kloppy), 也有一些项目使用了 [socceraction](https://github.com/ML-KULeuven/socceraction) 的 spadl，这两个都可以看成“标准化的足球事件数据结构”，也就是把各个数据源的事件数据读取成一个统一的数据结构，方便后面的一系列计算。
 </summary>
@@ -32,22 +32,9 @@ df_actions = spadl.statsbomb.convert_to_actions(df_events, home_team_id)
 <pre><code class="language-python">df_actions.sample(5)
 </code></pre>
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-<pre><code>.dataframe tbody tr th {
-    vertical-align: top;
-}
-
-.dataframe thead th {
-    text-align: right;
-}
-</code></pre>
-</style>
-<table border="1" class="dataframe">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>game_id</th>
       <th>original_event_id</th>
@@ -160,22 +147,9 @@ df_actions = spadl.statsbomb.convert_to_actions(df_events, home_team_id)
 results_df()
 </code></pre>
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-<pre><code>.dataframe tbody tr th {
-    vertical-align: top;
-}
-
-.dataframe thead th {
-    text-align: right;
-}
-</code></pre>
-</style>
-<table border="1" class="dataframe">
+<table>
   <thead>
-    <tr style="text-align: right;">
+    <tr>
       <th></th>
       <th>result_id</th>
       <th>result_name</th>
