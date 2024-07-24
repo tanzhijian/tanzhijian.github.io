@@ -1,5 +1,7 @@
 ## 最近更新
 
+* [that-game 的可视化功能探讨](https://tanzhijian.org/posts/that-game_visualization_explore)
+
 * [关于 that-game](https://tanzhijian.org/posts/about_that_game)
 
 * [open-data events 文档笔记](https://tanzhijian.org/posts/ope_data_events)
@@ -17,8 +19,6 @@
 * [介绍一下 fusion-stat](https://tanzhijian.org/posts/fusion_stat_intro)
 
 * [关于在 fusion-stat 中使用 rapidfuzz 匹配名字](https://tanzhijian.org/posts/fusion_stat_and_rapidfuzz)
-
-* [statsbombpy-local](https://tanzhijian.org/posts/statsbombpy_local)
 
 [更多](https://tanzhijian.org/archive)
 

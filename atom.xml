@@ -2,10 +2,87 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-07-09T23:53:28Z</updated>
+  <updated>2024-07-24T20:36:43Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>that-game 的可视化功能探讨</title>
+    <link href="https://tanzhijian.org/posts/that-game_visualization_explore"></link>
+    <id>1721824603.4438024</id>
+    <updated>2024-07-24T20:36:43Z</updated>
+    <published>2024-07-24T20:36:43Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>我发现 that-game 通过设计好的数据格式，或许可以很方便的完成各个级别的可视化
+</summary>
+    <content type="html">
+      <h1>that-game 的可视化功能探讨</h1>
+<p>我发现 that-game 通过设计好的数据格式，或许可以很方便的完成各个级别的可视化</p>
+<p>文章只为探讨，所有的示例图都为引用的效果图，其具体功能还未实现</p>
+<h2>Pitch</h2>
+<pre><code class="language-python">pitch = Pitch(length=105, width=68)
+pitch.show()
+</code></pre>
+<p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_pitches_003.png" alt="" /></p>
+<pre><code class="language-python">pitch = Pitch(length=105, width=68, vertical=True)
+pitch.show()
+</code></pre>
+<p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_pitches_009.png" alt="" /></p>
+<p>这样可以很方便的预览设置的 pitch 是否与自己心目中的一样</p>
+<h2>Location</h2>
+<p>每一个单独的 Location 都可以单独的查看在 pitch 中的位置</p>
+<pre><code class="language-python">location = Location(x=60, y=40, pitch=pitch)
+location.show()
+</code></pre>
+<h2>Event</h2>
+<h3>Shot</h3>
+<p>可以预览单次射门的状况</p>
+<pre><code class="language-python">shot = Shot(...)
+shot.show()
+</code></pre>
+<p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_shot_freeze_frame_001.png" alt="" /></p>
+<h3>Pass</h3>
+<p>可以预览单次 pass 的传球图，传球方，接球方，球的轨迹，穿过的球员(如果有)</p>
+<h3>其他</h3>
+<p>其他的一些 type 类我还没有写完，比如 duel, block, dribble, 都会以单点的形式在 pitch 上描绘</p>
+<h2>Game</h2>
+<p>可以从 game 的角度查看更多</p>
+<h3>shots</h3>
+<pre><code class="language-python">game = Game(...)
+shots = game.shots()
+shots.shotmap(selected=&#x27;home&#x27;)
+</code></pre>
+<p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_scatter_008.png" alt="" /></p>
+<h3>passes</h3>
+<pre><code class="language-python">passes = game.passes()
+passes.network(selected=&#x27;home&#x27;)
+</code></pre>
+<pre><code class="language-python">passes.passmap(selected=&#x27;home&#x27;)
+</code></pre>
+<p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_lines_001.png" alt="" /></p>
+<p><img src="https://soccermatics.readthedocs.io/en/latest/_images/Denmark.png" alt="" /></p>
+<pre><code class="language-python">passes.passmap(id=&#x27;66&#x27;)
+</code></pre>
+<p><img src="https://soccermatics.readthedocs.io/en/latest/_images/TAA.png" alt="" /></p>
+<h3>其他</h3>
+<pre><code class="language-python">touches = game.touches()
+touches.heatmap(selected=&#x27;home&#x27;)
+</code></pre>
+<p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_heatmap_001.png" alt="" /></p>
+<h3>games</h3>
+<p>可以站在 games 集合的角度查看一些统计数据</p>
+<pre><code class="language-python">games = Games(Game(...), Game(...), Game(...))
+shots = games.shots()
+shots.shotmap(team=&#x27;liverpool&#x27;)
+</code></pre>
+<p><img src="https://soccermatics.readthedocs.io/en/latest/_images/Liverpool_shot_map.png" alt="" /></p>
+<pre><code class="language-python">touches = games.touches()
+touches.countmap()
+</code></pre>
+<p>接下来就是设计好用的 api 和参数，以及具体代码实现。坑越挖越大了。</p>
+
+    </content>
+  </entry>
   <entry>
     <title>关于 that-game</title>
     <link href="https://tanzhijian.org/posts/about_that_game"></link>
@@ -1482,42 +1559,6 @@ process.extractOne(
 </code></pre>
 <p>对球员名和赛事并不是每个数据源都是相同的数量，上面提到的 FotMob 和 FBref，一线队名单一个是 25 一个 23，所以需要加上一个预设分数，如果相似度分数低于某个值则判定为两个人不予匹配，我大概设了一个值目前测试下来没什么问题，但也只是暂时，你不能避免万一某一支球队里面有两兄弟，他们名字只差一个字母，出生年月日，国籍，身高，位置都一样。。。需要在日后开发中再改进了。</p>
 <p>至少对于目前开放的六个联赛的数据是没问题的。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>statsbombpy-local</title>
-    <link href="https://tanzhijian.org/posts/statsbombpy_local"></link>
-    <id>1694140307.0</id>
-    <updated>2023-09-08T10:31:47Z</updated>
-    <published>2023-09-08T10:31:47Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock
-</summary>
-    <content type="html">
-      <h1>statsbombpy-local</h1>
-<p>更新：已经可以使用 competition_events，competition_frames 读取本地文件，并移除了 requests-mock</p>
-<hr />
-<p>最近频繁使用 statsbombpy 获取数据，等待网络请求是件很烦的事情，所以想着改写一下这个库，反正都是在 GitHub 请求公开数据，把它的 open-data 拉到本地，每次从本地读取岂不是很爽。</p>
-<p>最开始想着 fork 一个分支直接修改，确实很省事，在 public.py 里添加一个本地读取的函数，然后把使用 requests 的地方换成本地读取，再修改一些配置，设定好本地环境变量，改一下测试通过即可。</p>
-<p>但是这样做的缺点是如果主分支每次有新版本都得去合并，由于修改删除的代码处数还不少，合并多了就会很烦，所以还是作罢。不过代码还在，<a href="https://github.com/tanzhijian/statsbombpy-local-old/blob/master/statsbombpy/public.py">statsbombpy-local-old </a>，想用的仍然可以用。</p>
-<p>新建一个从外部扩展功能的库，原代码比较烦的一点是全写的函数，而且没有什么接口可以修改到内部，原本想的是像 requests-file 这样通过 file:// URLs 访问本地文件系统</p>
-<pre><code class="language-python">s = requests.Session()
-s.mount(&#x27;file://&#x27;, FileAdapter())
-
-resp = s.get(&#x27;file:///path/to/file&#x27;)
-</code></pre>
-<p>又或者继承一个 Requests 类来改写，但原代码</p>
-<pre><code class="language-python">def get_response(path):
-    response = req.get(path)
-    response.raise_for_status()
-    data = response.json()
-    return data
-</code></pre>
-<p>这样的写法是摸不到内部，所以只能换一个思路，也就是目前使用的 mock，拦截掉网络请求，从本地本地读取文件后返回请求，但这样的做法可能不是很优雅，因为 mock 通常用于测试。。。</p>
-<p>然后就是写。目前可以从 statsbombpy-local 使用 statsbombpy 的所有方法，但只有 competitions, matches, lineups, events 和 frames 从本地读取，其他的几个，player_match_stats，player_season_stats，team_season_stats 需要 key 才能使用，不作考虑保持原样。</p>
-<p>而 competition_events，competition_frames，它们的流程是先获取赛事赛季 id，然后获取所有的比赛 id，再获取所有的 events 或者 frames，组一起得到一个 DataFrame。我能做的只是顺着它的思路，获取到赛事，比赛，事件的查询 id 从本地读取文件后注册到 mock，再调用原本函数开始请求，但原本函数里使用了多进程 Pool，于是导致了很多莫名其妙的 ConnectingError，懒得去探究了，就此作罢，继续使用原函数。要用类似的功能现写也用不了几行代码。</p>
-<p>暂时这样了，想要使用的 pip 安装即可。</p>
 
     </content>
   </entry>
