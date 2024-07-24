@@ -2,16 +2,16 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-07-24T20:36:43Z</updated>
+  <updated>2024-07-24T20:45:01Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
   <entry>
     <title>that-game 的可视化功能探讨</title>
     <link href="https://tanzhijian.org/posts/that-game_visualization_explore"></link>
-    <id>1721824603.4438024</id>
-    <updated>2024-07-24T20:36:43Z</updated>
-    <published>2024-07-24T20:36:43Z</published>
+    <id>1721825101.4856722</id>
+    <updated>2024-07-24T20:45:01Z</updated>
+    <published>2024-07-24T20:45:01Z</published>
     <author><name>tanzhijian</name></author>
     <summary>我发现 that-game 通过设计好的数据格式，或许可以很方便的完成各个级别的可视化
 </summary>
@@ -57,10 +57,10 @@ shots.shotmap(selected=&#x27;home&#x27;)
 <pre><code class="language-python">passes = game.passes()
 passes.network(selected=&#x27;home&#x27;)
 </code></pre>
+<p><img src="https://soccermatics.readthedocs.io/en/latest/_images/Denmark.png" alt="" /></p>
 <pre><code class="language-python">passes.passmap(selected=&#x27;home&#x27;)
 </code></pre>
 <p><img src="https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_lines_001.png" alt="" /></p>
-<p><img src="https://soccermatics.readthedocs.io/en/latest/_images/Denmark.png" alt="" /></p>
 <pre><code class="language-python">passes.passmap(id=&#x27;66&#x27;)
 </code></pre>
 <p><img src="https://soccermatics.readthedocs.io/en/latest/_images/TAA.png" alt="" /></p>

@@ -73,13 +73,13 @@ passes = game.passes()
 passes.network(selected='home')
 ```
 
+![](https://soccermatics.readthedocs.io/en/latest/_images/Denmark.png)
+
 ```python
 passes.passmap(selected='home')
 ```
 
 ![](https://mplsoccer.readthedocs.io/en/latest/_images/sphx_glr_plot_lines_001.png)
-
-![](https://soccermatics.readthedocs.io/en/latest/_images/Denmark.png)
 
 ```python
 passes.passmap(id='66')
