@@ -1,5 +1,7 @@
 ## 目录
 
+* [zed 的使用体验](https://tanzhijian.org/posts/zed_explore)
+
 * [that-game 的可视化功能探讨](https://tanzhijian.org/posts/that-game_visualization_explore)
 
 * [关于 that-game](https://tanzhijian.org/posts/about_that_game)
