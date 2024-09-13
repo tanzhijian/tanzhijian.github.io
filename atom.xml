@@ -2,10 +2,53 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-08-19T16:36:03Z</updated>
+  <updated>2024-09-14T02:23:40Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>一个感动的创业故事</title>
+    <link href="https://tanzhijian.org/posts/a_good_story"></link>
+    <id>1726251820.5937457</id>
+    <updated>2024-09-14T02:23:40Z</updated>
+    <published>2024-09-14T02:23:40Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>我曾经在《Football Hacker》这本书的读书笔记中分享过这个故事，但我想有必要再分享一次。这次会添加一些润色，以及一些主观的评述，如果想要了解更为真实的故事请直接阅读《Football Hacker》的第五章 outsiders。
+</summary>
+    <content type="html">
+      <h1>一个感动的创业故事</h1>
+<p>我曾经在《Football Hacker》这本书的读书笔记中分享过这个故事，但我想有必要再分享一次。这次会添加一些润色，以及一些主观的评述，如果想要了解更为真实的故事请直接阅读《Football Hacker》的第五章 outsiders。</p>
+<h2>1.</h2>
+<p>想成为比利·比恩的人。</p>
+<p>克里斯·安德森这个名字大家可能会陌生，他写过一本《数字游戏：关于足球，你全弄错了……吗？》的书，是为数不多被翻译成中文的足球数据类书籍，他是康奈尔大学教授，教授政治经济学和政治社会学，原本平淡稳定且体面的生活。</p>
+<p>但一切在 2009 年因为一本书而改变了，Moneyball。他的妻子是一名经济学家，她经常用这本书来教她的学生“基于证据的决策”，而她把这本书带给了他。其中的故事——棒球俱乐部董事总经理比利·比恩，巧妙地使用数据来克服他低预算的限制，投入了大量工作来寻找具有更强意义的新数据集，深深吸引了他。以至于读完后他发出感叹：“足球界的比利·比恩出现了吗？”</p>
+<p>在 Moneyball 的兴趣推动下，他开始在互联网上搜索免费可用的比赛数据。他把数据下载到 Excel 表格中，并探讨相关性。</p>
+<p>起初这只是一点乐趣，一个四十多岁的人的爱好，他已经在学术和个人生活中实现了他想要的东西。只有少数人对他的经验分析感兴趣，但随着愈发深入，他作为社会科学家在“日常工作”中使用的分析工具可以轻松应用于足球数据，越多的人开始成为他的读者，他开始逐渐明确了一个理想：“成为足球的比利·比恩。“</p>
+<h2>2.</h2>
+<p>他们住在纽约州的大学城伊萨卡，有红砖建筑、修剪整齐的草坪和古树，像明信片图片一般的校园。这是一个贵族和阶级的地方，但几乎不具备发动足球革命的自然基础。他们——他和他的妻子莎莉，需要一个好的计划。</p>
+<p>在他们看来有两个因素是决定性的：他需要被认真对待；他必须想出一些真正改变比赛的东西，具有破坏性和令人印象深刻性，足以让潜在客户为此支付高额资金。</p>
+<p>他们决定先写一本书，“首先，它使我们能够进行广泛的研究，使我们能够更好地了解该行业、其人员及其动态。它还让我有机会向这些人证明数字可以显示非常有趣的东西。”</p>
+<p>他联系了 Opta 和 Prozone 等体育数据公司免费使用他们非常昂贵的数据，并承诺在书中对其价值进行宣传，他去了英国和德国的俱乐部，了解他们如何使用数据，2013 年书完成了，就是前面提到的《数字游戏》。他们选择了首先在英国出版，如果在美国出版，就会变成一本“来自美国的足球书籍”，天生得不到重视。</p>
+<p>它于 2013 年发行，取得巨大成功，在英国、美国、斯堪的纳维亚半岛和一些亚洲国家拥有众多读者。他们计划的第一部分已经完成。人们确实认真对待他们，他们收获了一个有用的联系网络。</p>
+<h2>3.</h2>
+<p>但尽管如此，想要进入真正的足球圈仍然很远，数据分析部门很难得到自己俱乐部的赏识。“人们对这些新技术很感兴趣，但仅此而已。”“那里没有任何真正适合技术发展的环境；其中许多只是独自一人在推动，然后慢慢死去。”他们几乎可以确定，许多较大的俱乐部，特别是英超俱乐部，确实投资了技术球探或数据分析师。但他们中的许多人似乎被录用只是因为他们的老板不想被指责为过时。在决策过程方面，这些人的工作充其量只是次要的作用。</p>
+<p>如果影响不到上层的决策，就不会产生任何影响。</p>
+<p>这一认知导致他们得出了一个根本性的结论，试图说服俱乐部老板采纳他们的想法是没有意义的。他们必须找到愿意购买俱乐部的投资者，并从一开始就以不同的方式管理它。作为两位常春藤联盟教授，他们利用他们的联系人向来自中东、俄罗斯，当然还有来自美国的高净值企业家推销他们的愿景。</p>
+<p>他们通过了多次的谈判，多次失败的接触，最终敲定了考文垂，获得了专业足球俱乐部的实践机会。</p>
+<h2>4.</h2>
+<p>可能到了这里，大家认为一切走向正轨，他们改造球队成功，一个完美的创业故事。但生活中失败与妥协才是常态，你不能像一个将军一样吠叫着命令，更多时候得像一个值得信赖的中尉知道如何在实地完成工作。票务，薪水，更衣室，甚至洗衣房，都需要妥善的处理，而他们并没有办法做好一切，这些才是俱乐部的真实面貌——数据战术只是很小的一部分。</p>
+<p>他们于 2015 年接任，俱乐部以第八名结束了本赛季。第二年夏天，便出现了问题——他们认为他们无法解决这些问题。2016年10月，在工作一年多一点后，他们决定认输并离开。</p>
+<p>所以这是一个失败的故事吗？</p>
+<p>他们发现到目前为止，足球创新完全是由内部人士推动的。他们想创新也可以来自外部的想法，他们想试试局外人是否也能赢，这个想法非常浪漫。</p>
+<p>在考文垂之前他成立了一家咨询公司 Anderson and Sally，就经济和金融问题向足球俱乐部的投资者提供建议，尤其是希望其中一位投资者有足够的勇气，把钱花在局外人身上。</p>
+<p>他们仍然有退路，2018 年，他们接受了沃里克大学的聘书，回到了经济学和政治学教授的学术生活。他们仍然为足球俱乐部做一些咨询。</p>
+<p>所以他们是幸运的，比起大多数我认识的，包括我自己。</p>
+<p>这个故事发生在大约十年前，而到了现在，整个行业对于足球的核心圈，仍然是局外人。上层人士痴迷于他们的主观判断，似乎只有需要数据去解释他们的观点时才会引用，而从业者只能在长期不被认可的环境中摸索前行，足球作为一个古老行业，有着太多历史遗留问题。</p>
+<p>但愿大家能在不具有包容性的时代，找到属于自己的角色。</p>
+<p>也许，只是也许......</p>
+
+    </content>
+  </entry>
   <entry>
     <title>zed 的使用体验</title>
     <link href="https://tanzhijian.org/posts/zed_explore"></link>
@@ -1449,67 +1492,6 @@ def test_pydantic_settings() -&gt; None:
     assert str(secret) == &#x27;foobar&#x27;
 </code></pre>
 <p>没有用加密手段却规避了在调试时的信息泄露。但它的不方便之处在于，不可能为了只使用而安装整个 Starlette。于是大多数时候都是用 python-dotenv 自己写一个读取的类</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>介绍一下 fusion-stat</title>
-    <link href="https://tanzhijian.org/posts/fusion_stat_intro"></link>
-    <id>1703233933.8477497</id>
-    <updated>2023-12-22T16:32:13Z</updated>
-    <published>2023-12-22T16:32:13Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>更新：已经更新 API
-</summary>
-    <content type="html">
-      <h1>介绍一下 fusion-stat</h1>
-<p>更新：已经更新 API</p>
-<hr />
-<p>最初只是想给 score-simulator 写一个获取数据的脚本，但写着写着应该可以写成一个工具，可以方便获取网络上免费公开足球数据的爬虫工具，到目前为止可以正常给 score-simulator 提供数据了，于是发布了一个版本到 pip 方便自己使用。</p>
-<p>他的特点是同时从不同的数据源获取然后组合在一起。因为这确实是获取足球数据一个很麻烦的事情，从一个数据源获取一些数据，从另一个数据源获取另一些数据，他们大多数基础数据是相同的，只有一些不同的特色数据，而 fusion-stat 便是在获取数据时就把它们最大程度的拼接在一起，通过一次调用就可以获得一份尽可能全面的数据。</p>
-<pre><code class="language-python">competitions = Competitions()
-fusion = await competitions.gather()
-</code></pre>
-<p>使用 httpx 完成 downloader 类似的功能，所以提供了可以在初始化时传入 httpx.AsyncClient 的一些参数，比如 <code>competitions = Competitions(proxies=PROXIES)</code>，由于是通过 <code>**kwargs</code>，缺乏参数类型补全提示，后续还会改进。每个类都会初始化一个 AsyncClient 作为 client，如果是大量爬取势必会增加开销，所以还可以提前创建好一个 client 每次传入使用:</p>
-<pre><code class="language-python">async with httpx.AsyncClient(proxies=PROXIES) as client:
-    competition = Competition(
-        fotmob_id=&quot;47&quot;, 
-        fbref_id=&quot;9&quot;, 
-        fbref_path_name=&quot;Premier-League&quot;,
-        official_name=&quot;Premier League&quot;,
-        season=2022,
-        client=client,
-    )
-</code></pre>
-<p>关于参数，最初的设想是只需要传入一个具有唯一特征同时还有可读性的参数，比如：</p>
-<pre><code class="language-python">member = Member(&quot;Bukayo Saka&quot;)
-</code></pre>
-<p>很漂亮但显然不具有可行性。且不说唯一性，单是如何通过一行字符串到最终完成不同数据源的请求 url 都很困难，如果只是赛事，或者球队，即使规模扩大到很大，几百个赛事，几千支球队，可以通过缓存一份数据来提供查询，但更多的球员名，随时在增加的比赛，就不大可能缓存下来了，这无异于还得提供一个数据库。</p>
-<p>所以目前采用这样一种方法，不是很方便手动输入，但可以通过上一级获取到的 index 来使用：</p>
-<pre><code class="language-python">fusion = await team.gather()
-saka = fusion.members_index()[-2]
-saka
-</code></pre>
-<pre><code>{&#x27;fotmob_id&#x27;: &#x27;961995&#x27;,
- &#x27;fbref_id&#x27;: &#x27;bc7dc64d&#x27;,
- &#x27;fbref_path_name&#x27;: &#x27;Bukayo-Saka&#x27;}
-</code></pre>
-<pre><code class="language-python">member = Member(**saka)
-fusion = await member.gather()
-</code></pre>
-<p>如果需要长期使用，在第一次获取时本地缓存一份 index，就可以极大的方便后续使用了。</p>
-<p>目前数据源只写了很小的一部分，只满足了 score-simulator 的需求，之后会继续完善。如果想要添加更多的数据，或者更多的来源，在 spiders 里面新建一个模块继承 Spider 类，然后实现 request 和 parse:</p>
-<pre><code class="language-python">class Futbol(Spider):
-
-    @property
-    def request(self) -&gt; httpx.Request:
-        ...
-
-    def parse(self, response: httpx.Response) -&gt; Any:
-        ...
-</code></pre>
-<p>可以参考其他的爬虫写法。之后在对应的 fusion 添加进去即可，欢迎提交 pr。</p>
-<p>总体来说，目前处于一个能用但不好用的地步。需要改进的地方太多，比如最后的数据类 Fusion，虽然都是 fusion，但方法大相径庭，需要一个更好的方案；models 里面的各种杂乱的数据模型类看起来很糟糕；也没有文档，想要正常使用得看源代码。慢慢写了，最初设计的时候并没有规划太多，大部分都是写一步看一步。</p>
 
     </content>
   </entry>

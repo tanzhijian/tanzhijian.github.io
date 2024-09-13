@@ -1,5 +1,7 @@
 ## 目录
 
+* [一个感动的创业故事](https://tanzhijian.org/posts/a_good_story)
+
 * [zed 的使用体验](https://tanzhijian.org/posts/zed_explore)
 
 * [that-game 的可视化功能探讨](https://tanzhijian.org/posts/that-game_visualization_explore)
