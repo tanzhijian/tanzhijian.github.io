@@ -1,5 +1,7 @@
 ## 目录
 
+* [《挪威的森林》一些补充](https://tanzhijian.org/posts/norwegian_wood_2)
+
 * [《La Roja》读书笔记](https://tanzhijian.org/posts/la_roja)
 
 * [一个感动的创业故事](https://tanzhijian.org/posts/a_good_story)
