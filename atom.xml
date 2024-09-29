@@ -2,10 +2,54 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>tanzhijian.org</title>
   <id>https://tanzhijian.org/atom.xml</id>
-  <updated>2024-09-23T16:56:34Z</updated>
+  <updated>2024-09-29T22:32:03Z</updated>
   <link href="tanzhijian.org"/>
   <link href="https://tanzhijian.org/atom.xml" rel="self"/>
   <generator>?</generator>
+  <entry>
+    <title>Statsbomb 的传球分析</title>
+    <link href="https://tanzhijian.org/posts/statsbomb_analysing_passing_rofiles"></link>
+    <id>1727620323.5612075</id>
+    <updated>2024-09-29T22:32:03Z</updated>
+    <published>2024-09-29T22:32:03Z</published>
+    <author><name>tanzhijian</name></author>
+    <summary>最近收到一份 Stamsbomb 的推送报告，附件包含他们瑞典，丹麦，挪威联赛的传球数据报告，不太清楚他们的版权规定，但可以写一些结论性的东西。
+</summary>
+    <content type="html">
+      <h1>Statsbomb 的传球分析</h1>
+<p>最近收到一份 Stamsbomb 的推送报告，附件包含他们瑞典，丹麦，挪威联赛的传球数据报告，不太清楚他们的版权规定，但可以写一些结论性的东西。</p>
+<p>报告的主要目的是研究比赛通常比赛中的传球类型；哪些传球为比赛增加了最大的价值，以及球员是否有效的完成了传球</p>
+<p>使用了三个模型：xPass，传球类型的聚类，和OBV（控球价值？），其中：</p>
+<ul>
+<li>xPass 根据传球条件（例如起始位置、角度、对手压力和使用的身体部位）为我们预期传球完成频率提供了基准</li>
+<li>传球聚类模型将具有相似特征的传球分组，使识别和分析比赛模式更加易于管理和解释</li>
+<li>OBV 根据每个动作对球队得分和失球可能性的 +/- 影响来评估每个动作的模型</li>
+</ul>
+<p>接下来是一些结论</p>
+<ul>
+<li>总体来看，球场上最多的6种传球发生在中圈附近，以及传球到进攻三区的两侧，但 OBV 最高的传球是由后场边路发动的长传到进攻三区两侧，以及两侧传中球</li>
+</ul>
+<p>细分到位置：</p>
+<ul>
+<li>
+后卫最常见的传球是从防守三区往中场的短传球，以及中圈附近的回传球，都是短传，通常是针对稳定的防守阵型，OBV 最高的传球是向前推进的传球，位置包含了左中右三条线，以及过了中圈的向前传球<ul>
+<li>其中边后卫最有价值的是距离长的，从防守区域直接传到中场</li>
+<li>中后卫则是距离较短的中路向前推进传球</li>
+<li>以及高位的位置从中圈传到进攻三区中路，其中包括边后卫的向进攻肋部传球</li>
+</ul>
+</li>
+<li>
+中场最常见的传球是作为防守位置中圈附近回传球，作为中路进攻的进攻三区中路左右转移，以及进攻三区边路的渗透直传球，一个共同点是，所有人都以某种方式支持 build-on 阶段，并寻求在防守和进攻三区之间推进球，OBV最高的则是：<ul>
+<li>边路中场需要的向禁区传中球，以及盘带到更靠近边路禁区线的短传传中</li>
+<li>中路进攻的中路大禁区附近左右段距离横传</li>
+<li>能够进入进攻区域并将球移到危险区域的中场球员平均而言将增加最大的价值</li>
+</ul>
+</li>
+<li>前锋最常见的传球都在进攻三区，与中场球员类似，这也说明了现代足球的中场与前锋衔接很深，OBV 最高的传球一个有趣趋势是从边路传给防线后面的跑动者——这是快攻中非常有价值的传球</li>
+</ul>
+
+    </content>
+  </entry>
   <entry>
     <title>《挪威的森林》一些补充</title>
     <link href="https://tanzhijian.org/posts/norwegian_wood_2"></link>
@@ -1349,42 +1393,6 @@ class Match:
 <p>下面就是添加到 fusion-stat。country_name 和 country_code 各个数据源使用不一致，在写了 fifacodes 之后可以很好的解决。</p>
 <p>后面的工作就没那么好进行下去了，上一级获取下一级的数据可以做到，最主要还是卡在了如何在下一级的数据中获取到上一级一致的特征。比如在 match 中需要获取 competition 和 team 所有的 id 特征，名字是基本特征容易获取到，但国家在目前的数据源内并不能找全，诚然目前可以把 competition 的国家用在 team，但之后添加了洲际比赛，世界级比赛，国家队比赛，这些就没办法使用了。</p>
 <p>最终还是放弃了在 0.0.6 版本中更新 id，有可行性，但以目前的数据广度还不能实装，且 player 级的唯一性还需进一步优化，只能在未来不断扩展新的数据源中重点考虑这些特征直到全部可用了。</p>
-
-    </content>
-  </entry>
-  <entry>
-    <title>介绍一下 fifacodes</title>
-    <link href="https://tanzhijian.org/posts/fifacodes_intro"></link>
-    <id>1705496359.0520616</id>
-    <updated>2024-01-17T20:59:19Z</updated>
-    <published>2024-01-17T20:59:19Z</published>
-    <author><name>tanzhijian</name></author>
-    <summary>fusion-stat 的开发过程有很多国家名称和国家代码转换的场景，一些数据源是使用国家名称，另外一些使用国家代码，在使用时需要那么一个工具来统一他们。最开始打算使用 pycountry, 但对于足球数据来说大多是使用国际足联成员国的国家地区来区分，而国际足联国家代码与 ISO 3166-1 三位字母代码是有差异的，比如使用英格兰 ENG 而不是英国 GBR。搜索了一下并没有现成的工具，只能自己写一个。
-</summary>
-    <content type="html">
-      <h1>介绍一下 fifacodes</h1>
-<p>fusion-stat 的开发过程有很多国家名称和国家代码转换的场景，一些数据源是使用国家名称，另外一些使用国家代码，在使用时需要那么一个工具来统一他们。最开始打算使用 pycountry, 但对于足球数据来说大多是使用国际足联成员国的国家地区来区分，而国际足联国家代码与 ISO 3166-1 三位字母代码是有差异的，比如使用英格兰 ENG 而不是英国 GBR。搜索了一下并没有现成的工具，只能自己写一个。</p>
-<p>首先是数据源，维基百科有现成的表，爬下来即可。但直接使用有个问题是，国家代码是标准的，数据源与数据源的国家名称不一定是标准的，比如我国，大多数数据源是 China，一小部分是 China PR，以至于还需要一个 custom 来添加更多的别名，所幸两百多个国际足联成员国数量并不大，有了基础数据之后，这个 custom 采用手工维护即可。</p>
-<p>接下来是方法了，我的设想是，整个国家代码和名称可以抽象成一个 Counties 类，而这个类本质上是一个只读 dict，可以通过 dict 的所有方法索引查询到一个包含代码和名称的 Country 类。</p>
-<p>而索引可以并不只限于代码，它的数据特殊性在于，代码是唯一的，名称是唯一的，同时代码与名称之间也是唯一的，所以可以把他们全部添加为索引，既可以用代码也可以用名称，像这样:</p>
-<pre><code class="language-pycon">&gt;&gt;&gt; counties.get(&#x27;ENG&#x27;)
-Country(code=&#x27;ENG&#x27;, name=&#x27;England&#x27;)
-&gt;&gt;&gt; counties[&#x27;England&#x27;]
-Country(code=&#x27;ENG&#x27;, name=&#x27;England&#x27;)
-</code></pre>
-<p>这样使用起来可以不论数据源是使用何种识别方式，都能很好的处理。但由于代码和名称同时在索引内，使用一些迭代方法的时候会出现重复的 value，所以最简单的方法便是使用两个 dict，使用 getitem 的方法时用 key + value 的 dict，使用 iter 时用只有 key 的 dict。</p>
-<p>同时还有一个搜索方法，使用 rapidfuzz 来实现 key 的搜索，如果不确定准确的 key，输入一部分也可以获得结果：</p>
-<pre><code class="language-pycon">&gt;&gt;&gt; counties.search(&#x27;ARG&#x27;)
-[Country(code=&#x27;ARG&#x27;, name=&#x27;Argentina&#x27;), Country(code=&#x27;AFG&#x27;, name=&#x27;Afghanistan&#x27;), Country(code=&#x27;ALG&#x27;, name=&#x27;Algeria&#x27;)]
-&gt;&gt;&gt; counties.search_one(&#x27;Argent&#x27;)
-Country(code=&#x27;ARG&#x27;, name=&#x27;Argentina&#x27;)
-</code></pre>
-<p>一些参数也是可以调节的：</p>
-<pre><code class="language-pycon">&gt;&gt;&gt; counties.search(&#x27;Fran&#x27;, limit=2, score_cutoff=70)
-[Country(code=&#x27;FRA&#x27;, name=&#x27;France&#x27;), Country(code=&#x27;IRN&#x27;, name=&#x27;Iran&#x27;)]
-</code></pre>
-<p>基本功能就这些了，已经可以 pip 安装使用。</p>
-<p>对于数据的更新，我的设想是默认的基础数据只通过脚本爬取维基百科进行更新，手动维护的 custom 接收 pr 提交，添加的条目代码通常不会有增加，而名称只作为别名添加到索引，返回的 value, Country 仍然使用 default 中的名称，这样比较好规范。</p>
 
     </content>
   </entry>

@@ -1,5 +1,7 @@
 ## 目录
 
+* [Statsbomb 的传球分析](https://tanzhijian.org/posts/statsbomb_analysing_passing_rofiles)
+
 * [《挪威的森林》一些补充](https://tanzhijian.org/posts/norwegian_wood_2)
 
 * [《La Roja》读书笔记](https://tanzhijian.org/posts/la_roja)
